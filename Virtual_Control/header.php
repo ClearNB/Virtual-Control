@@ -1,20 +1,7 @@
 <!DOCTYPE html>
-<html>
+<?php
 
-<head>
-  <meta charset="utf-8">
-  <meta name="application-name" content="Virtual Control">
-  <link rel="icon" href="images/favicon.ico">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Virtual Control - A Controlling Network Tool.</title>
-  <meta name="description" content="Virtual Control - A Controlling Network Tool.">
-  <link rel="stylesheet" href="awesome.min.css" type="text/css">
-  <link rel="stylesheet" href="aquamarine.css" type="text/css">
-  <script src="js/navbar-ontop.js"></script>
-  <script src="js/animate-in.js"></script>
-</head>
-
-<body>
+$body = <<<HTML
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" style="box-shadow: black 0px 0px 4px;">
     <div class="container"> <a class="navbar-brand" href="index.php" style=""><svg width="12em" version="1.1" viewBox="0 0 106.53 18.638" xmlns="http://www.w3.org/2000/svg" fill="#ff5a00">
           <g transform="translate(-35.835 -38.875)">
@@ -34,9 +21,8 @@
       </div>
     </div>
   </nav>
-  <script src="js/jquery-3.3.1.min.js"></script>
-  <script src="js/popper.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-</body>
+HTML;
 
-</html>
+echo nl2br(htmlspecialchars($body));
+
+?>

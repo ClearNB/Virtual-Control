@@ -1,0 +1,24 @@
+## Project GSC | HTML CODE (FOR OUT-SOURCE ENGINEERING)
+## Version  : 1.0.0
+## Language : HTML, CSS, Javascript
+## Author   : Kazuki Matsuda (Project GSC)
+
+## HTML CODE (TABLE FORMAT)
+<table class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>[HEADER_COLUMN]</th>
+            <td  id="sysName">[HEADER_DATA]</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>[HEADER_COLUMN]</th>
+            <td  id="sysName">[HEADER_DATA]</td>
+        </tr>
+        <tr>
+            <th>[DATA_COLUMN]</th>
+            <td id="sysDescr">[DATA]</td>
+        </tr>
+    </tbody>
+</table>
