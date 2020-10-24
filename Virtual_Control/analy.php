@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+
+<?php
+$agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデータはデータベースから取得する
+?>
+
 <html>
 
     <head>
@@ -39,7 +44,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12"><a href="#" class="list-group-item list-group-item-action flex-column align-items-start active my-1">
+                    <div class="col-md-12"><a href="#d01" class="list-group-item list-group-item-action flex-column align-items-start active my-1">
                             <h4 class="text-monospace bg-dark my-1 rounded-sm py-2" id="AgentName"><i class="fa fa-fw fa-server fa-lg"></i><b>[Agent_Info]</b></h4>
                             <div class="d-flex w-100 justify-content-between">
                             </div>
@@ -49,7 +54,9 @@
                                 <div class="col-md-6 "><i class="fa fa-bars fa-2x pull-right my-1 fa-fw"></i></div>
                             </div>
                             <span class="badge badge-pill badge-primary" ></span>
-                        </a></div>
+                    </a></div>
+                    <!-- Agent Selection -->
+                    
                 </div>
             </div>
         </div>

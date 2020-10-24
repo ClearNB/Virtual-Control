@@ -44,7 +44,6 @@
           <a class="btn btn-block btn-lg py-2 btn-dark active" href="index.php"><i class="fa fa-fw fa-arrow-circle-o-left"></i>戻る</a>
         </div>
       </div>
-      <hr class="mt-0">
     </div>
   </div>
   

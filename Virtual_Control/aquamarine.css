@@ -2892,10 +2892,26 @@ input[type="button"].btn-block {
     position: static;
     float: none; }
 
-.navbar-text {
-    display: none;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem; }
+.nav-item {
+    position: relative;
+}
+
+.nav-item .navbar-text {
+    position: absolute;
+    color: #fff;
+    top: 50%;
+    left: 50%;
+}
+
+.nav-item .nav-icon {
+    opacity: 100%;
+}
+
+.nav-item:hover .navbar-text {
+    display: inline-block;
+    animation: fade-in 0.5s;
+    -webkit-animation: fade-in 0.5s;
+}
 
 .navbar-collapse {
     flex-basis: 100%;
@@ -2954,8 +2970,18 @@ input[type="button"].btn-block {
     .navbar-expand-md > .container-fluid {
         padding-right: 0;
         padding-left: 0; }
-    .navbar-text {
-        display: inline-block;
+    
+    .nav-item .navbar-text {
+        position: relative;
+    }
+    
+    .nav-item .nav-icon {
+        text-align: left;
+    }
+    
+    .nav-item:hover .navbar-text {
+        animation: none;
+        -webkit-animation: none;
     }
 }
 
@@ -2979,7 +3005,25 @@ input[type="button"].btn-block {
     .navbar-expand-md .navbar-toggler {
         display: none; }
     .navbar-text {
-        display: none;
+        left: 50%;
+        top: 50%;
+        -ms-transform: translate(-50%,-50%);
+        -webkit-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%);
+        background-color: rgba(255, 255, 255, 0.2);
+        margin:0;
+        padding:0;
+        opacity: 0%;
+    }
+    
+    .nav-item:hover .nav-icon {
+        opacity: 50%;
+    }
+    
+    .nav-item:hover .navbar-text {
+        opacity: 100%;
+        animation: fade-in 0.5s;
+        -webkit-animation: fade-in 0.5s;
     }
 }
 
@@ -3116,7 +3160,7 @@ input[type="button"].btn-block {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); }
 
 .navbar-dark .navbar-text {
-    color: rgba(255, 255, 255, 0.5); }
+    color: rgba(255, 255, 255, 1); }
 .navbar-dark .navbar-text a {
     color: #fff; }
 .navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus {
@@ -6714,4 +6758,50 @@ hr.orange {
 
 h5.warnTitle {
     margin-bottom: 1px;
+}
+
+label.formtitle {
+    border-left: 2px #000 solid;
+}
+
+@keyframes fade-in {
+    0% { opacity: 0% }
+    100% { opacity: 100% }
+}
+
+@keyframes fade-out {
+    0% { opacity: 100% }
+    100% { opacity: 0% }
+}
+
+div.failedMessage {
+    padding: 5px;
+    margin-bottom: 2rem;
+    background-color: #000;
+    border-radius: 5px;
+    color: #ff5a00;
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+label.formtext {
+    border: 2px solid #fff;
+    background-color: #000;
+    color: #ff5a00;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 2px;
+    width: 80%;
+}
+
+label.importantLabel {
+    border: 2px solid #fff;
+    border-radius: 10px;
+    background-color: #ff5a00;
+    color: #000;
+    margin-right: 5px;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 2px;
 }

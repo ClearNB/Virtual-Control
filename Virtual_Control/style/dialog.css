@@ -1,12 +1,16 @@
 .modal {
   display: none;
-  -webkit-transition: all ease-in 1.0s;
-  -o-transition: all ease-in 1.0s;
-  transition: all ease-in 1.0s;
 }
 
 .modal:target {
   display: flex;
+  -webkit-animation: .5s fadeIn;
+  animation: .5s fadeIn;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0%; }
+    100% { opacity: 100% }
 }
 
 .modal {
