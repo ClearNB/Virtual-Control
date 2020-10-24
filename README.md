@@ -1,6 +1,10 @@
 # Virtual Control
 A Controlling Network Tool with using SNMP.
 
+## 注意: 本パッケージはSNMP未実装です
+実用的なツールとして用いらないよう、ご配慮をお願いいたします。
+by Project GSC
+
 ## 1. 概要
 Virtual Control は、ネットワーク監視に用いられるSNMPを管理・操作する、オープンソースのWebアプリケーションです。開発元はProject GSC（日本工学院北海道専門学校）。
 
