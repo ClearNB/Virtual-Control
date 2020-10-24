@@ -125,22 +125,6 @@ if (!isset($_SESSION['count'])) {
             </div>
         </div>
 
-
-        <!-- TEST -->
-        <a href="#d01">Open modal</a>
-
-        <div class="modal" id="d01" tabindex="-1">
-            <a href="#" class="modal__overlay" aria-label="Close modal"></a>
-            <div class="modal__content">
-                <a href="" class="modal__close" aria-label="Close modal">&times;</a>
-                <div><h3 class="md-0">テスト用ダイアログです</h3>
-                    <hr>
-                    ダイアログ処理はここで行います。
-                    <a class="btn btn-dark btn-lg btn-block" href="" style=""><i class="fa fa-fw fa-envelope"></i>閉じる</a>
-                </div>
-            </div>
-        </div>
-
         <!-- Footer -->
         <div id="foot"></div>
 
