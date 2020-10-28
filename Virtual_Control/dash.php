@@ -18,20 +18,18 @@ if (!isset($_SESSION['count'])) {
         <meta name="application-name" content="Virtual Control">
         <link rel="icon" href="images/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>DASHBOARD - Virtual Control</title>
-        <meta name="description" content="Dashboard - Virtual Control">
-        <!-- CSS -->
-        <link rel="stylesheet" href="awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="aquamarine.css" type="text/css">
+        <title>DASHBOARD - A Controlling Network Tool.</title>
+        <meta name="description" content="Virtual Control - A Controlling Network Tool.">
+        <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
         <link rel="stylesheet" href="style/dialog.css" type="text/css">
-        <!-- Javascript -->
+
         <script src="js/navbar-ontop.js"></script>
         <script src="js/animate-in.js"></script>
         <script src="js/loader.js"></script>
     </head>
 
     <body class="text-monospace">
-
         <!-- Navbar & Logo -->
         <div id="nav"></div>
         <div class="bg-primary pt-5">

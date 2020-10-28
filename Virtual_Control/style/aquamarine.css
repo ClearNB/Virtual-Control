@@ -2901,6 +2901,10 @@ input[type="button"].btn-block {
     color: #fff;
     top: 50%;
     left: 50%;
+    -moz-transition: all 0.5s ease-in;
+    -ms-transition: all 0.5s ease-in;
+    -webkit-transition: all 0.5s ease-in;
+    transition: all 0.5s ease-in;
 }
 
 .nav-item .nav-icon {
@@ -2971,12 +2975,20 @@ input[type="button"].btn-block {
         padding-right: 0;
         padding-left: 0; }
     
-    .nav-item .navbar-text {
-        position: relative;
+    .navbar-nav {
+        display: block;
     }
     
-    .nav-item .nav-icon {
+    .nav-item .navbar-text {
+        position: static;
+    }
+    
+    .nav-item {
         text-align: left;
+    }
+    
+    .nav-item:hover {
+        background-color: #495057;
     }
     
     .nav-item:hover .navbar-text {
@@ -3007,20 +3019,21 @@ input[type="button"].btn-block {
     .navbar-text {
         left: 50%;
         top: 50%;
-        -ms-transform: translate(-50%,-50%);
-        -webkit-transform: translate(-50%,-50%);
-        transform: translate(-50%,-50%);
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: #ff5a00;
         margin:0;
         padding:0;
         opacity: 0%;
-    }
-    
-    .nav-item:hover .nav-icon {
-        opacity: 50%;
+        -ms-transform: translate(-50%,-50%);
+        -moz-transform: translate(-50%,-50%);
+        -webkit-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%);
     }
     
     .nav-item:hover .navbar-text {
+        -ms-transform: translate(0%, 0%);
+        -moz-transform: translate(0%, 0%);
+        -webkit-transform: translate(0%, 0%);
+        transform: translate(0%, 0%);
         opacity: 100%;
         animation: fade-in 0.5s;
         -webkit-animation: fade-in 0.5s;

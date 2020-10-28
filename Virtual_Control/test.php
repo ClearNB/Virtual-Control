@@ -4,15 +4,14 @@
 
 <html>
     <head>
-        <!-- HEADER SCRIPTS -->
         <meta charset="utf-8">
         <meta name="application-name" content="Virtual Control">
         <link rel="icon" href="images/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>FORMAT PAGE - Virtual Control</title>
+        <title>TEST - A Controlling Network Tool.</title>
         <meta name="description" content="Virtual Control - A Controlling Network Tool.">
-        <link rel="stylesheet" href="awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="aquamarine.css" type="text/css">
+        <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
         <link rel="stylesheet" href="style/dialog.css" type="text/css">
 
         <script src="js/navbar-ontop.js"></script>
@@ -20,7 +19,7 @@
         <script src="js/loader.js"></script>
     </head>
 
-    <body>
+    <body class="text-monospace">
         <!-- HEADER NAVIGATION -->
         <div id="nav"></div>
 

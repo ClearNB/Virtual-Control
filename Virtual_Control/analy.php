@@ -11,12 +11,12 @@ $agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデ
         <meta name="application-name" content="Virtual Control">
         <link rel="icon" href="images/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Virtual Control - A Controlling Network Tool.</title>
+        <title>ANALYTICS - A Controlling Network Tool.</title>
         <meta name="description" content="Virtual Control - A Controlling Network Tool.">
-        <!-- CSS -->
-        <link rel="stylesheet" href="awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="aquamarine.css" type="text/css">
-        <!-- JavaScript -->
+        <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
+        <link rel="stylesheet" href="style/dialog.css" type="text/css">
+
         <script src="js/navbar-ontop.js"></script>
         <script src="js/animate-in.js"></script>
         <script src="js/loader.js"></script>
@@ -54,9 +54,9 @@ $agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデ
                                 <div class="col-md-6 "><i class="fa fa-bars fa-2x pull-right my-1 fa-fw"></i></div>
                             </div>
                             <span class="badge badge-pill badge-primary" ></span>
-                    </a></div>
+                        </a></div>
                     <!-- Agent Selection -->
-                    
+
                 </div>
             </div>
         </div>

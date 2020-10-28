@@ -68,17 +68,18 @@ if ($method == 'POST') {
         <meta name="application-name" content="Virtual Control">
         <link rel="icon" href="images/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Virtual Control - A Controlling Network Tool.</title>
+        <title>LOGIN - A Controlling Network Tool.</title>
         <meta name="description" content="Virtual Control - A Controlling Network Tool.">
+        <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
+        <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
+        <link rel="stylesheet" href="style/dialog.css" type="text/css">
+
         <script src="js/navbar-ontop.js"></script>
         <script src="js/animate-in.js"></script>
-        <link rel="stylesheet" href="awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="aquamarine.css">
-
         <script src="js/loader.js"></script>
     </head>
 
-    <body>
+    <body class="text-monospace">
         <!-- Navbar -->
         <div id="nav"></div>
         <div class="bg-primary pt-5">
@@ -117,16 +118,16 @@ if ($method == 'POST') {
                                 <input type="text" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Enter UserID" required="required" id="userid" name="userid" value="<?php echo htmlspecialchars($userid, ENT_QUOTES, 'UTF-8'); ?>">
                                 <small class="form-text text-body" style="">ユーザIDはVCServerによって振り分けられています。</small>
                             </div>
-                            
+
                             <div class="form-group pt-2"> <label class="importantLabel">【必須】</label><label class="formtext">パスワード</label>
                                 <input type="password" class="form-control bg-dark form-control-lg shadow-sm" placeholder="Password" required="required" id="pass" name="pass" value="<?php echo htmlspecialchars($pass, ENT_QUOTES, 'UTF-8'); ?>">
                                 <small class="form-text text-body">ユーザIDに割り当てられたパスワードを入力します。</small>
                             </div>
-                            
+
                             <?php
-                                if($chk_post && $chk_failed) {
-                                    echo '<div class="failedMessage">ログインに失敗しました。<br>ユーザIDもしくはパスワードが違います。<hr class="orange"></div>';
-                                }
+                            if ($chk_post && $chk_failed) {
+                                echo '<div class="failedMessage">ログインに失敗しました。<br>ユーザIDもしくはパスワードが違います。<hr class="orange"></div>';
+                            }
                             ?>
                             <button type="submit" class="btn btn-dark btn-block btn-lg shadow-lg">
                                 <i class="fa fa-fw fa-sign-in"></i>ログイン</button>
