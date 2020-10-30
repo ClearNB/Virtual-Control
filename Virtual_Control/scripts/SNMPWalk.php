@@ -14,18 +14,13 @@ if ($method === 'GET') {
 
     //Functions
     $result = "Host: $host <br> Community: $com <br> OID: $oid<br>===================<br>";
-    $snmpdata = snmp2_walk($host, $com, $oid, 5000, 5);
-    if ($snmpdata == false) {
+    $snmpdata = snmp2_walk($host, $com, $oid);
+    if (!is_array($snmpdata)) {
         $result = $result . "エラー: SNMPを取得できませんでした。";
-        echo json_encode(['res' => $result]);
     } else {
-        if (is_array($snmpdata)) {
-            $result = $result . implode('<br>', $snmpdata);
-        } else if ($snmpdata == null) {
-            $result = $result . "オブジェクトの取得ができませんでした。";
-        }
-        echo json_encode(['res' => $result]);
+        $result = $result . implode('<br>', $snmpdata);
     }
+    echo json_encode(['res' => $result]);
 } else {
     $result = "本システムの直接の実行はできません。";
     echo json_encode(['res' => $result]);

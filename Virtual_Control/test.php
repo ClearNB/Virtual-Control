@@ -40,20 +40,7 @@
         </div>
 
         <!-- TITLE SECTION -->
-        <div class="py-3">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h1 class="text-uppercase"><i class="fa fa-fw fa-exclamation-triangle"></i>FORMAT</h1>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <p class="text-monospace">ここにページの説明を書き入れます。</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="py-3" id='title'></div>
 
         <!-- CONTENT SECTION -->
         <div class="py-2 bg-primary">
@@ -81,6 +68,7 @@
             <script type="text/javascript">
             load(1);
             c.Export();
+            load_title("SNMPWALK", "SNMPのエージェントとの接続確認にご活用ください。");
             /* Ajax - SNMPWALKER */
             $(function () {
                 $('#snmpwk').submit(function(event) {
@@ -96,10 +84,14 @@
                         data: $form.serializeArray(),
                         dataType: 'json'
                     }).done(function(res) {
-                        btn.value = "SNMPを実行";
-                        btn.disabled = false;
                         generate_empty_dialog("snmpwalk-dialog", "<i class=\"fa fa-fw fa-server fa-lx\"></i>SNMPWALK 結果", true);
                         $('#snmpwalk-dialog').html(res["res"]);
+                    }).fail(function() {
+                        generate_empty_dialog("snmpwalk-dialog", "<i class=\"fa fa-fw fa-server fa-lx\"></i>SNMPWALK 結果", true);
+                        $('#snmpwalk-dialog').html("<strong>SNMPの取得に失敗しました。<br>===============================<br>以下の設定項目をご確認ください。<br>・ホストアドレスに間違いがないか<br>・対象機器の設定に不備がないか<br>・MIBの指定方法に間違いがないか</strong>");
+                    }).always(function() {
+                        btn.value = "SNMPを実行";
+                        btn.disabled = false;
                         /* Dialog Controller */
                         (function () {
                             const close = document.getElementById('close');
