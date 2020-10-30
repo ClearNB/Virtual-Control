@@ -68,7 +68,7 @@ if ($method == 'POST') {
         <meta name="application-name" content="Virtual Control">
         <link rel="icon" href="images/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>LOGIN - A Controlling Network Tool.</title>
+        <title>LOGIN - Virtual Control</title>
         <meta name="description" content="Virtual Control - A Controlling Network Tool.">
         <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
         <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
@@ -110,16 +110,16 @@ if ($method == 'POST') {
                         <h1 class=""><i class="fa fa-user fa-fw"></i>ログイン</h1>
                     </div>
                 </div>
-                <div class="row" style="">
+                <div class="row">
                     <div class="col-md-12 text-lg-left text-center align-self-center my-2">
-                        <form action="" method="POST">
+                        <form action="" method="POST" id="former">
 
-                            <div class="form-group" style=""> <label class="importantLabel">【必須】</label><label class="formtext">ユーザID</label>
+                            <div class="form-group pt-2"> <label class="importantLabel col-md-2">【必須】</label><label class="formtext col-md-9">ユーザID</label>
                                 <input type="text" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Enter UserID" required="required" id="userid" name="userid" value="<?php echo htmlspecialchars($userid, ENT_QUOTES, 'UTF-8'); ?>">
                                 <small class="form-text text-body" style="">ユーザIDはVCServerによって振り分けられています。</small>
                             </div>
 
-                            <div class="form-group pt-2"> <label class="importantLabel">【必須】</label><label class="formtext">パスワード</label>
+                            <div class="form-group pt-2"> <label class="importantLabel col-md-2">【必須】</label><label class="formtext col-md-9">パスワード</label>
                                 <input type="password" class="form-control bg-dark form-control-lg shadow-sm" placeholder="Password" required="required" id="pass" name="pass" value="<?php echo htmlspecialchars($pass, ENT_QUOTES, 'UTF-8'); ?>">
                                 <small class="form-text text-body">ユーザIDに割り当てられたパスワードを入力します。</small>
                             </div>
@@ -130,7 +130,8 @@ if ($method == 'POST') {
                             }
                             ?>
                             <button type="submit" class="btn btn-dark btn-block btn-lg shadow-lg">
-                                <i class="fa fa-fw fa-sign-in"></i>ログイン</button>
+                                <i class="fa fa-fw fa-sign-in"></i>ログイン
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -142,7 +143,7 @@ if ($method == 'POST') {
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <h3 class="" style="">ログインできない場合</h3>
+                        <h3>ログインできない場合</h3>
                     </div>
                 </div>
                 <div class="row">

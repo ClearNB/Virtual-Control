@@ -17,6 +17,15 @@
         <script src="js/navbar-ontop.js"></script>
         <script src="js/animate-in.js"></script>
         <script src="js/loader.js"></script>
+        <script src="js/form_generator.js"></script>
+        <script type="text/javascript">
+            const c = new form_generator("snmpwk", "./scripts/SNMPWalk.php");
+            c.Title("SNMPWALK", "male");
+            c.Input("host", "ホストアドレス", "接続先を指定します。", "address-card", true);
+            c.Input("community", "コミュニティ", "エージェントが属するコミュニティを設定します。", "users", true);
+            c.Input("oid", "OID", "フィルタリングするOIDを設定します。", "object-ungroup", false);
+            c.Button("walker", "SNMPWALKを実行");
+        </script>
     </head>
 
     <body class="text-monospace">
@@ -49,38 +58,69 @@
         <!-- CONTENT SECTION -->
         <div class="py-2 bg-primary">
             <div class="container">
+
                 <div class="row m-2">
                     <div class="col-md-12">
-                        <!-- BUTTON --> <a class="btn btn-block btn-lg py-2 btn-dark active" href="index.php"><i class="fa fa-fw fa-arrow-circle-o-left"></i>戻る</a>
+                        <!-- BUTTON -->
+                        <a class="btn btn-block btn-lg py-2 btn-dark active" href="index.php"><i class="fa fa-fw fa-arrow-circle-o-left"></i>戻る</a>
                     </div>
                 </div>
-                <div class="row m-2">
-                    <div class="col-md-12">
-                        <!-- DIALOG --> <div id="dialog"></div>
-                    </div>
-                </div>
-                <!-- FORM EXAMPLE -->
-                <form action="" method="POST">
-                    <div class="form-group"> <label class="formtitle">項目タイトル<br></label>
-                        <input type="text" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Enter UserID" required="required" id="userid" name="userid" value="<?php echo htmlspecialchars($userid, ENT_QUOTES, 'UTF-8'); ?>">
-                        <small class="form-text text-body" style="">ユーザIDはVCServerによって振り分けられています。</small> </div>
-                        <INPUT type="checkbox" class="form-check bg-dark my-1 text-monospace" name="aiueo" value="1" required="required" >あああ
-                    <button type="submit" class="btn btn-dark btn-block btn-lg shadow-lg"><i class="fa fa-fw fa-sign-in"></i>送信</button>
-                </form>
+
+                <div id="dialogrt"></div>
+
+                <div id="former"></div>
             </div>
-        </div>
 
-        <!-- FOOTER -->
-        <div id="foot"></div>
+            <!-- FOOTER -->
+            <div id="foot"></div>
 
-        <!-- FOOTER SCRIPTS -->
-        <script src="js/jquery-3.3.1.min.js"></script>
-        <script src="js/popper.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script type="text/javascript">
+            <!-- FOOTER SCRIPTS -->
+            <script src="js/jquery-3.3.1.min.js"></script>
+            <script src="js/popper.min.js"></script>
+            <script src="js/bootstrap.min.js"></script>
+            <script type="text/javascript">
             load(1);
-            generate_dialog('d01', 'テスト', 'フォーマット系です。<br>HTMLでセクションを書くことができます。');
-        </script>
+            c.Export();
+            /* Ajax - SNMPWALKER */
+            $(function () {
+                $('#snmpwk').submit(function(event) {
+                    event.preventDefault();
+                    var btn = document.getElementById("walker");
+                    btn.disabled = true;
+                    btn.value = "アクセス中...";
+                    var $form = $(this);
+                    
+                    $.ajax({
+                        type: 'GET',
+                        url: $form.attr('action'),
+                        data: $form.serializeArray(),
+                        dataType: 'json'
+                    }).done(function(res) {
+                        btn.value = "SNMPを実行";
+                        btn.disabled = false;
+                        generate_empty_dialog("snmpwalk-dialog", "<i class=\"fa fa-fw fa-server fa-lx\"></i>SNMPWALK 結果", true);
+                        $('#snmpwalk-dialog').html(res["res"]);
+                        /* Dialog Controller */
+                        (function () {
+                            const close = document.getElementById('close');
+                            const dialog = document.getElementById('dialog');
+
+                            dialog.showModal();
+
+                            close.addEventListener('click', function () {
+                                dialog.close();
+                            });
+
+                            dialog.addEventListener('click', function (event) {
+                                if (event.target === dialog) {
+                                    dialog.close('cancelled');
+                                }
+                            });
+                        }());
+                    });
+                });
+            });
+            </script>
     </body>
 
 </html>

@@ -51,7 +51,7 @@ $agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデ
                             <p class="mb-1 text-monospace" id="AgentDescription">[Agent_Description]</p>
                             <div class="row">
                                 <div class="col-md-6"><small class="text-monospace" id="AgentStatus">[Agent_Status]</small></div>
-                                <div class="col-md-6 "><i class="fa fa-bars fa-2x pull-right my-1 fa-fw"></i></div>
+                                <div class="col-md-6"><i class="fa fa-bars fa-2x pull-right my-1 fa-fw"></i></div>
                             </div>
                             <span class="badge badge-pill badge-primary" ></span>
                         </a></div>
@@ -66,8 +66,8 @@ $agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデ
                     <div class="col-md-12" >
                         <div class="list-group" >
                         </div>
-                        <h2 class="" ><i class="fa fa-fw fa-bar-chart"></i><b>データアナリティクス</b></h2>
-                        <h6  class="" id="UpdateTime"><i class="fa fa-fw fa-clock-o"></i>データ取得日時：[Update_Time]<br></h6>
+                        <h2><i class="fa fa-fw fa-bar-chart"></i><b>アナリティクス</b></h2>
+                        <h6 id="UpdateTime"><i class="fa fa-fw fa-clock-o"></i>データ取得日時：[Update_Time]<br></h6>
                     </div>
                 </div>
             </div>

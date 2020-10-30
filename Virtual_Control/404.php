@@ -6,7 +6,7 @@
         <meta name="application-name" content="Virtual Control">
         <link rel="icon" href="images/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>404 (Not Found) - A Controlling Network Tool.</title>
+        <title>404 (Not Found) - Virtual Control</title>
         <meta name="description" content="Virtual Control - A Controlling Network Tool.">
         <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
         <link rel="stylesheet" href="style/aquamarine.css" type="text/css">

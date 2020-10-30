@@ -6,7 +6,7 @@
         <meta name="application-name" content="Virtual Control">
         <link rel="icon" href="images/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>403 (Forbidden) - A Controlling Network Tool.</title>
+        <title>403 (Forbidden) - Virtual Control</title>
         <meta name="description" content="Virtual Control - A Controlling Network Tool.">
         <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
         <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
