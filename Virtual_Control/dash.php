@@ -3,9 +3,9 @@
 <!--
 <?php
 session_start();
-if (!isset($_SESSION['count'])) {
-    http_response_code(301);
-    header("Location: noadmin.php");
+if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
+    http_response_code(403);
+    header("Location: 403.php");
     exit();
 }
 ?>
@@ -62,6 +62,10 @@ if (!isset($_SESSION['count'])) {
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
+                        <?php
+                            $username = $_SESSION['username'];
+                            echo '<h3 class="text-center bg-dark p-2">' . $username . "さん</h3>";
+                        ?>
                         <h3 class="text-center">アクセス監視をしましょう</h3>
                         <p class="text-monospace text-center">行動を選択してください:</p>
                     </div>
@@ -93,7 +97,6 @@ if (!isset($_SESSION['count'])) {
                                 </div>
                                 <p class="mb-1">アカウントまたはサーバの設定を行います</p> <small>詳しくはクリック！</small>
                             </a>
-
                         </div>
                     </div>
                 </div>
@@ -126,7 +129,7 @@ if (!isset($_SESSION['count'])) {
         <!-- Footer -->
         <div id="foot"></div>
 
-        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/jquery.js"></script>
         <script src="js/popper.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script type="text/javascript">

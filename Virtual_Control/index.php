@@ -3,12 +3,10 @@
 <!--
 <?php
 session_start();
-if (isset($_SESSION['count'])) {
-    if ($_SESSION['count'] === 0) {
-        http_response_code(301);
-        header("Location: dash.php");
-        exit();
-    }
+if (isset($_SESSION['username']) && isset($_SESSION['permission'])) {
+    http_response_code(301);
+    header("Location: dash.php");
+    exit();
 }
 ?>
 -->
@@ -102,7 +100,7 @@ if (isset($_SESSION['count'])) {
                 <div class="row py-3">
                     <div class="col-md-12 align-self-center text-center text-md-left" style="">
                         <h4 class="text-center">ログインが必要です</h4>
-                        <p contenteditable="true" class="text-center">ボタンをクリックして、ログインを行ってください</p>
+                        <p class="text-center">ボタンをクリックして、ログインを行ってください</p>
                         <div class="row mt-4">
                             <div class="col-md-12 col-12"> <a class="btn btn-block btn-lg btn-dark active" href="login.php"><i class="fa fa-fw fa-sign-in"></i>ログイン</a> </div>
                         </div>
@@ -115,7 +113,7 @@ if (isset($_SESSION['count'])) {
         <div id="foot"></div>
 
         <!-- JavaScript dependencies -->
-        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/jquery.js"></script>
         <script src="js/popper.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script type="text/javascript">load(2); load(0);</script>

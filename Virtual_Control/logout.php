@@ -9,6 +9,7 @@
 
 <?php
 session_start();
-unset($_SESSION['count']);
+unset($_SESSION['username']);
+unset($_SESSION['permission']);
 http_response_code(301);
 header("Location: index.php");

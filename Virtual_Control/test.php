@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 
 <!-- PHP HEADER MODULE -->
+<?php
+session_start();
+if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
+    http_response_code(403);
+    header("Location: 403.php");
+    exit;
+}
+?>
 
 <html>
     <head>
@@ -13,13 +21,16 @@
         <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
         <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
         <link rel="stylesheet" href="style/dialog.css" type="text/css">
-
+        <link rel="stylesheet" href="jquery-style/jquery-ui.css" type="text/css">
+        <link rel="stylesheet" href="jquery-style/jquery-ui.structure.css" type="text/css">
+        <link rel="stylesheet" href="jquery-style/jquery-ui.theme.css" type="text/css">
+        
         <script src="js/navbar-ontop.js"></script>
         <script src="js/animate-in.js"></script>
         <script src="js/loader.js"></script>
         <script src="js/form_generator.js"></script>
         <script type="text/javascript">
-            const c = new form_generator("snmpwk", "./scripts/SNMPWalk.php");
+            const c = new form_generator("snmpwk", "./scripts/snmpwalk.php");
             c.Title("SNMPWALK", "male");
             c.Input("host", "ホストアドレス", "接続先を指定します。", "address-card", true);
             c.Input("community", "コミュニティ", "エージェントが属するコミュニティを設定します。", "users", true);
@@ -62,7 +73,9 @@
             <div id="foot"></div>
 
             <!-- FOOTER SCRIPTS -->
-            <script src="js/jquery-3.3.1.min.js"></script>
+            <script src="js/now_loading.js"></script>
+            <script src="js/jquery.js"></script>
+            <script src="jquery/jquery-ui.js"></script>
             <script src="js/popper.min.js"></script>
             <script src="js/bootstrap.min.js"></script>
             <script type="text/javascript">
@@ -71,44 +84,59 @@
             load_title("SNMPWALK", "SNMPのエージェントとの接続確認にご活用ください。");
             /* Ajax - SNMPWALKER */
             $(function () {
-                $('#snmpwk').submit(function(event) {
+                $('#snmpwk').submit(function (event) {
+                    //ローディング
+                    dispLoading();
+                    
                     event.preventDefault();
+                    //ボタンによる実行を阻止
                     var btn = document.getElementById("walker");
                     btn.disabled = true;
-                    btn.value = "アクセス中...";
-                    var $form = $(this);
+                    btn.value = "実行中です。";
                     
+                    var $form = $(this);
                     $.ajax({
                         type: 'GET',
                         url: $form.attr('action'),
                         data: $form.serializeArray(),
                         dataType: 'json'
-                    }).done(function(res) {
+                    }).done(function (res) {
                         generate_empty_dialog("snmpwalk-dialog", "<i class=\"fa fa-fw fa-server fa-lx\"></i>SNMPWALK 結果", true);
                         $('#snmpwalk-dialog').html(res["res"]);
-                    }).fail(function() {
+                    }).fail(function () {
                         generate_empty_dialog("snmpwalk-dialog", "<i class=\"fa fa-fw fa-server fa-lx\"></i>SNMPWALK 結果", true);
                         $('#snmpwalk-dialog').html("<strong>SNMPの取得に失敗しました。<br>===============================<br>以下の設定項目をご確認ください。<br>・ホストアドレスに間違いがないか<br>・対象機器の設定に不備がないか<br>・MIBの指定方法に間違いがないか</strong>");
-                    }).always(function() {
+                    }).always(function () {
+                        removeLoading();
                         btn.value = "SNMPを実行";
                         btn.disabled = false;
                         /* Dialog Controller */
-                        (function () {
-                            const close = document.getElementById('close');
-                            const dialog = document.getElementById('dialog');
-
-                            dialog.showModal();
-
-                            close.addEventListener('click', function () {
-                                dialog.close();
-                            });
-
-                            dialog.addEventListener('click', function (event) {
-                                if (event.target === dialog) {
-                                    dialog.close('cancelled');
+                        $('#dialog').dialog({
+                            autoOpen: false,
+                            resizable: false,
+                            width: "80%",
+                            closeOnEscape: true,
+                            modal: true,
+                            show: {
+                                effect: "blind",
+                                duration: 1000
+                            },
+                            hide: {
+                                effect: "blind",
+                                duration: 1000
+                            },
+                            buttons: [
+                                {
+                                    text: '閉じる',
+                                    class: 'btn btn-block btn-lg btn-primary active',
+                                    click: function() {
+                                        $(this).dialog('close');
+                                    }
                                 }
-                            });
-                        }());
+                            ]
+                        });
+                        
+                        $('#dialog').parent().css({position: "fixed"}).end().dialog('open');
                     });
                 });
             });

@@ -51,7 +51,7 @@
   <script src="js/popper.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script type="text/javascript">
-      load(1);
+      load(<?php if(isset($_SESSION['username']) && isset($_SESSION['permission'])) { echo 1; } else { echo 2; }  ?>);
   </script>
 </body>
 

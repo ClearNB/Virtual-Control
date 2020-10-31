@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 
     <head>
@@ -50,10 +51,12 @@
 
         <div id="foot"></div>
 
-        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/jquery.js"></script>
         <script src="js/popper.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script type="text/javascript">load(1);</script>
+        <script type="text/javascript">
+            load(1);
+        </script>
     </body>
 
 </html>

@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 
 <?php
+session_start();
+if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
+    http_response_code(403);
+    exit();
+}
+
+
 $agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデータはデータベースから取得する
 ?>
 
@@ -212,7 +219,7 @@ $agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデ
         <div id="foot"></div>
 
         <!-- JavaScript dependencies -->
-        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/jquery.js"></script>
         <script src="js/popper.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script type="text/javascript">

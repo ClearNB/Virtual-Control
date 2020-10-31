@@ -2978,25 +2978,25 @@ input[type="button"].btn-block {
     .navbar-expand-md > .container-fluid {
         padding-right: 0;
         padding-left: 0; }
-    
+
     .navbar-nav {
         display: block;
     }
-    
+
     .nav-item .navbar-text {
         position: static;
     }
-    
+
     .nav-item {
         text-align: left;
         border-bottom: 2px solid #ff5a00;
     }
-    
+
     .nav-item:hover {
         background-color: #495057;
         border-bottom: 5px solid #ff5a00;
     }
-    
+
     .nav-item:hover .navbar-text {
         animation: none;
         -webkit-animation: none;
@@ -3034,7 +3034,7 @@ input[type="button"].btn-block {
         -webkit-transform: translate(-50%,-50%);
         transform: translate(-50%,-50%);
     }
-    
+
     .nav-item:hover .navbar-text {
         -ms-transform: translate(0%, 0%);
         -moz-transform: translate(0%, 0%);
@@ -6723,7 +6723,6 @@ div.scroll-view {
     height: 15em;
     padding: 10px;
     background-color: #ff5a00;
-    border-radius: 20px;
     overflow-y: scroll;
 }
 
@@ -6742,31 +6741,31 @@ div.scroll-view {
 }
 
 ul.black-view, ol.black-view {
-  padding: 0;
-  position: relative;
+    padding: 0;
+    position: relative;
 }
 
 ul.black-view li, ol.black-view li {
-  color: #fff;
-  border-left: solid 6px #000;
-  margin-bottom: 3px;
-  line-height: 1.5;
-  padding: 0.5em;
-  list-style-type: none !important;
+    color: #fff;
+    border-left: solid 6px #000;
+    margin-bottom: 3px;
+    line-height: 1.5;
+    padding: 0.5em;
+    list-style-type: none !important;
 }
 
 ul.orange-view, ol.orange-view {
-  padding: 0;
-  position: relative;
+    padding: 0;
+    position: relative;
 }
 
 ul.orange-view li, ol.orange-view li {
-  color: #fff;
-  border-left: solid 6px #ff5a00;
-  margin-bottom: 3px;
-  line-height: 1.5;
-  padding: 0.5em;
-  list-style-type: none !important;
+    color: #fff;
+    border-left: solid 6px #ff5a00;
+    margin-bottom: 3px;
+    line-height: 1.5;
+    padding: 0.5em;
+    list-style-type: none !important;
 }
 
 hr {

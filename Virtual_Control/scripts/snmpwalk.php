@@ -5,7 +5,6 @@
  * To launch, need module: PDO_SNMP.
  */
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
-
 if ($method === 'GET') {
     //Variables
     $host = filter_input(INPUT_GET, 'host', FILTER_SANITIZE_STRING);

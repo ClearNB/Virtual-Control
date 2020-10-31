@@ -11,51 +11,103 @@
 <?php
 //すでにログインが完了している場合は、セッション条件によりこのページから退避させる
 session_start();
-if (isset($_SESSION['count'])) {
-    if ($_SESSION['count'] === 0) {
-        http_response_code(301);
-        header("Location: dash.php");
-        exit();
-    }
+if (isset($_SESSION['username']) && isset($_SESSION['permission'])) {
+    http_response_code(301);
+    header("Location: dash.php");
+    exit();
 }
 
-//変数の定義（データベースにより、ここは機能変更）
+//変数の定義
 $userid = '';
 $pass = '';
-$c_userid = 'clearnb';
-$c_pass = 'aa';
+$salt = '';
+$username = '';
+$permission = 0;
 $session_time = 1500;
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 $chk_post = false;
 $chk_failed = false;
+$chk_nouser = false;
+
+//include
+include ("./scripts/dbconfig.php");
+include ("./scripts/common.php");
 
 //フォーム実行時に動的実行される
 if ($method == 'POST') {
+    //表示フラグの変更
+    $chk_post = true;
+
     //値の取得
     $userid = filter_input(INPUT_POST, 'userid', FILTER_SANITIZE_STRING);
     $pass = filter_input(INPUT_POST, 'pass', FILTER_SANITIZE_STRING);
 
-    //表示フラグの変更
-    $chk_post = true;
+    //ソルトの取得
+    $query = "
+        SELECT SALT
+        FROM   GSC_USERS
+        WHERE  USERID = '$userid'
+    ";
+    $result = query($query);
 
-    //（機能変更）認証は静的SQLプレースホルダを利用すること
-    if ($userid == $c_userid && $pass == $c_pass) {
-        if (!isset($_SESSION['count'])) {
+
+    while ($row = $result->fetch_assoc()) {
+        $salt = $row['SALT'];
+    }
+
+    //ない場合はログイン失敗
+    if ($salt === "") {
+        $chk_nouser = true;
+    } else {
+        //ハッシュ化
+        $hash = hash('sha256', $pass . $salt);
+
+        $query2 = "
+            SELECT (PASSWORD_HASH = '$hash') AS PASSWORD_MATCHES
+            FROM   GSC_USERS
+            WHERE  USERID = '$userid'
+        ";
+        $result2 = query($query2);
+
+        $password_matches = false;
+        while ($row = $result2->fetch_assoc()) {
+            $password_matches = $row['PASSWORD_MATCHES'];
+        }
+
+        if ($password_matches) {
+            $query3 = "
+                SELECT USERNAME, PERMISSION
+                FROM   GSC_USERS
+                WHERE  USERID = '$userid'
+            ";
+            $result3 = query($query3);
+            
+            while ($row = $result3->fetch_assoc()) {
+                $username = $row['USERNAME'];
+                $permission = $row['PERMISSION'];
+            }
+
             /* セッション設定
              * 1. 待機セッション時間は 1,500秒（25分）とする
              * 2. セッション情報は count と呼ばれる変数に 0 を入れている
              * 3. このセッション情報が破棄されると、監視を行うことができなくなる
+             * 4. セッションには、ユーザ名及び権限を格納する
+             * （ユーザ名および権限がセッション情報にない場合、アクセス権を失効します）
+             * 
+             * [アクセス権付与ページ]
+             * 
              */
             ini_set('session.gc_divisor', 1);
             ini_set('session.gc_maxlifetime', $session_time);
             session_start();
-            $_SESSION['count'] = 0;
+            $_SESSION['username'] = $username;
+            $_SESSION['permission'] = $permission;
+            http_response_code(301);
+            header("Location: dash.php");
+            exit;
+        } else {
+            $chk_failed = true;
         }
-        http_response_code(301);
-        header("Location: dash.php");
-        exit;
-    } else {
-        $chk_failed = true;
     }
 }
 ?>
@@ -126,7 +178,9 @@ if ($method == 'POST') {
 
                             <?php
                             if ($chk_post && $chk_failed) {
-                                echo '<div class="failedMessage">ログインに失敗しました。<br>ユーザIDもしくはパスワードが違います。<hr class="orange"></div>';
+                                echo '<div class="failedMessage">ログインに失敗しました。<br>パスワードが違います。<hr class="orange"></div>';
+                            } else if ($chk_post && $chk_nouser) {
+                                echo '<div class="failedMessage">ログインに失敗しました。<br>指定された情報は存在しません。<hr class="orange"></div>';
                             }
                             ?>
                             <button type="submit" class="btn btn-dark btn-block btn-lg shadow-lg">

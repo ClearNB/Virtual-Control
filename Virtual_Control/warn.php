@@ -3,9 +3,9 @@
 <!--
 <?php
 session_start();
-if (!isset($_SESSION['count'])) {
-    http_response_code(301);
-    header("Location: noadmin.php");
+if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
+    http_response_code(403);
+    header("Location: 403.php");
     exit();
 }
 ?>
@@ -182,7 +182,7 @@ if (!isset($_SESSION['count'])) {
         <div id="foot"></div>
 
         <!-- JavaScript dependencies -->
-        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/jquery.js"></script>
         <script src="js/popper.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script type="text/javascript">

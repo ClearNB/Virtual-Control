@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <?php
 session_start();
-if (!isset($_SESSION['count'])) {
-    http_response_code(301);
-    header("Location: noadmin.php");
+if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
+    http_response_code(403);
+    header("Location: 403.php");
     exit();
 }
+
+$options = array(
+    array('アカウント'),
+    array('サーバ'),
+    array('コミュニティ')
+);
+$option_flags = array(false, false, false);
+
 ?>
 
 <html>
@@ -14,7 +22,7 @@ if (!isset($_SESSION['count'])) {
         <meta name="application-name" content="Virtual Control">
         <link rel="icon" href="images/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>OPTION - A Controlling Network Tool.</title>
+        <title>OPTION - Virtual Control</title>
         <meta name="description" content="Virtual Control - A Controlling Network Tool.">
         <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
         <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
@@ -62,19 +70,23 @@ if (!isset($_SESSION['count'])) {
         </div>
 
         <!-- Option Buttons -->
-        <div class="bg-primary py-1" style="">
+        <div class="bg-primary py-1">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="list-group">
-                            
+                            <?php 
+                                if($_SESSION['permission'] === 0) {
+                                    
+                                }
+                            ?>
                             <!-- Account Option (All) -->
-                            <a href="#con" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2">
+                            <button id="account" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1"><i class="fa fa-user fa-fw"></i>アカウント管理</h5>
                                 </div>
                                 <p class="mb-1" style="">アカウントを設定します</p>
-                            </a>
+                            </button>
 
                             <!-- Server Option (VCServer Only) -->
                             <a href="#con" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2">
@@ -98,33 +110,10 @@ if (!isset($_SESSION['count'])) {
             </div>
         </div>
 
-        <!-- Option Contents -->
-        <div class="py-3" id="con">
-            <div class="container">
-                
-                <!-- Option Title -->
-                <div class="row">
-                    <div class="col-md-10">
-                        <h1 class="mb-2"><i class="fa fa-user fa-fw"></i>[FORM_TITLE]</h1>
-                    </div>
-                </div>
-                
-                <!-- Form Desc -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <p class="text-monospace">[FORM_DESC]</p>
-                    </div>
-                </div>
-                
-                <!-- Option Contents -->
-                
-            </div>
-        </div>
-
         <!-- Footer -->
         <div id="foot"></div>
 
-        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/jquery.js"></script>
         <script src="js/popper.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script type="text/javascript">
