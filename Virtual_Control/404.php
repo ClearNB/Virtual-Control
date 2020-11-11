@@ -1,21 +1,12 @@
 <!DOCTYPE html>
+<?php
+include ('./scripts/loader.php');
+$loader = new loader();
+?>
 
 <html>
-
     <head>
-        <meta charset="utf-8">
-        <meta name="application-name" content="Virtual Control">
-        <link rel="icon" href="images/favicon.ico">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>404 (Not Found) - Virtual Control</title>
-        <meta name="description" content="Virtual Control - A Controlling Network Tool.">
-        <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
-        <link rel="stylesheet" href="style/dialog.css" type="text/css">
-
-        <script src="js/navbar-ontop.js"></script>
-        <script src="js/animate-in.js"></script>
-        <script src="js/loader.js"></script>
+        <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
     </head>
 
     <body class="text-monospace">

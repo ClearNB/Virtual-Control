@@ -2,10 +2,11 @@
 
 <!--
 <?php
+include ('./scripts/session_chk.php');
 session_start();
-if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
-    http_response_code(403);
-    header("Location: 403.php");
+if(!session_chk()) {
+    http_response_code(301);
+    header('location: 403.php');
     exit();
 }
 ?>
@@ -22,8 +23,8 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
         <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
         <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
         <link rel="stylesheet" href="style/dialog.css" type="text/css">
+        <link rel="stylesheet" href="style/Roboto.css" type="text/css">
 
-        <script src="js/navbar-ontop.js"></script>
         <script src="js/animate-in.js"></script>
         <script src="js/loader.js"></script>
     </head>
@@ -41,16 +42,6 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
         <!-- Server  -->
         <div class="py-3" style="border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; border-bottom-width: 4px; border-style: solid; border-color: #ff5a00;">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-12" style="">
-                        <h2 style="" class="text-left text-uppercase"><i class="fa fa-fw fa-server"></i>[Server_NAME]</h2>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <p class="text-monospace">[Description]</p>
-                    </div>
-                </div>
                 
                 <!-- Agent Information -->
                 <h4 class="bg-dark my-1 rounded-sm py-2" style="" id="AgentName"><i class="fa fa-fw fa-server fa-lg"></i><b>エージェント</b></h4>
@@ -161,6 +152,8 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
                                     <li><strong>トラップデータ</strong><br>wwwjazoth11029211 ...</li>
                                 </ul>
                             </div>
+                            
+                            <!-- Warn-Format -->
                             <div class="tab-pane fade" id="tabthree" role="tabpanel">
                                 <h5><i class="fa fa-fw fa-exclamation-circle"></i>エージェントと接続がありません<br></h5>
                                 <h6>発行日: ####/##/##</h6>

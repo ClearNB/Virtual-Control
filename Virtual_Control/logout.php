@@ -9,7 +9,6 @@
 
 <?php
 session_start();
-unset($_SESSION['username']);
-unset($_SESSION['permission']);
+unset($_SESSION['gsc_userindex']);
 http_response_code(301);
 header("Location: index.php");

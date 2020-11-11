@@ -4,18 +4,19 @@
  * Send Query to SQL Database for MySQL.
  * {return: Result for Query}
  */
+
 function query($query) {
     $mysqli = get_db();
     $result = $mysqli -> query($query);
 
     if (!$result) {
         print 'クエリが失敗しました' . "Errormessage: %s\n" . $mysqli -> error;
-        $mysqli -> close();
-        exit();
+        return false;
     }
 
     return $result;
 }
+
 
 /* Load File(*.JSON) Function
  * {args: File Name (file pass)}

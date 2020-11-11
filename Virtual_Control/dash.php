@@ -2,58 +2,45 @@
 
 <!--
 <?php
+include ('./scripts/session_chk.php');
 session_start();
-if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
-    http_response_code(403);
-    header("Location: 403.php");
+if(!session_chk()) {
+    http_response_code(301);
+    header('location: 403.php');
     exit();
 }
+include_once ('./scripts/sqldata.php');
+include_once ('./scripts/common.php');
+include_once ('./scripts/dbconfig.php');
+include_once ('./scripts/loader.php');
+$loader = new loader();
+$index = $_SESSION['gsc_userindex'];
+$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = $index");
 ?>
 -->
 
 <html>
-
     <head>
-        <meta charset="utf-8">
-        <meta name="application-name" content="Virtual Control">
-        <link rel="icon" href="images/favicon.ico">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>DASHBOARD - A Controlling Network Tool.</title>
-        <meta name="description" content="Virtual Control - A Controlling Network Tool.">
-        <link rel="stylesheet" href="style/awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="style/aquamarine.css" type="text/css">
-        <link rel="stylesheet" href="style/dialog.css" type="text/css">
-
-        <script src="js/navbar-ontop.js"></script>
-        <script src="js/animate-in.js"></script>
-        <script src="js/loader.js"></script>
+        <?php echo $loader->loadHeader('Virtual Control', 'DASHBOARD') ?>
     </head>
 
     <body class="text-monospace">
         <!-- Navbar & Logo -->
-        <div id="nav"></div>
+        <?php echo $loader->navigation($getdata['PERMISSION']) ?>
         <div class="bg-primary pt-5">
             <div class="container">
-                <div id="logo"></div>
+                <?php echo $loader->load_Logo() ?>
             </div>
         </div>
 
         <!-- Server Status -->
         <div class="py-3">
             <div class="container">
-
                 <div class="row">
                     <div class="col-md-12">
-                        <h2 style="" class="text-monospace text-left text-uppercase"><i class="fa fa-fw fa-server"></i>[Server_NAME]</h2>
+                        <?php echo $loader->SubTitle("DASHBOARD", "ここがあなたのトップページです。監視しましょう。", "fas fa-server") ?>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <p class="text-monospace">[Description]</p>
-                    </div>
-                </div>
-
             </div>
         </div>
 
@@ -63,8 +50,7 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
                 <div class="row">
                     <div class="col-md-12">
                         <?php
-                            $username = $_SESSION['username'];
-                            echo '<h3 class="text-center bg-dark p-2">' . $username . "さん</h3>";
+                            echo '<h3 class="text-center bg-dark p-2">' . $getdata['USERNAME'] . "さん</h3>";
                         ?>
                         <h3 class="text-center">アクセス監視をしましょう</h3>
                         <p class="text-monospace text-center">行動を選択してください:</p>
@@ -91,7 +77,7 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
                             </a>
 
                             <!-- Options -->
-                            <a href="option.php" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark">
+                            <a href="./option" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1"><i class="fa fa-fw fa-wrench"></i>オプション</h5>
                                 </div>
@@ -127,14 +113,11 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['permission'])) {
         </div>
 
         <!-- Footer -->
-        <div id="foot"></div>
+        <?php echo $loader->footer(); ?>
 
         <script src="js/jquery.js"></script>
         <script src="js/popper.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script type="text/javascript">
-            load(1);
-        </script>
     </body>
 
 </html>

@@ -1,15 +1,4 @@
-/*!
-* Aquamarine Pingendo template (https://templates.pingendo.com)
-* Based on: Bootstrap v4.1.3 (https://getbootstrap.com)
-* Copyright 2014-2018 Pingendo (https://pingendo.com)
-*/
-@import url("https://fonts.googleapis.com/css?family=Roboto:200,300,400");
-/*!
- * Bootstrap v4.1.3 (https://getbootstrap.com/)
- * Copyright 2011-2018 The Bootstrap Authors
- * Copyright 2011-2018 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- */
+
 :root {
     --blue: #007bff;
     --indigo: #6610f2;
@@ -1250,7 +1239,7 @@ pre code {
 .table-responsive {
     display: block;
     width: 100%;
-    overflow-x: auto;
+    overflow-x: scroll;
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: -ms-autohiding-scrollbar; }
 .table-responsive > .table-bordered {
@@ -6762,7 +6751,6 @@ ul.orange-view, ol.orange-view {
 ul.orange-view li, ol.orange-view li {
     color: #fff;
     border-left: solid 6px #ff5a00;
-    margin-bottom: 3px;
     line-height: 1.5;
     padding: 0.5em;
     list-style-type: none !important;
@@ -6774,7 +6762,7 @@ hr {
 }
 
 hr.orange {
-    border: 1px solid #ff5a00;
+    border: 2px solid #ff5a00;
     margin: 0 0;
 }
 
@@ -6808,19 +6796,132 @@ div.failedMessage {
 }
 
 label.formtext {
-    border-bottom: 2px solid #000;
-    color: #000;
+    border-bottom: 2px solid #ff5a00;
+    color: #ff5a00;
     font-weight: bold;
     font-size: 20px;
     padding: 2px;
 }
 
 label.importantLabel {
-    background-color: #000;
-    color: #ff5a00;
+    background-color: #ff5a00;
+    color: #000;
     font-weight: bold;
     font-size: 20px;
     text-align: center;
     padding: 2px;
     margin-right: 10px;
+}
+
+/* チェックボックス02 */
+input[type=checkbox] {
+    display: none;
+}
+.checkbox02 {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 30px;
+    position: relative;
+    width: auto;
+}
+.checkbox02::before {
+    background: none;
+    border: 2px solid #000;
+    border-radius: 3px;
+    content: '';
+    display: block;
+    height: 16px;
+    left: 5px;
+    margin-top: -8px;
+    position: absolute;
+    top: 50%;
+    width: 16px;
+}
+.checkbox02::after {
+    border-right: 6px solid #000;
+    border-bottom: 5px solid #000;
+    content: '';
+    display: block;
+    height: 21.5px;
+    left: 12.5px;
+    margin-top: -16px;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    transform: rotate(45deg);
+    width: 9px;
+}
+input[type=checkbox]:checked + .checkbox02::before {
+    border-color: #000;
+}
+input[type=checkbox]:checked + .checkbox02::after {
+    opacity: 1;
+}
+
+/* ラジオボタン02 */
+input[type=radio] {
+    display: none;
+}
+.radio02 {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 30px;
+    position: relative;
+    width: auto;
+}
+
+.radio02::before {
+    background: #fff;
+    border: 5px solid #aaa;
+    border-radius: 50%;
+    content: '';
+    display: block;
+    height: 20px;
+    left: 5px;
+    margin-top: -8px;
+    position: absolute;
+    top: 50%;
+    width: 20px;
+}
+
+input[type=radio]:hover + .radio02::before {
+    border-color: #000;
+}
+
+.radio02::after {
+    background: #ff5a00;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    content: '';
+    display: block;
+    height: 11px;
+    left: 9.85px;
+    margin-top: -3.8px;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    width: 11px;
+}
+
+input[type=radio]:active + .radio02::before {
+    border-color: #ffa500;
+}
+
+input[type=radio]:checked + .radio02::before {
+    border-color: #000;
+}
+input[type=radio]:checked + .radio02::after {
+    opacity: 1;
+}
+
+.btn-dark-smart {
+    background-color: #000;
+    color: #fff;
+}
+
+.h-min {
+    min-height: 100%;
+    height: auto;
 }
