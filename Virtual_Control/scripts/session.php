@@ -69,10 +69,9 @@ if ($method == 'POST') {
             } else {
                 $r_text = 1;
             }
-            echo json_encode(['res' => $r_text]);
         } else {
             $r_text = -1;
-            echo json_encode(['res' => $r_text]);
         }
+	echo json_encode(['res' => $r_text]);
     }
 }

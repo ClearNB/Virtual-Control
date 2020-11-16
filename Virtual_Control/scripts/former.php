@@ -19,7 +19,7 @@ class form_generator {
      * @param strng $action     【任意】アクション先の外部ファイル。通常空白。
      */
     function __construct($id, $action = '') {
-	$this->data = ["<form id=\"$id\" action=\"$action\" method=\"POST\">"];
+	$this->data = ["<div class=\"bg-primary\"><div class=\"container py-2\"><form id=\"$id\" action=\"$action\" method=\"POST\">"];
     }
 
     /**
@@ -32,7 +32,7 @@ class form_generator {
      * 【 @link https://fontawesome.com/v4.7.0/icons/ 】
      */
     function Title($title, $icon) {
-	array_push($this->data, "<div class=\"form-group pt-2\"><div class=\"w-100\"><h2><i class=\"fa fa-$icon fa-fw\"></i>$title</h2></div></div>");
+	array_push($this->data, "<div class=\"form-group pt-2\"><div class=\"w-100\"><h2><i class=\"fas fa-$icon fa-fw\"></i>$title</h2></div></div>");
     }
 
     /**
@@ -44,7 +44,7 @@ class form_generator {
      */
     function SubTitle($title, $caption, $icon) {
 	array_push($this->data,
-		"<div class=\"form-group pt-2\"><div class=\"w-100\"><h3><i class=\"fa fa-$icon fa-fw\"></i>$title</h3><hr><p>$caption</p></div></div>");
+		"<div class=\"form-group pt-2\"><div class=\"w-100\"><h3><i class=\"fas fa-$icon fa-fw\"></i>$title</h3><hr><p>$caption</p></div></div>");
     }
 
     /**
@@ -93,7 +93,7 @@ class form_generator {
 	} else {
 	    $r_flag .= " autocomplete=\"off\"";
 	}
-	array_push($this->data, "<div class=\"form-group pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fa fa-$icon fa-2x ml-2\"></i></label><input type=\"text\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\"><small class=\"form-text text-body\" id=\"$id-label\">$small_desc</small></div>");
+	array_push($this->data, "<div class=\"form-group pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label><input type=\"text\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\"><small class=\"form-text text-body\" id=\"$id-label\">$small_desc</small></div>");
     }
 
     /**
@@ -120,9 +120,9 @@ class form_generator {
 	    $r_flag .= " autocomplete=\"off\"";
 	}
 	if($eye_modify) {
-	    $m_text = '<span class="field-icon"><i toggle="#password-field" class="fa fa-eye toggle-password"></i></span>';
+	    $m_text = '<span class="field-icon"><i toggle="#password-field" class="fas fa-eye toggle-password"></i></span>';
 	}
-	array_push($this->data, "<div class=\"form-group pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fa fa-$icon fa-2x ml-2\"></i></label><input type=\"password\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\">$m_text<small class=\"form-text text-body\">$small_desc</small></div>");
+	array_push($this->data, "<div class=\"form-group pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label><input type=\"password\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\">$m_text<small class=\"form-text text-body\">$small_desc</small></div>");
     }
 
     /**
@@ -159,7 +159,7 @@ class form_generator {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function Buttonx3($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	array_push($this->data, "<div class=\"col-md-4 col-sm-4\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color-smart btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fa fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
+	array_push($this->data, "<div class=\"col-md-4 col-sm-4\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color-smart btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
     }
 
     /**
@@ -172,7 +172,7 @@ class form_generator {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function Buttonx2($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	array_push($this->data, "<div class=\"col-md-6 col-sm-6\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color-smart btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fa fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
+	array_push($this->data, "<div class=\"col-md-6 col-sm-6\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color-smart btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
     }
 
     /**
@@ -185,7 +185,7 @@ class form_generator {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function Button($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	array_push($this->data, "<button type=\"$type\" id=\"$id\" class=\"btn btn-$color-smart btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fa fa-fw fa-lx fa-$icon\"></i>$desc</button>");
+	array_push($this->data, "<button type=\"$type\" id=\"$id\" class=\"btn btn-$color-smart btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button>");
     }
 
     /**
@@ -198,7 +198,7 @@ class form_generator {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function ButtonLgx3($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	array_push($this->data, "<div class=\"col-md-4 col-sm-12\"><button type=\"$type\" class=\"btn btn-" . $color . " btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $disabled><i class=\"fa fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
+	array_push($this->data, "<div class=\"col-md-4 col-sm-12\"><button type=\"$type\" class=\"btn btn-" . $color . " btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
     }
 
     /**
@@ -211,7 +211,7 @@ class form_generator {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function ButtonLgx2($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	array_push($this->data, "<div class=\"col-md-6 col-sm-6\"><button type=\"$type\" class=\"btn btn-" . $color . " btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $disabled><i class=\"fa fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
+	array_push($this->data, "<div class=\"col-md-6 col-sm-6\"><button type=\"$type\" class=\"btn btn-" . $color . " btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
     }
 
     /**
@@ -224,7 +224,7 @@ class form_generator {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function ButtonLg($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	array_push($this->data, "<button type=\"$type\" class=\"btn btn-" . $color . " btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $disabled><i class=\"fa fa-fw fa-lx fa-$icon\"></i>$desc</button>");
+	array_push($this->data, "<button type=\"$type\" class=\"btn btn-" . $color . " btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button>");
     }
 
     /**
@@ -296,13 +296,25 @@ class form_generator {
     function closeSelect() {
 	array_push($this->data, '</select></div>');
     }
+    
+    /**
+     * 背景を変更します。
+     * @param type $color 0..閉じる, 1..プライマリ（オレンジ）, 2..ダーク（黒）
+     */
+    function bgChange($color = 1) {
+	if($color == 1) {
+	    array_push($this->data, '<div class="py-3 bg-primary"><div class="container">');
+	} else {
+	    array_push($this->data, '<div class="py-3 bg-dark"><div class="container">');
+	}
+    }
 
     /**
      * プッシュされたすべてのデータを取り出し、後入先出法により文字列化し出力します
      * @return string	フォームクラス内で作成されたデータを文字列として返します
      */
     function Export() {
-	array_push($this->data, "</form>");
+	array_push($this->data, "</form></div></div>");
 	$text = '';
 	foreach ($this->data as $var) {
 	    $text = $text . $var;

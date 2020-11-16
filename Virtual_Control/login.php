@@ -18,7 +18,7 @@ include_once ('./scripts/former.php');
 include_once ('./scripts/loader.php');
 include_once ('./scripts/session_chk.php');
 
-if(session_chk()) {
+if (session_chk()) {
     http_response_code(301);
     header('location: dash.php');
     exit();
@@ -33,7 +33,7 @@ $form->Password('password', 'パスワード', '指定のパスワードを入�
 $form->Button('form_submit', 'ログイン', 'submit', 'sign-in', 'primary');
 
 $form_wait = new form_generator('failed_form_01', '', 2);
-$form_wait->SubTitle("セッション中です。", "そのままお待ちください...", "spinner");
+$form_wait->SubTitle("セッション中です。", "そのままお待ちください...", "spinner fa-spin");
 
 $form_failed_01 = new form_generator('failed_form_01', '', 2);
 $form_failed_01->SubTitle("ログインに失敗しました。", "ユーザIDまたはパスワードが違います", "exclamation-triangle");
@@ -49,23 +49,23 @@ $form_failed_02->Button('form_back_form_01', '入力に戻る', 'button', 'caret
 
 <html>
     <head>
-        <?php echo $loader->loadHeader('Virtual Control', 'LOGIN') ?>
+	<?php echo $loader->loadHeader('Virtual Control', 'LOGIN') ?>
         <script type="text/javascript">
-            var fdata1 = '<?php echo $form->Export() ?>';
-            var fdata2 = '<?php echo $form_failed_01->Export() ?>';
-            var fdata3 = '<?php echo $form_failed_02->Export() ?>';
-            var fdataw = '<?php echo $form_wait->Export() ?>';
+	    var fdata1 = '<?php echo $form->Export() ?>';
+	    var fdata2 = '<?php echo $form_failed_01->Export() ?>';
+	    var fdata3 = '<?php echo $form_failed_02->Export() ?>';
+	    var fdataw = '<?php echo $form_wait->Export() ?>';
         </script>
     </head>
 
     <body class="text-monospace">
         <!-- Navbar -->
-        <div id="nav"></div>
-        
-        <?php ?>
-        
+	<?php echo $loader->navigation(0) ?>
+
+	<?php echo $loader->Title('LOGIN', 'fas fa-sign-in') ?>
+	
         <!-- Login Form -->
-        <div >
+        <div id="data_output"></div>
 
         <!-- Non-Available Logins -->
         <div class="py-3 bg-primary">
@@ -78,65 +78,73 @@ $form_failed_02->Button('form_back_form_01', '入力に戻る', 'button', 'caret
                             本サーバの管理者はVCServerと呼称されます。
                             VCServerにお問い合わせする際は、
                             以下のボタンリンクのメールアドレスでお願いいたします。
-                    <div class="col-md-12">
-                        <a class="btn btn-dark btn-block mb-2 shadow-lg" href="#">
-                            <i class="fa fa-fw fa-envelope-o"></i>VCServerにお問い合わせ
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+			<div class="col-md-12">
+			    <a class="btn btn-dark btn-block mb-2 shadow-lg" href="#">
+				<i class="fa fa-fw fa-envelope-o"></i>VCServerにお問い合わせ
+			    </a>
+			</div>
+		    </div>
+		</div>
+	    </div>
 
-        <!-- Footer -->
-        <div id="foot"></div>
+	    <!-- Footer -->
+	    <?php echo $loader->footer() ?>
 
-        <!-- JavaScript dependencies -->
-        <script src="js/now_loading.js"></script>
-        <script src="js/jquery.js"></script>
-        <script src="jquery/jquery-ui.js"></script>
-        <script src="js/popper.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script type="text/javascript">
-            load(2);
+	    <!-- JavaScript dependencies -->
+	    <?php echo $loader->footerS() ?>
+	    <script type="text/javascript">
+		
+		$(document).ready(function () {
+		    animation('data_output', 0, fdata1);
+		});
 
-            $(document).ready(function () {
-                animation('data_output', 0, fdata1);
-            });
+		//Page1: Login Form
+		$(document).on('submit', '#login_form', function (event) {
+		    event.preventDefault();
+		    var form = $('#login_form');
+		    var d = form.serializeArray();
+		    fdata1 = document.getElementById('data_output').innerHTML;
+		    animation('data_output', 400, fdataw);
+		    ajax_dynamic_post('./scripts/session.php', d).then(function (data) {
+			switch (data['res']) {
+			    case 0:
+				animation_to_sites('data_output', 400, './dash.php');
+				break;
+			    case 1:
+				animation('data_output', 400, fdata2);
+				break;
+			    case -1:
+				animation('data_output', 400, fdata3);
+				break;
+			}
+		    });
+		    $.ajax({
+			type: 'POST',
+			url: './scripts/session.php',
+			data: d,
+			crossDomain: false,
+			dataType: 'json'
+		    }).done(function (res) {
+			removeLoading();
+			if (res["res"] === 0) {
+			    window.location.href = 'dash.php';
+			} else {
+			    animation('data_output', 400, fdata2);
+			}
+		    }).fail(function () {
+			animation('data_output', 400, fdata3);
+		    });
+		});
 
-            //Page1: Login Form
-            $(document).on('submit', '#login_form', function (event) {
-                event.preventDefault();
-                var form = $('#login_form');
-                var d = form.serializeArray();
-                fdata1 = document.getElementById('data_output').innerHTML;
-                animation('data_output', 400, fdataw);
-                $.ajax({
-                    type: 'POST',
-                    url: './scripts/session.php',
-                    data: d,
-                    crossDomain: false,
-                    dataType: 'json'
-                }).done(function (res) {
-                    removeLoading();
-                    if (res["res"] === 0) {
-                        window.location.href = 'dash.php';
-                    } else {
-                        animation('data_output', 400, fdata2);
-                    }
-                }).fail(function () {
-                    animation('data_output', 400, fdata3);
-                });
-            });
-            
-            //Page2: Failed Form 01
-            $(document).on('click', '#form_back_form_01', function () {
-                animation('data_output', 400, fdata1);
-            });
-            
-            //Page3: Failed Form 02
-            $(document).on('click', '#form_back_form_02', function () {
-                animation('data_output', 400, fdata1);
-            });
-        </script>
+		//Page2: Failed Form 01
+		$(document).on('click', '#form_back_form_01', function () {
+		    animation('data_output', 400, fdata1);
+		});
+
+		//Page3: Failed Form 02
+		$(document).on('click', '#form_back_form_02', function () {
+		    animation('data_output', 400, fdata1);
+		});
+	    </script>
     </body>
 </html>

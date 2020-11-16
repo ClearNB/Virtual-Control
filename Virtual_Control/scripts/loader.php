@@ -45,8 +45,7 @@ class loader {
         <link rel="stylesheet" href="' . $hide_text . './style/dialog.css" type="text/css">
         <link rel="stylesheet" href="' . $hide_text . './style/Roboto.css" type="text/css">
         <script src="' . $hide_text . './js/animate-in.js"></script>
-        <script src="' . $hide_text . './js/loader.js"></script>
-        <script type="text/javascript"> function animation(output_id, duration, data) { $(\'#\' + output_id).hide(duration, function () { $(\'#\' + output_id).html(data); $(\'#\' + output_id).show(\'slow\'); }); } </script>';
+        <script src="' . $hide_text . './js/loader.js"></script>';
     }
 
     function load_Logo() {
@@ -90,9 +89,10 @@ class loader {
     function footerS($ishideC = false) {
         $hide_text = '';
         if ($ishideC) { $hide_text = '.'; }
-        echo '<script src="js/ajax_dynamic.js"></script>
+        echo '<script src="js/jquery.js"></script>
+	      <script src="js/ajax_dynamic.js"></script>
+	      <script src="js/animation.js"></script>
 	      <script src="js/acc_check.js"></script>
-              <script src="js/jquery.js"></script>
               <script src="js/popper.min.js"></script>
               <script src="js/bootstrap.min.js"></script>';
     }
