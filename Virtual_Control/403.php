@@ -8,56 +8,47 @@ include_once ('./scripts/common.php');
 include_once ('./scripts/dbconfig.php');
 include_once ('./scripts/former.php');
 
-$former = new form_generator('form_failed');
-$former->SubTitle('403 (Forbidden)', 'あなたはこのページを表示・操作できません。', 'fas fa-times-cirlce');
-$former->Button('', '', 'button', 'fas fa-');
+$fm = new form_generator('form_failed', '', 2);
+$fm->SubTitle('アクセス禁止', 'あなたはこのページを表示・操作できません。', 'fas fa-times-circle');
+$fm->Button('bttn_fm_back', 'ホームへ戻る', 'button', 'fas fa-home');
 
-$index = $_SESSION['gsc_userindex'];
-$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = $index");
+include_once ('./scripts/session_chk.php');
+session_start();
+if(isset($_SESSION['gsc_userindex'])) {
+    $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = $index");
+} else {
+    $getdata = ["PERMISSION"=>2];
+}
 ?>
 
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
+        <script type="text/javascript">
+            var fm = '<?php echo $fm->Export() ?>';
+        </script>
     </head>
 
     <body class="text-monospace">
         <!-- Navbar & Logo -->
         <?php echo $loader->navigation($getdata['PERMISSION']) ?>
+
+        <?php echo $loader->load_Logo() ?>
         
-        <div class="bg-primary pt-5">
-            <div class="container">
-                <?php echo $loader->load_Logo() ?>
-            </div>
-        </div>
-
-        <div class="py-3">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <?php echo $loader->SubTitle('403 (Forbidden)', 'このページを表示・操作する権限がありません。', 'fas fa-times-circle') ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="bg-primary py-3">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <a class="btn btn-block btn-lg btn-dark" href="index.php">
-                            <i class="fa fa-fw fa-arrow-circle-o-left"></i>戻る
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <?php echo $loader->Title('403 (Forbidden)', 'fas fa-exclamation') ?> <!-- ページタイトル -->
+        
+        <div id="data_output"></div>
+        
         <!-- Footer -->
         <?php echo $loader->footer() ?>
-
-        <script src="js/jquery.js"></script>
-        <script src="js/popper.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
+        
+        <?php echo $loader->footerS() ?>
+        
+        <script type="text/javascript">
+            $(document).ready(function() {
+                animation('data_output', 0, fm);
+            });
+        </script>
     </body>
 
 </html>

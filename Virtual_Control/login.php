@@ -26,21 +26,21 @@ if(session_chk()) {
 
 $loader = new loader();
 
-$form = new form_generator('login_form');
+$form = new form_generator('login_form', '', 2);
 $form->Title('ログイン', 'sign-in');
 $form->Input('userid', 'ユーザID', 'ユーザIDは、VCServerによって指定されています。', 'user-circle-o', true);
 $form->Password('password', 'パスワード', '指定のパスワードを入力します。', 'key', true);
 $form->Button('form_submit', 'ログイン', 'submit', 'sign-in', 'primary');
 
-$form_wait = new form_generator('failed_form_01');
+$form_wait = new form_generator('failed_form_01', '', 2);
 $form_wait->SubTitle("セッション中です。", "そのままお待ちください...", "spinner");
 
-$form_failed_01 = new form_generator('failed_form_01');
+$form_failed_01 = new form_generator('failed_form_01', '', 2);
 $form_failed_01->SubTitle("ログインに失敗しました。", "ユーザIDまたはパスワードが違います", "exclamation-triangle");
 $form_failed_01->Caption("<h3 class=\"py-2\">【警告】</h3><hr class=\"orange\"><ul class=\"orange-view\"><li>各項目の入力事項をご確認ください。</li><li>ユーザID・パスワードを忘れたら、管理者に相談してください。</li></ul>");
 $form_failed_01->Button('form_back_form_01', '入力に戻る', 'button', 'caret-square-o-left', 'primary');
 
-$form_failed_02 = new form_generator('failed_form_02');
+$form_failed_02 = new form_generator('failed_form_02', '', 2);
 $form_failed_02->SubTitle("ログインに失敗しました。", "データベースの状態を確認してください。", "exclamation-triangle");
 $form_failed_02->Caption("<h3 class=\"py-1 md-0\">【警告】</h3><ul class=\"orange-view\"><li>データベースの設定を見直してください。</li><li>この件は管理者に必ず相談してください。</li></ul>");
 $form_failed_02->Button('form_back_form_01', '入力に戻る', 'button', 'caret-square-o-left', 'primary');
@@ -55,33 +55,17 @@ $form_failed_02->Button('form_back_form_01', '入力に戻る', 'button', 'caret
             var fdata2 = '<?php echo $form_failed_01->Export() ?>';
             var fdata3 = '<?php echo $form_failed_02->Export() ?>';
             var fdataw = '<?php echo $form_wait->Export() ?>';
-            function animation(output_id, duration, data) {
-                $('#' + output_id).hide(duration, function () {
-                    $('#' + output_id).html(data);
-                    $('#' + output_id).show('slow');
-                });
-            }
         </script>
     </head>
 
     <body class="text-monospace">
         <!-- Navbar -->
         <div id="nav"></div>
-        <div class="bg-primary pt-5">
-            <div class="container">
-                <div id="logo"></div>
-            </div>
-        </div>
-
+        
+        <?php ?>
+        
         <!-- Login Form -->
-        <div class="bg-dark shadow-lg pt-2">
-            <div class="container mt-0 pt-0">
-                <div class="row">
-                    <div class="w-100 h-min" id="data_output">
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div >
 
         <!-- Non-Available Logins -->
         <div class="py-3 bg-primary">

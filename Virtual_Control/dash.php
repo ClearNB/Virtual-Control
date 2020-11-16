@@ -115,9 +115,7 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = 
         <!-- Footer -->
         <?php echo $loader->footer(); ?>
 
-        <script src="js/jquery.js"></script>
-        <script src="js/popper.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
+        <?php echo $loader->footerS(); ?>
     </body>
 
 </html>

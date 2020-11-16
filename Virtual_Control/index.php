@@ -3,12 +3,12 @@
 <!--
 <?php
 include ('./scripts/session_chk.php');
-include ('./scripts/loader.php');
 if(session_chk()) {
     http_response_code(301);
     header('location: dash.php');
     exit();
 }
+include ('./scripts/loader.php');
 $loader = new loader();
 ?>
 -->

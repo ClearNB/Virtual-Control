@@ -21,14 +21,11 @@ $loader = new loader();
 
 //1: アカウント表
 $form_accounts = new form_generator('form_accounts');
-$form_accounts->SubTitle('アカウント一覧', 'アカウントの一覧表を以下に表示します。操作を行ってください。', 'group');
 $data = account_table();
-if ($data) {
-    $form_accounts->Caption($data);
-} else {
-    $form_accounts->Caption('TABLEDATA');
+if (!$data) {
+    $data = "TABLE_DATA";
 }
-$form_accounts->Caption('【操作方法】<ul class="title-view">'
+$form_accounts->Caption($data . '【操作方法】<ul class="title-view">'
         . '<li>作成 ... 以下の【作成】ボタンを押してください。</li>'
         . '<li>編集 ... 一覧表隣のチェックボックスに1件だけ選択し、【編集】ボタンを押してください。</li>'
         . '<li>削除 ... 一覧表隣のチェックボックスに該当部分を選択し、【削除】ボタンを押してください。'
