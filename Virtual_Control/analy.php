@@ -22,11 +22,7 @@ $agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデ
         <!-- Navbar -->
         <div id="nav"></div>
         
-        <div class="bg-primary pt-5">
-            <div class="container">
-                <div id="logo"></div>
-            </div>
-        </div>
+        <?php $loader->load_Logo(); ?>
         
         <div class="py-3">
             <div class="container">
@@ -38,15 +34,9 @@ $agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデ
             </div>
         </div>
         
-        <div id="foot"></div>
+        <?php echo $loader->footer() ?>
 
         <!-- JavaScript dependencies -->
-        <script src="js/jquery.js"></script>
-        <script src="js/popper.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script type="text/javascript">
-            load(1);
-        </script>
+        <?php echo $loader->footerS() ?>
     </body>
-
 </html>

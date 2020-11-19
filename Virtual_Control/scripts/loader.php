@@ -19,7 +19,7 @@ class loader {
     }
 
     function Title($title, $icon) {
-        return "<div class=\"py-2 bg-dark\"><div class=\"container\"><div class=\"col-md-12 py-2\"><h2><i class=\"$icon\"></i>$title</h2></div></div></div>";
+        return "<div class=\"py-2 bg-dark\"><div class=\"container\"><div class=\"col-md-12 py-2\"><h2><i class=\"$icon px-2\"></i>$title</h2></div></div></div>";
     }
 
     function SubTitle($title, $caption, $icon) {
@@ -70,17 +70,15 @@ class loader {
             <div class="navbar-collapse text-center justify-content-end collapse" id="navbar2SupportedContent">
             <ul class="navbar-nav w-100">';
         if($permission == 1) {
-            $data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../index.php"><i class="fa fa-fw fa-2x fa-home nav-icon"></i><span class="navbar-text">HOME</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="fa fa-fw fa-2x fa-bar-chart nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="fa fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../option"><i class="fa fa-fw fa-2x fa-wrench nav-icon"></i><span class="navbar-text">OPTION</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../help.php"><i class="fa fa-fw fa-2x fa-info-circle nav-icon"></i><span class="navbar-text">HELP</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout.php"><i class="fa fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
+            $data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../index.php"><i class="px-2 fa fa-fw fa-2x fa-home nav-icon"></i><span class="navbar-text">HOME</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="px-2 fa fa-fw fa-2x fa-bar-chart nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="px-2 fa fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="px-2 fab fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="../option"><i class="px-2 fa fa-fw fa-2x fa-wrench nav-icon"></i><span class="navbar-text">OPTION</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout.php"><i class="px-2 fa fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
         } else {
-            $data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../help.php"><i class="fas fa-question-circle fa-2x nav-icon"></i><span class="navbar-text">HELP</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../login.php"><i class="fas fa-sign-in-alt fa-2x nav-icon"></i><span class="navbar-text">LOGIN</span></a> </li>';
+            $data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="px-2 fab fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="../login.php"><i class="px-2 fas fa-sign-in-alt fa-2x nav-icon"></i><span class="navbar-text">LOGIN</span></a> </li>';
         }
         $data .= '</ul></div></div></nav>';
         return $data;
@@ -90,6 +88,7 @@ class loader {
         $hide_text = '';
         if ($ishideC) { $hide_text = '.'; }
         echo '<script src="js/jquery.js"></script>
+              <script src="js/pass_modify.js"></script>
 	      <script src="js/ajax_dynamic.js"></script>
 	      <script src="js/animation.js"></script>
 	      <script src="js/acc_check.js"></script>

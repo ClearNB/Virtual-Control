@@ -8,9 +8,9 @@ include_once ('./scripts/common.php');
 include_once ('./scripts/dbconfig.php');
 include_once ('./scripts/former.php');
 
-$fm = new form_generator('form_failed', '', 2);
+$fm = new form_generator('fm');
 $fm->SubTitle('アクセス禁止', 'あなたはこのページを表示・操作できません。', 'fas fa-times-circle');
-$fm->Button('bttn_fm_back', 'ホームへ戻る', 'button', 'fas fa-home');
+$fm->Button('bt_fm_bk', 'ホームへ戻る', 'button', 'fas fa-home');
 
 include_once ('./scripts/session_chk.php');
 session_start();
@@ -47,6 +47,10 @@ if(isset($_SESSION['gsc_userindex'])) {
         <script type="text/javascript">
             $(document).ready(function() {
                 animation('data_output', 0, fm);
+            });
+            
+            $(document).on('click', '#bt_fm_bk', function() {
+                animation_to_sites('data_output', 400, './');
             });
         </script>
     </body>

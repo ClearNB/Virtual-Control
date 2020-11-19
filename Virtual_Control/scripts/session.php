@@ -72,6 +72,7 @@ if ($method == 'POST') {
         } else {
             $r_text = -1;
         }
+        ob_get_clean();
 	echo json_encode(['res' => $r_text]);
     }
 }

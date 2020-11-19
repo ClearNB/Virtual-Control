@@ -62,11 +62,17 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = 
                         <div class="list-group">
 
                             <!-- Analysis -->
+                            <a href="test.php" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1"><i class="fas fa-fw fa-vials fa-lg"></i>SNMPチェック</h5>
+                                </div>
+                                <p class="mb-1">SNMPの情報を試しに取得することができます</p> <small>詳しくはクリック！</small>
+                            </a>
                             <a href="analy.php" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1"><i class="fa fa-fw fa-bar-chart fa-lg"></i>アナリティクス</h5>
                                 </div>
-                                <p class="mb-1" style="">アクセス状況をリアルタイムで監視できます</p> <small>詳しくはクリック！</small>
+                                <p class="mb-1">アクセス状況をリアルタイムで監視できます</p> <small>詳しくはクリック！</small>
                             </a>
                             <!-- Warnings -->
                             <a href="warn.php" class="list-group-item flex-column align-items-start list-group-item-dark list-group-item-action active mb-2">
