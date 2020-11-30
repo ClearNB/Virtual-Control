@@ -18,8 +18,12 @@ class form_generator {
      * @param strng $id          フォームグループの一意なIDを指定します。
      * @param strng $action     【任意】アクション先の外部ファイル。通常空白。
      */
-    function __construct($id, $action = '') {
-	$this->data = ["<div class=\"bg-primary\"><div class=\"container py-2\"><form id=\"$id\" action=\"$action\" method=\"POST\">"];
+    function __construct($id, $action = '', $color_flag = 1) {
+	if ($color_flag == 1) {
+	    $this->data = ["<div class=\"bg-primary\"><div class=\"container py-2\"><form id=\"$id\" action=\"$action\" method=\"POST\">"];
+	} else if ($color_flag == 2) {
+	    $this->data = ["<div class=\"bg-dark\"><div class=\"container py-2\"><form id=\"$id\" action=\"$action\" method=\"POST\">"];
+	}
     }
 
     /**
@@ -44,7 +48,12 @@ class form_generator {
      */
     function SubTitle($title, $caption, $icon) {
 	array_push($this->data,
-		"<div class=\"form-group pt-2\"><div class=\"w-100\"><h3><i class=\"fas fa-$icon fa-fw\"></i>$title</h3><hr><p>$caption</p></div></div>");
+		"<div class=\"form-group pt-2\"><div class=\"w-100\"><h3><i class=\"fas fa-$icon fa-fw\"></i>$title</h3><hr><p class=\"py-2\">$caption</p></div></div>");
+    }
+    
+    function SubTitleDark($title, $caption, $icon) {
+	array_push($this->data,
+		"<div class=\"form-group pt-2\"><div class=\"w-100\"><h3><i class=\"fas fa-$icon fa-fw\"></i>$title</h3><hr class=\"orange\"><p class=\"py-2\">$caption</p></div></div>");
     }
 
     /**
@@ -55,7 +64,7 @@ class form_generator {
 	array_push($this->data,
 		"<div class=\"form-group\"><hr><div>$caption</div><hr></div>");
     }
-    
+
     /**
      * 説明を作成します
      * @param type $caption
@@ -119,7 +128,7 @@ class form_generator {
 	} else {
 	    $r_flag .= " autocomplete=\"off\"";
 	}
-	if($eye_modify) {
+	if ($eye_modify) {
 	    $m_text = '<span class="field-icon"><i toggle="#password-field" class="fas fa-eye toggle-password"></i></span>';
 	}
 	array_push($this->data, "<div class=\"form-group pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label><input type=\"password\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\">$m_text<small class=\"form-text text-body\">$small_desc</small></div>");
@@ -159,7 +168,7 @@ class form_generator {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function Buttonx3($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	array_push($this->data, "<div class=\"col-md-4 col-sm-4\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color-smart btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
+	array_push($this->data, "<div class=\"col-md-4 col-sm-4\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
     }
 
     /**
@@ -172,7 +181,7 @@ class form_generator {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function Buttonx2($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	array_push($this->data, "<div class=\"col-md-6 col-sm-6\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color-smart btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
+	array_push($this->data, "<div class=\"col-md-6 col-sm-6\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
     }
 
     /**
@@ -185,7 +194,11 @@ class form_generator {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function Button($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	array_push($this->data, "<button type=\"$type\" id=\"$id\" class=\"btn btn-$color-smart btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button>");
+	if(strpos($icon, 'fa-') !== false) {
+	    array_push($this->data, "<div class=\"py-2\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fa-fw fa-lx $icon\"></i>$desc</button></div>");
+	} else {
+	    array_push($this->data, "<div class=\"py-2\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
+	}
     }
 
     /**
@@ -296,13 +309,21 @@ class form_generator {
     function closeSelect() {
 	array_push($this->data, '</select></div>');
     }
+
+    function Card($caption_title, $icon, $title, $caption) {
+	array_push($this->data, '<div class="card mt-1 rounded"><div class="card-header bg-secondary border-bottom border-dark">' . $caption_title . '</div><div class="card-body bg-primary"><h5 class="text-left text-monospace"><i class="' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
+    }
     
+    function CardDark($caption_title, $icon, $title, $caption) {
+	array_push($this->data, '<div class="card mt-1 rounded"><div class="card-header bg-dark border-bottom border-primary">' . $caption_title . '</div><div class="card-body bg-dark"><h5 class="text-left text-monospace"><i class="' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
+    }
+
     /**
      * 背景を変更します。
      * @param type $color 0..閉じる, 1..プライマリ（オレンジ）, 2..ダーク（黒）
      */
     function bgChange($color = 1) {
-	if($color == 1) {
+	if ($color == 1) {
 	    array_push($this->data, '<div class="py-3 bg-primary"><div class="container">');
 	} else {
 	    array_push($this->data, '<div class="py-3 bg-dark"><div class="container">');

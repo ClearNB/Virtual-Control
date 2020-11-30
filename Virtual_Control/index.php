@@ -1,109 +1,72 @@
 <!DOCTYPE html>
-
 <!--
 <?php
-include ('./scripts/session_chk.php');
+include_once ('./scripts/session_chk.php');
+include_once ('./scripts/loader.php');
+include_once ('./scripts/former.php');
 if(session_chk()) {
     http_response_code(301);
     header('location: dash.php');
     exit();
 }
-include ('./scripts/loader.php');
+
 $loader = new loader();
+$fm_dt01 = new form_generator('fm_dt01', '', 2);
+$fm_dt01->SubTitleDark("アクセス監視は、新たな挑戦へ", "Virtual Control は、SNMPを利用したネットワークアクセス監視を実現できる監視ツールです。<br><br>アクセス監視は運用・保守の専門職を問わず、誰でも監視できる環境を整えなければならない時代に差し掛かっています。その状況の中で、私たちは「標準化」を目的に、Webアプリケーションで監視が可能なアプリケーションを開発しました。", 'fas fa-server');
+
+$fm_dt02 = new form_generator('fm_dt02');
+$fm_dt02->SubTitle('使いやすく、そしてわかりやすく', 'Virtual Control は、できるだけ利用しやすい環境として HTML5 (+ CSS, JavaScript), PHP の2言語を使用しております。', 'fas fa-users');
+$fm_dt02->Button('bt_02_gh', 'GitHubを開く', 'button', 'fab fa-github-square');
+
+$fm_dt03 = new form_generator('fm_dt03', '', 2);
+$fm_dt03->SubTitleDark('もっと気軽に', '', 'fas fa-laptop-code');
+$fm_dt03->Card('標準MIBに準拠した監視を', 'server', 'OID識別を日本語メッセージに変換！', '参照しなければ何の項目かわからないOIDを、標準MIBに準拠した日本語メッセージを搭載！安心して気になった項目を監視できます。');
+
+$fm_dt04 = new form_generator('fm_dt04');
+$fm_dt04->CardDark('WARNING!', 'fas fa-user', 'ログインが必要です', '本サーバはユーザ登録制です。<br>管理者権限により作成されたアカウントでログインしてください。');
+$fm_dt04->Button('bt_04_lg', 'ログインする', 'button', 'sign-in-alt');
+
+$fm_dt = $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04->Export();
 ?>
 -->
 
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
+	<script type="text/javascript">
+	    var fm_dt = '<?php echo $fm_dt ?>';
+	</script>
     </head>
 
     <body class="text-monospace">
         <!-- Navbar -->
-        <div id="nav"></div>
-
-        <div class="pt-5 bg-primary shadow-lg">
-            <div class="container mt-0 pt-0">
-                <div class="row">
-                    <div class="col-md-12 text-lg-left text-center align-self-center my-2">
-                        <div class="card-body my-1 bg-dark" style="border-top-left-radius: 20px; border-bottom-right-radius: 20px;">
-                            <h5 class="card-title bg-primary shadow-none p-2" style="border-bottom-right-radius: 10px; border-top-left-radius: 10px;">
-                                <i class="fas fa-users"></i>ログインが必要です</h5>
-                            <p class="card-text">本サーバはユーザ登録制です。<br>管理者権限により作成されたアカウントでログインしてください。</p>
-                        </div>
-                    </div>
-                </div>
-                <div id="logo"></div>
-            </div>
-        </div>
-        <div class="py-3">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3>アクセス監視は新たな挑戦へ</h3>
-                        <p class="text-monospace break">Virtual Control は、SNMPを利用したネットワークアクセス監視を実現できる監視ツールです。<br><br>アクセス監視は運用・保守の専門職を問わず、誰でも監視できる環境を整えなければならない時代に差し掛かっています。その状況の中で、私たちは「標準化」を目的に、Webアプリケーションで監視が可能なアプリケーションを開発しました。</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="py-2 bg-primary">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12 align-self-center order-1 order-md-2 text-md-left text-center">
-                        <h3 class="text-left text-body">使いやすく<br>そしてわかりやすく</h3>
-                        <p class="text-left text-monospace">Virtual Control は、できるだけ利用しやすい環境として HTML5 (+ CSS, JavaScript), PHP の2言語を使用しております。</p>
-                        <a class="btn btn-dark btn-lg btn-block active" href="https://github.com/ClearNB/Virtual-Control" target="_blank">
-                            <i class="fab fa-fw fa-github-square fa-lg"></i>GitHubを開く
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Features -->
-        <div class="container py-3">
-            <div class="row">
-                <div class="col-md-12">
-                    <h3 class="text-left text-monospace">SNMPを使った監視をもっと気軽に</h3>
-                    <div class="col-md-12">
-                        <div class="card mt-1 rounded">
-                            <div class="card-header bg-secondary border-bottom border-dark">標準MIBに準拠した監視を</div>
-                            <div class="card-body bg-primary">
-                                <h5 class="text-left text-monospace"><i class="fas fa-server"></i>OID識別を日本語メッセージに変換！</h5>
-                                <p class="text-left">参照しなければ何の項目かわからないOIDを、標準MIBに準拠した日本語メッセージを搭載！安心して気になった項目を監視できます。</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Call to action -->
-        <div class="bg-primary">
-            <div class="container">
-                <div class="row py-3">
-                    <div class="col-md-12 align-self-center text-center text-md-left">
-                        <h4 class="text-center">ログインが必要です</h4>
-                        <p class="text-center">ボタンをクリックして、ログインを行ってください</p>
-                        <div class="row mt-4">
-                            <div class="col-md-12 col-12">
-                                <a class="btn btn-block btn-lg btn-dark active" href="login.php">
-                                    <i class="fas fa-sign-in-alt"></i>ログイン
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?php echo $loader->navigation(0) ?>
+	<?php echo $loader->load_Logo() ?>
+	
+        <div id="data_output"></div>
 
         <!-- Footer -->
-        <div id="foot"></div>
+        <?php echo $loader->footer() ?>
 
         <!-- JavaScript dependencies -->
-        <script src="js/jquery.js"></script>
-        <script src="js/popper.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script type="text/javascript">load(2);</script>
+        <?php echo $loader->footerS() ?>
+	
+	<script type="text/javascript">
+	    $(document).ready(function() {
+		animation('data_output', 0, fm_dt);
+	    });
+	    
+	    $(document).on('click', '#bt_02_gh, #bt_04_lg', function() {
+		switch($(this).attr('id')) {
+		    case "bt_02_gh":
+			animation_to_sites('data_output', 400, 'https://github.com/ClearNB/Virtual-Control');
+			break;
+		    case "bt_04_lg":
+			animation_to_sites('data_output', 400, './login.php');
+			break;
+		}
+	    });
+	</script>
     </body>
 
 </html>

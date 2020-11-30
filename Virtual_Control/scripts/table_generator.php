@@ -40,10 +40,6 @@ function account_table() {
     }
 }
 
-function agent_table() {
-    
-}
-
-function mib_table() {
+function result_table($result) {
     
 }

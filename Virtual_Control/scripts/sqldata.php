@@ -59,8 +59,12 @@ function insert_select($table, $column, $select) {
     return $result;
 }
 
-function update($table, $column, $value, $while = '') {
-    $query = "UPDATE $table SET $column = $value $while";
+function update($table, $column, $value, $where = '') {
+    $text = $value;
+    if (gettype($text) === 'string') {
+	$text = "'" . $text . "'";
+    }
+    $query = "UPDATE $table SET $column = $text $where";
     $result = query($query);
     return $result;
 }
@@ -72,11 +76,7 @@ function delete($table, $while = '') {
 }
 
 function select($one_column, $table, $column, $other = '') {
-    $query = "
-            SELECT $column
-            FROM   $table
-            $other
-    ";
+    $query = "SELECT $column FROM $table $other";
     $result = query($query);
     if ($one_column) {
         if ($result) {
@@ -90,4 +90,8 @@ function reset_auto_increment($table, $index = 1) {
     $query = "ALTER TABLE $table AUTO_INCREMENT = $index";
     $result = query($query);
     return $result;
+}
+
+function getMIB() {
+    $query = select($one_column, $table, '');
 }

@@ -95,10 +95,10 @@ $form_failed_02->Button('form_back_form_01', '入力に戻る', 'button', 'caret
                             animation_to_sites('data_output', 400, './dash.php');
                             break;
                         case 1:
-                            animation('data_output', 400, fdata2);
-                            break;
-                        case - 1:
                             animation('data_output', 400, fdata3);
+                            break;
+                        case 2:
+                            animation('data_output', 400, fdata2);
                             break;
                     }
                 });

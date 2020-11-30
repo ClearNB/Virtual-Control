@@ -70,12 +70,12 @@ class loader {
             <div class="navbar-collapse text-center justify-content-end collapse" id="navbar2SupportedContent">
             <ul class="navbar-nav w-100">';
         if($permission == 1) {
-            $data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../index.php"><i class="px-2 fa fa-fw fa-2x fa-home nav-icon"></i><span class="navbar-text">HOME</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="px-2 fa fa-fw fa-2x fa-bar-chart nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="px-2 fa fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
+            $data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../index.php"><i class="px-2 fas fa-fw fa-2x fa-home nav-icon"></i><span class="navbar-text">HOME</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="px-2 fas fa-fw fa-2x fa-bar-chart nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="px-2 fas fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="px-2 fab fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../option"><i class="px-2 fa fa-fw fa-2x fa-wrench nav-icon"></i><span class="navbar-text">OPTION</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout.php"><i class="px-2 fa fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="../option"><i class="px-2 fas fa-fw fa-2x fa-wrench nav-icon"></i><span class="navbar-text">OPTION</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout.php"><i class="px-2 fas fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
         } else {
             $data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="px-2 fab fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../login.php"><i class="px-2 fas fa-sign-in-alt fa-2x nav-icon"></i><span class="navbar-text">LOGIN</span></a> </li>';

@@ -14,8 +14,9 @@ include_once ('./scripts/common.php');
 include_once ('./scripts/dbconfig.php');
 include_once ('./scripts/loader.php');
 $loader = new loader();
-$index = $_SESSION['gsc_userindex'];
-$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = $index");
+
+$id = $_SESSION['gsc_userid'];
+$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$id'");
 ?>
 -->
 
@@ -27,11 +28,8 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = 
     <body class="text-monospace">
         <!-- Navbar & Logo -->
         <?php echo $loader->navigation($getdata['PERMISSION']) ?>
-        <div class="bg-primary pt-5">
-            <div class="container">
-                <?php echo $loader->load_Logo() ?>
-            </div>
-        </div>
+	
+        <?php echo $loader->load_Logo() ?>
 
         <!-- Server Status -->
         <div class="py-3">
@@ -68,6 +66,7 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = 
                                 </div>
                                 <p class="mb-1">SNMPの情報を試しに取得することができます</p> <small>詳しくはクリック！</small>
                             </a>
+			    
                             <a href="analy.php" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1"><i class="fa fa-fw fa-bar-chart fa-lg"></i>アナリティクス</h5>

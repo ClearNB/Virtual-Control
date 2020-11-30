@@ -42,8 +42,7 @@ if ($method == 'POST') {
 
     //ない場合はログイン失敗
     if ($salt === "") {
-        $r_text = -1;
-        echo json_encode(['res' => $r_text]);
+        $r_text = 2;
     } else {
         //ハッシュ化
         $hash = hash('sha256', $pass . $salt);
@@ -54,25 +53,22 @@ if ($method == 'POST') {
 
         //パスワードがマッチしていたらセッション情報登録
         if ($password_matches) {
-            $result = select(true, "GSC_USERS", "USERINDEX", "WHERE USERID = '$userid'");
-            $userindex = $result['USERINDEX'];
-            
             //セッションタイム（1500秒）およびセッション情報を出力する
             ini_set('session.gc_divisor', 1);
             ini_set('session.gc_maxlifetime', $session_time);
             session_start();
-            $_SESSION['gsc_userindex'] = $userindex;
+            $_SESSION['gsc_userid'] = $userid;
             //最終ログイン時間の更新
-            $r = update("GSC_USERS", "LOGINUPTIME", "'" . date("Y-m-d H:i:s") . "'", "WHERE USERINDEX='$userindex'");
+            $r = update("GSC_USERS", "LOGINUPTIME", date("Y-m-d H:i:s"), "WHERE USERID='$userid'");
             if($r) {
                 $r_text = 0;
             } else {
                 $r_text = 1;
             }
         } else {
-            $r_text = -1;
+            $r_text = 2;
         }
-        ob_get_clean();
-	echo json_encode(['res' => $r_text]);
     }
+    ob_get_clean();
+    echo json_encode(['res' => $r_text]);
 }

@@ -3,6 +3,7 @@
 <!-- PHP HEADER MODULE -->
 <?php
 include ('./scripts/session_chk.php');
+
 session_start();
 if (!session_chk()) {
     http_response_code(301);
@@ -12,11 +13,14 @@ if (!session_chk()) {
 
 include_once ('./scripts/former.php');
 include_once ('./scripts/loader.php');
+include_once ('./scripts/dbconfig.php');
+include_once ('./scripts/sqldata.php');
+include_once ('./scripts/common.php');
 
 $loader = new loader();
 
 $fm = new form_generator('fm');
-$fm->Button('fm_bt_bk', 'ホームに戻る', 'submit', 'vials');
+$fm->Button('bt_fm_bk', 'ホームに戻る', 'button', 'chevron-circle-left');
 $fm->SubTitle('SNMPWALKテスト', '情報の取得をテストします', 'fas fa-server');
 $fm->Input('host', 'ホストアドレス', '接続先を指定します。', 'id-card-alt', true);
 $fm->Input('community', 'コミュニティ', 'エージェントが属するコミュニティを設定します。', 'users', true);
@@ -40,8 +44,8 @@ $fm_fl->addList('エージェントのファイアウォール設定をご確認
 $fm_fl->closeList();
 $fm_fl->Button('bt_fl_bk', '戻る', 'button', 'chevron-circle-left');
 
-$index = $_SESSION['gsc_userindex'];
-$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = $index");
+$id = $_SESSION['gsc_userid'];
+$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$id'");
 ?>
 
 <html>
@@ -79,7 +83,7 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = 
         <!-- FOOTER SCRIPTS -->
         <?php echo $loader->footerS(); ?>
         <script type="text/javascript">
-            $(document).ready($function() {
+            $(document).ready(function() {
                 animation('data_output', 0, fm);
             });
 
@@ -87,9 +91,9 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = 
             $(document).on('submit', '#fm', function (event) {
                 event.preventDefault();
                 //ボタンによる実行を阻止
-                var d = $(this);
+                var d = $(this).serialize();
                 animation('data_output', 400, fm_ld);
-                ajax_dynamic_post('./scripts/snmpwalk.php', d).then(function (data) {
+                ajax_dynamic_post('./scripts/snmp/snmpwalk.php', d).then(function (data) {
                     switch(data['code']) {
                         case 0:
                             fm_w = fm_rt.replace('snmpdata', data['res']);

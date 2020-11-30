@@ -8,7 +8,7 @@ function session_start_once() {
 
 function session_chk() {
     session_start_once();
-    return isset($_SESSION['gsc_userindex']);
+    return isset($_SESSION['gsc_userid']);
 }
 
 function fails_check() {
