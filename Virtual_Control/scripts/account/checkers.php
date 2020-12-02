@@ -18,7 +18,7 @@ function check_username($data) {
 }
 
 function check_userid($data) {
-    $result = select(true, "MKTK_USERS", "COUNT(*) AS USERCOUNT", "WHERE USERID = '$data'");
+    $result = select(true, "GSC_USERS", "COUNT(*) AS USERCOUNT", "WHERE USERID = '$data'");
     if($result['USERCOUNT'] == 1) {
         return '・ユーザIDが重複しています';
     } else {

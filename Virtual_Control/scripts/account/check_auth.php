@@ -33,20 +33,20 @@ if ($method == 'POST') {
     if (session_chk() != 0) {
 	$r = 1;
     } else {
-	$index = $_SESSION['mktk_userindex'];
-	$result = select(true, "MKTK_USERS", "SALT", "WHERE USERINDEX = $index");
+	$index = $_SESSION['gsc_userindex'];
+	$result = select(true, "GSC_USERS", "SALT", "WHERE USERINDEX = $index");
 	if (!$result) {
 	    $r = 2;
 	} else {
 	    $salt = $result['SALT'];
 	    $hash = hash('sha256', $pass . $salt);
-	    $result = select(true, "MKTK_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERINDEX = $index");
+	    $result = select(true, "GSC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERINDEX = $index");
 	    $password_matches = $result['PASSWORD_MATCHES'];
 	    if (!$password_matches) {
 		$r = 1;
 	    }
 	}
     }
-    //ob_get_clean();
+    ob_get_clean();
     echo json_encode(['res' => $r]);
 }

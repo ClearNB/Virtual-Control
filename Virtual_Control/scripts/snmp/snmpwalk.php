@@ -110,6 +110,6 @@ if ($method === 'POST') {
 	    }
 	}
     }
-    //ob_get_clean();
+    ob_get_clean();
     echo json_encode(['code' => $code, 'res' => $result]);
 }

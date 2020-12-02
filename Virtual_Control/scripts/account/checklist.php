@@ -18,17 +18,17 @@ include_once ('../session_chk.php');
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 if ($method === 'POST') {
     $checklist = filter_input(INPUT_POST, 'index-s', FILTER_SANITIZE_STRING);
-    $select = select(true, 'MKTK_USERS', 'USERINDEX, USERNAME', 'WHERE USERID = \'' . $checklist . '\'');
+    $select = select(true, 'GSC_USERS', 'USERINDEX, USERNAME', 'WHERE USERID = \'' . $checklist . '\'');
     $code = 0;
     if (!$select) {
 	$code = 1;
     } else {
 	if(session_chk() === 0) {
-	    $index = $_SESSION['mktk_userindex'];
+	    $index = $_SESSION['gsc_userindex'];
 	    if($index == $select['USERINDEX']) {
 		$code = 2;
 	    } else {
-		$select01 = select(true, 'MKTK_USERS', 'USERNAME', 'WHERE USERINDEX = ' . $index);
+		$select01 = select(true, 'GSC_USERS', 'USERNAME', 'WHERE USERINDEX = ' . $index);
 		if(!$select01) {
 		    $code = 1;
 		}

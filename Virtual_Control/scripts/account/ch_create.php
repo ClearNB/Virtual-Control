@@ -44,7 +44,7 @@ if ($method === 'POST') {
     } else {
 	$salt = random(20);
 	$hash = hash('sha256', $pass . $salt);
-	$sql01 = insert('MKTK_USERS', ['USERID', 'USERNAME', 'PASSWORDHASH', 'PERMISSION', 'SALT'], [$userid, $username, $hash, $permission, $salt]);
+	$sql01 = insert('GSC_USERS', ['USERID', 'USERNAME', 'PASSWORDHASH', 'PERMISSION', 'SALT'], [$userid, $username, $hash, $permission, $salt]);
 	if(!$sql01) {
 	    $code = 1;
 	}

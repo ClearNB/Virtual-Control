@@ -35,6 +35,7 @@ if ($method === 'POST') {
     if ($index) {
 	$function = 6;
     }
+    
     //相違確認
     if ($function != $function_id) {
 	$function = 0;
@@ -57,27 +58,7 @@ if ($method === 'POST') {
 	    case 6: //DELETE
 		$flag = true;
 		$sql_s01 = select(false, 'MKTK_USERS_SET', 'SETID', "WHERE USERINDEX = $index");
-		if ($sql_s01) {
-		    while ($row = $sql_s01->fetch_assoc) {
-			$setid = $row['SETID'];
-			$sql_s02 = select(false, 'MKTK_TEST', 'TESTID', "WHERE SETID = $setid");
-			if ($sql_s02) {
-			    while ($row = $sql_s02->fetch_assoc()) {
-				$testid = $sql_s02['TESTID'];
-				$d01 = delete('MKTK_TEST_QS', "WHERE TESTID = $testid");
-				$d02 = delete('MKTK_TEST', "WHERE TESTID = $testid");
-				$flag &= ($d01 && $d02);
-			    }
-			}
-			$d01 = delete('MKTK_TEST', "WHERE SETID = $setid");
-			$d02 = delete('MKTK_LS_LIST', "WHERE SETID = $setid");
-			$d03 = delete('MKTK_USERS_SL', "WHERE SETID = $setid");
-			$d04 = delete('MKTK_USERS_SET', "WHERE SETID = $setid");
-			$flag &= ($d01 && $d02 && $d03 && d04);
-		    }
-		}
-		$d04 = delete('MKTK_USERS', "WHERE USERINDEX = $index");
-		if(!$flag || !$d04) {
+		if(!$sql_s01) {
 		    $code = 1;
 		}
 		break;

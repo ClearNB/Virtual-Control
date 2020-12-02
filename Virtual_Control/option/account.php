@@ -101,11 +101,7 @@ $getdata = select(true, "GSC_USERS", "USERNAME, PERMISSION", "WHERE USERINDEX = 
         </div>
 
         <!-- CONTENT SECTION -->
-        <div class="py-2 bg-primary">
-            <div class="container" id="data_output">
-
-            </div>
-        </div>
+        <div id="data_output"></div>
 
         <!-- FOOTER -->
         <?php echo $loader->footer() ?>

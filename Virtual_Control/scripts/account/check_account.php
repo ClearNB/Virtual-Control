@@ -95,7 +95,7 @@ if ($method === 'POST') {
     if ($data == '') {
 	if (session_chk() == 0) {
 	    session_start_once();
-	    $auth_id = $_SESSION['mktk_userindex'];
+	    $auth_id = $_SESSION['gsc_userindex'];
 	    $select01 = select(true, 'MKTK_USERS', 'USERNAME', 'WHERE USERINDEX = ' . $auth_id);
 	    if (!$select01) {
 		$code = 2;
