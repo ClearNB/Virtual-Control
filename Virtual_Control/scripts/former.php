@@ -10,6 +10,7 @@
 class form_generator {
 
     private $data;
+    private $id;
 
     /**
      * Form Generatorのコンストラクタです。
@@ -24,6 +25,7 @@ class form_generator {
 	} else if ($color_flag == 2) {
 	    $this->data = ["<div class=\"bg-dark\"><div class=\"container py-2\"><form id=\"$id\" action=\"$action\" method=\"POST\">"];
 	}
+	$this->id = $id;
     }
 
     /**
@@ -342,5 +344,17 @@ class form_generator {
 	}
 	return $text;
     }
-
+    
+    function getID() {
+	return $this->id;
+    }
+    
+    static function ExportClass($formers) {
+	$js = '<script type="text/javascript">';
+	foreach($formers as $f) {
+	    $js .= 'var ' . $f->getID() . ' = \'' . $f->Export() . '\';';
+	}
+	$js .= '</script>';
+	return $js;
+    }
 }

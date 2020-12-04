@@ -28,7 +28,7 @@ if ($method === 'POST') {
 	    if($index == $select['USERINDEX']) {
 		$code = 2;
 	    } else {
-		$select01 = select(true, 'GSC_USERS', 'USERNAME', 'WHERE USERINDEX = ' . $index);
+		$select01 = select(true, 'GSC_USERS', 'USERNAME', 'WHERE USERID = ' . $id);
 		if(!$select01) {
 		    $code = 1;
 		}

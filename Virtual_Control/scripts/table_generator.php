@@ -81,7 +81,7 @@ function account_table() {
     ];
     $result = select(false, "GSC_USERS", "CASE PERMISSION WHEN 1 THEN 'VCServer' WHEN 2 THEN 'VCHost' END AS PER, USERID, USERNAME, MAILADDRESS, LOGINUPTIME");
     if ($result) {
-        return horizonal_table($table_id, $table_title, $table_title_icon, $table_headers[0], $table_headers[1], $result, true, 'index-s', 'index');
+        return horizonal_table($table_id, $table_title, $table_title_icon, $table_headers[0], $table_headers[1], $result, true, 'id-s', 'index');
     } else {
         return false;
     }

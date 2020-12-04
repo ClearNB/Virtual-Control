@@ -13,94 +13,100 @@
     ],
     "tables": [
 	["GSC_USERS", "USERID VARCHAR (20) PRIMARY KEY, PASSWORDHASH CHAR (64) NOT NULL, USERNAME VARCHAR (50) NOT NULL, PERMISSION INT (1) NOT NULL, SALT BINARY (20) NOT NULL, LOGINUPTIME TIMESTAMP"],
-	["GSC_MIB", "MIBINDEX INT PRIMARY KEY AUTO_INCREMENT, MIBNAME VARCHAR (50) NOT NULL, MIBGROUPID INT (3) NOT NULL, MIBUPDATE TIMESTAMP"],
-	["GSC_MIB_GROUP", "MIBGROUPID INT PRIMARY KEY AUTO_INCREMENT, MIBGROUPNAME VARCHAR (10) NOT NULL"],
-	["GSC_MIB_SUB", "OBJECTID VARCHAR (255) PRIMARY KEY, MIBINDEX INT NOT NULL, DESCR VARCHAR (50) NOT NULL, JAPTLANS VARCHAR (50) NOT NULL, ICON VARCHAR (40)"],
-	["GSC_SNMP", "LOGID INT PRIMARY KEY AUTO_INCREMENT, LOGGROUPID INT NOT NULL, AGENTID INT NOT NULL, MIBINDEX INT NOT NULL, DATA BLOB NOT NULL, GETTIME TIMESTAMP NOT NULL"],
-	["GSC_TRAP", "TRAPINDEX INT PRIMARY KEY AUTO_INCREMENT, AGENTID VARCHAR (255) NOT NULL, TRAPLOGRAW BLOB NOT NULL, TRAPTYPEID INT NOT NULL, TRAPTIME TIMESTAMP NOT NULL, SOLUTIONFLAG INT (1) NOT NULL"],
+	["GSC_MIB_SUB", "SUBOBJECTID VARCHAR (255) PRIMARY KEY, MIBNAME VARCHAR (50) NOT NULL, MIBGROUPOBJECTID VARCHAR (255) NOT NULL, MIBUPDATE TIMESTAMP"],
+	["GSC_MIB_GROUP", "MIBGROUPOBJECTID VARCHAR (255) PRIMARY KEY, MIBGROUPNAME VARCHAR (10) NOT NULL"],
+	["GSC_MIB_NODE", "OBJECTID VARCHAR (255) PRIMARY KEY, SUBOBJECTID VARCHAR (255) NOT NULL, DESCR VARCHAR (50) NOT NULL, JAPTLANS VARCHAR (50) NOT NULL, ICON VARCHAR (25)"],
+	["GSC_SNMP", "LOGID INT PRIMARY KEY AUTO_INCREMENT, LOGGROUPID INT NOT NULL, TARGETID INT NOT NULL, DATA BLOB NOT NULL, GETTIME TIMESTAMP NOT NULL"],
+	["GSC_TRAP", "TRAPINDEX INT PRIMARY KEY AUTO_INCREMENT, TARGETID INT NOT NULL, TRAPLOGRAW BLOB NOT NULL, TRAPTYPEID INT NOT NULL, TRAPTIME TIMESTAMP NOT NULL, SOLUTIONFLAG INT (1) NOT NULL"],
 	["GSC_TRAP_TYPE", "TRAPTYPEID INT PRIMARY KEY, TYPEDESCR VARCHAR (255) NOT NULL, TYPEIMPORTANCE INT (1) NOT NULL"],
 	["GSC_AGT", "AGENTID INT PRIMARY KEY AUTO_INCREMENT, AGENTHOST VARCHAR (30) NOT NULL, COMMUNITY VARCHAR (255) NOT NULL, AGENTWARN INT (1) NOT NULL, AGENTUPTIME TIMESTAMP"],
-	["GSC_AGT_MIB", "AGENTID INT NOT NULL, MIBINDEX INT NOT NULL"]
+	["GSC_AGT_MIB", "TARGETID INT PRIMARY KEY AUTO_INCREMENT, AGENTID INT NOT NULL, SUBOBJECTID VARCHAR (255) NOT NULL"]
     ],
     "USERS_SET": [
 	"clearnb", "aa_74859", "ClearNB", 1
     ],
     "MIB_GROUP_SET": [
-	["GSC_MIB_GROUP", ["MIBGROUPNAME"], ["MIB v2"]]
+	["GSC_MIB_GROUP", ["MIBGROUPOBJECTID", "MIBGROUPNAME"], ["1.3.6.1.2.1", "MIB v2"]]
     ],
-    "MIB_SET": [
-	["GSC_MIB", ["MIBNAME", "MIBGROUPID"], ["SYSTEM", 1]],
-	["GSC_MIB", ["MIBNAME", "MIBGROUPID"], ["INTERFACE", 1]],
-	["GSC_MIB", ["MIBNAME", "MIBGROUPID"], ["IP", 1]],
-	["GSC_MIB", ["MIBNAME", "MIBGROUPID"], ["ICMP", 1]],
-	["GSC_MIB", ["MIBNAME", "MIBGROUPID"], ["TCP", 1]],
-	["GSC_MIB", ["MIBNAME", "MIBGROUPID"], ["UDP", 1]],
-	["GSC_MIB", ["MIBNAME", "MIBGROUPID"], ["SNMP", 1]]
+    "MIB_SUB_SET": [
+	["GSC_MIB_SUB", ["SUBOBJECTID", "MIBNAME", "MIBGROUPOBJECTID"], ["1.3.6.1.2.1.1", "SYSTEM", "1.3.6.1.2.1"]],
+	["GSC_MIB_SUB", ["SUBOBJECTID", "MIBNAME", "MIBGROUPOBJECTID"], ["1.3.6.1.2.1.2", "INTERFACE", "1.3.6.1.2.1"]],
+	["GSC_MIB_SUB", ["SUBOBJECTID", "MIBNAME", "MIBGROUPOBJECTID"], ["1.3.6.1.2.1.4", "IP", "1.3.6.1.2.1"]],
+	["GSC_MIB_SUB", ["SUBOBJECTID", "MIBNAME", "MIBGROUPOBJECTID"], ["1.3.6.1.2.1.5", "ICMP", "1.3.6.1.2.1"]],
+	["GSC_MIB_SUB", ["SUBOBJECTID", "MIBNAME", "MIBGROUPOBJECTID"], ["1.3.6.1.2.1.6", "TCP", "1.3.6.1.2.1"]],
+	["GSC_MIB_SUB", ["SUBOBJECTID", "MIBNAME", "MIBGROUPOBJECTID"], ["1.3.6.1.2.1.7", "UDP", "1.3.6.1.2.1"]],
+	["GSC_MIB_SUB", ["SUBOBJECTID", "MIBNAME", "MIBGROUPOBJECTID"], ["1.3.6.1.2.1.11", "SNMP", "1.3.6.1.2.1"]]
     ],
-    "MIB_SUB_SYSTEM": [
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.1.0", 1, "sysDescr", "システム概要", "fas fa-pencil-alt"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.2.0", 1, "sysObjectID", "システムOID", "far fa-object-group"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.3.0", 1, "sysUpTime", "システム稼働時間", "fas fa-clock"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.4.0", 1, "sysContact", "システム連絡先", "fas fa-address-book"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.5.0", 1, "sysName", "システム名", "fas fa-asterisk"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.6.0", 1, "sysLocation", "システム情報", "fas fa-indent"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.7.0", 1, "sysServices", "サービスフラグ", "fas fa-flag"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.8.0", 1, "sysORLastChange", "サブツリー最終更新日時", "fas fa-sync-alt"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.9.1.2.*", 1, "sysORIndex", "サブツリーOID", "fas fa-sort-numeric-down"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.9.1.3.*", 1, "sysORDescr", "説明", "fas fa-info-circle"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.9.1.4.*", 1, "sysORUpTime", "最終更新日時", "fas fa-retweet"]]
+    "MIB_NODE_SYSTEM": [
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.1.0", "1.3.6.1.2.1.1", "sysDescr", "システム概要", "fas fa-pencil-alt"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.2.0", "1.3.6.1.2.1.1", "sysObjectID", "システムOID", "far fa-object-group"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.3.0", "1.3.6.1.2.1.1", "sysUpTime", "システム稼働時間", "fas fa-clock"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.4.0", "1.3.6.1.2.1.1", "sysContact", "システム連絡先", "fas fa-address-book"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.5.0", "1.3.6.1.2.1.1", "sysName", "システム名", "fas fa-asterisk"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.6.0", "1.3.6.1.2.1.1", "sysLocation", "システム情報", "fas fa-indent"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.7.0", "1.3.6.1.2.1.1", "sysServices", "サービスフラグ", "fas fa-flag"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.8.0", "1.3.6.1.2.1.1", "sysORLastChange", "サブツリー最終更新日時", "fas fa-sync-alt"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.9.1.0.*", "1.3.6.1.2.1.1", "sysORTable", "サブツリーテーブル", ""]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.9.1.2.*", "1.3.6.1.2.1.1", "sysORIndex", "サブツリーOID", "fas fa-sort-numeric-down"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.9.1.3.*", "1.3.6.1.2.1.1", "sysORDescr", "サブツリー説明", "fas fa-info-circle"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.1.9.1.4.*", "1.3.6.1.2.1.1", "sysORUpTime", "最終更新日時", "fas fa-retweet"]]
     ],
-    "MIB_SUB_INTERFACE": [
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.1.0", 2, "ifNumber", "インタフェース総数", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.1.*", 2, "ifIndex", "インタフェースID", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.2.*", 2, "ifDescr", "インタフェース名", "fas fa-pencil-alt"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.3.*", 2, "ifType", "インタフェース種別", "file-text"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.4.*", 2, "ifMtu", "MTU値", "fas fa-signal"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.5.*", 2, "ifSpeed", "帯域", "fas fa-expand-arrows-alt"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.6.*", 2, "ifPhysAddress", "MACアドレス", "fas fa-address-card"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.7.*", 2, "ifAdminStatus", "管理上の状態", "fas fa-tasks"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.8.*", 2, "ifOperStatus", "運用上の状態", "fab fa-opera"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.9.*", 2, "ifLastChange", "最終更新日時", "fas-clock"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.10.*", 2, "ifInOctets", "入力オクテットパケット数（U-32ビット）", "fas fa-signal"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.11.*", 2, "ifInUcastPkts", "入力ユニキャストパケット数（U-32ビット）", "fas fa-signal"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.12.*", 2, "ifInNUcastPkts", "受信パケット総数（ユニキャスト以外）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.13.*", 2, "ifInDiscards", "入力時の破棄回数（U-32ビット）", "fas fa-indent"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.14.*", 2, "ifInErrors", "入力エラー数（U-32ビット）", "fas fa-times"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.15.*", 2, "ifInUnknownProtos", "プロトコル不明なパケットの入力数（U-32ビット）", "fas fa-signal"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.16.*", 2, "ifOutOctets", "出力オクテット数（U-32ビット）", "fas fa-signal"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.17.*", 2, "ifOutUcastPkts", "出力ユニキャストパケット数（U-32ビット）", "fas fa-signal"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.18.*", 2, "ifOutNUcastPkts", "送信パケット総数（ユニキャスト以外）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.19.*", 2, "ifOutDiscards", "破棄された送信パケット総数", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.20.*", 2, "ifOutErrors", "出力エラー回数（U-32ビット）", "fas fa-signal"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.21.*", 2, "ifOutQLen", "バッファ出力待ちパケット総数", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.22.*", 2, "ifSpecific", "オブジェクトのOID（追加情報）", "battery-empty"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.1.*", 2, "ifName", "インタフェース名", "fas fa-file-signature"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.2.*", 2, "ifInMulticastPkts", "入力パケット数（U-32bit）", "fas fa-signal"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.3.*", 2, "ifInBroadcastPkts", "受信パケット総数（ブロードキャスト）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.4.*", 2, "ifOutMulticastPkts", "出力パケット数（マルチキャスト・U-32bit）", "fas fa-signal"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.5.*", 2, "ifOutBroadcastPkts", "送信のパケット総数（ブロードキャスト）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.6.*", 2, "ifHCInOctets", "入力オクテット数", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.7.*", 2, "ifHCInUcastPkts", "入力パケット数（ユニキャスト）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.8.*", 2, "ifHCInMulticastPkts", "入力パケット数（マルチキャスト）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.9.*", 2, "ifHCInBroadcastPkts", "受信パケット総数（ブロードキャスト・64 ビット）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.10.*", 2, "ifHCOutOctets", "出力オクテット数", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.11.*", 2, "ifHCOutUcastPkts", "出力パケット数（ユニキャスト）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.12.*", 2, "ifHCOutMulticastPkts", "出力パケット数（マルチキャスト）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.13.*", 2, "ifHCOutBroadcastPkts", "送信パケット総数（ブロードキャスト・64ビット）", "fas fa-stopwatch-20"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.14.*", 2, "ifLinkUpDownTrapEnable", "リンク状態変化トラップ送信の可否", "fas fa-link"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.15.*", 2, "ifHighSpeed", "帯域", "fas fa-expand-arrows-alt"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.16.*", 2, "ifPromiscuousMode", "プロミスキャスモード", "fab fa-linode"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.17.*", 2, "ifConnectorPresent", "コネクターの有無", "fas fa-plug"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.19.*", 2, "ifCounterDiscontinuityTime", "カウンタ情報が非連続時の最終更新日時", "fas-clock"]],
-	["GSC_MIB_SUB", ["OBJECTID", "MIBINDEX", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.5.*", 2, "ifCounterDiscontinuityTime", "起動後の最終更新日時", "fas-clock"]]
+    "MIB_NODE_INTERFACE": [
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.1.0", "1.3.6.1.2.1.2", "ifNumber", "インタフェース総数", "fas fa-stopwatch-20"]],
+	
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.0.*", "1.3.6.1.2.1.2", "ifEntry", "インタフェース情報【基本情報】", ""]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.1.*", "1.3.6.1.2.1.2", "ifIndex", "インタフェースID", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.2.*", "1.3.6.1.2.1.2", "ifDescr", "インタフェース名", "fas fa-pencil-alt"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.3.*", "1.3.6.1.2.1.2", "ifType", "インタフェース種別", "file-text"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.4.*", "1.3.6.1.2.1.2", "ifMtu", "MTU値", "fas fa-signal"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.5.*", "1.3.6.1.2.1.2", "ifSpeed", "帯域", "fas fa-expand-arrows-alt"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.6.*", "1.3.6.1.2.1.2", "ifPhysAddress", "MACアドレス", "fas fa-address-card"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.7.*", "1.3.6.1.2.1.2", "ifAdminStatus", "管理上の状態", "fas fa-tasks"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.8.*", "1.3.6.1.2.1.2", "ifOperStatus", "運用上の状態", "fab fa-opera"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.9.*", "1.3.6.1.2.1.2", "ifLastChange", "最終更新日時", "fas-clock"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.10.*", "1.3.6.1.2.1.2", "ifInOctets", "入力オクテットパケット数（U-32ビット）", "fas fa-signal"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.11.*", "1.3.6.1.2.1.2", "ifInUcastPkts", "入力ユニキャストパケット数（U-32ビット）", "fas fa-signal"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.12.*", "1.3.6.1.2.1.2", "ifInNUcastPkts", "受信パケット総数（ユニキャスト以外）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.13.*", "1.3.6.1.2.1.2", "ifInDiscards", "入力時の破棄回数（U-32ビット）", "fas fa-indent"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.14.*", "1.3.6.1.2.1.2", "ifInErrors", "入力エラー数（U-32ビット）", "fas fa-times"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.15.*", "1.3.6.1.2.1.2", "ifInUnknownProtos", "プロトコル不明なパケットの入力数（U-32ビット）", "fas fa-signal"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.16.*", "1.3.6.1.2.1.2", "ifOutOctets", "出力オクテット数（U-32ビット）", "fas fa-signal"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.17.*", "1.3.6.1.2.1.2", "ifOutUcastPkts", "出力ユニキャストパケット数（U-32ビット）", "fas fa-signal"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.18.*", "1.3.6.1.2.1.2", "ifOutNUcastPkts", "送信パケット総数（ユニキャスト以外）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.19.*", "1.3.6.1.2.1.2", "ifOutDiscards", "破棄された送信パケット総数", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.20.*", "1.3.6.1.2.1.2", "ifOutErrors", "出力エラー回数（U-32ビット）", "fas fa-signal"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.21.*", "1.3.6.1.2.1.2", "ifOutQLen", "バッファ出力待ちパケット総数", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.2.2.1.22.*", "1.3.6.1.2.1.2", "ifSpecific", "オブジェクトのOID（追加情報）", "battery-empty"]],
+	
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.0.*", "1.3.6.1.2.1.2", "ifXEntry", "インタフェース情報【パケット詳細】", ""]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.1.*", "1.3.6.1.2.1.2", "ifName", "インタフェース名", "fas fa-file-signature"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.2.*", "1.3.6.1.2.1.2", "ifInMulticastPkts", "入力パケット数（U-32bit）", "fas fa-signal"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.3.*", "1.3.6.1.2.1.2", "ifInBroadcastPkts", "受信パケット総数（ブロードキャスト）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.4.*", "1.3.6.1.2.1.2", "ifOutMulticastPkts", "出力パケット数（マルチキャスト・U-32bit）", "fas fa-signal"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.5.*", "1.3.6.1.2.1.2", "ifOutBroadcastPkts", "送信のパケット総数（ブロードキャスト）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.6.*", "1.3.6.1.2.1.2", "ifHCInOctets", "入力オクテット数", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.7.*", "1.3.6.1.2.1.2", "ifHCInUcastPkts", "入力パケット数（ユニキャスト）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.8.*", "1.3.6.1.2.1.2", "ifHCInMulticastPkts", "入力パケット数（マルチキャスト）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.9.*", "1.3.6.1.2.1.2", "ifHCInBroadcastPkts", "受信パケット総数（ブロードキャスト・64 ビット）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.10.*", "1.3.6.1.2.1.2", "ifHCOutOctets", "出力オクテット数", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.11.*", "1.3.6.1.2.1.2", "ifHCOutUcastPkts", "出力パケット数（ユニキャスト）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.12.*", "1.3.6.1.2.1.2", "ifHCOutMulticastPkts", "出力パケット数（マルチキャスト）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.13.*", "1.3.6.1.2.1.2", "ifHCOutBroadcastPkts", "送信パケット総数（ブロードキャスト・64ビット）", "fas fa-stopwatch-20"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.14.*", "1.3.6.1.2.1.2", "ifLinkUpDownTrapEnable", "リンク状態変化トラップ送信の可否", "fas fa-link"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.15.*", "1.3.6.1.2.1.2", "ifHighSpeed", "帯域", "fas fa-expand-arrows-alt"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.16.*", "1.3.6.1.2.1.2", "ifPromiscuousMode", "プロミスキャスモード", "fab fa-linode"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.17.*", "1.3.6.1.2.1.2", "ifConnectorPresent", "コネクターの有無", "fas fa-plug"]],
+	["GSC_MIB_NODE", ["OBJECTID", "SUBOBJECTID", "DESCR", "JAPTLANS", "ICON"], ["1.3.6.1.2.1.31.1.1.1.19.*", "1.3.6.1.2.1.2", "ifCounterDiscontinuityTime", "カウンタ情報が非連続時の最終更新日時", "fas-clock"]]
     ],
-    "MIB_SUB_IP": [
+    "MIB_NODE_IP": [
 
     ],
-    "MIB_SUB_ICMP": [
+    "MIB_NODE_ICMP": [
     ],
-    "MIB_SUB_TCP": [
+    "MIB_NODE_TCP": [
     ],
-    "MIB_SUB_UDP": [
+    "MIB_NODE_UDP": [
+    ],
+    "MIB_NODE_SNMP": [
     ]
 }

@@ -2,22 +2,22 @@
 
 <!--
 <?php
-include ('./scripts/session_chk.php');
-session_start();
-if(!session_chk()) {
-    http_response_code(301);
-    header('location: 403.php');
-    exit();
-}
-
 include_once ('./scripts/sqldata.php');
 include_once ('./scripts/common.php');
 include_once ('./scripts/dbconfig.php');
 include_once ('./scripts/loader.php');
 include_once ('./scripts/former.php');
+include ('./scripts/session_chk.php');
+session_start();
+if (!session_chk()) {
+    http_response_code(301);
+    header('location: 403.php');
+    exit();
+}
+
 $loader = new loader();
-$index = $_SESSION['gsc_userindex'];
-$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = $index");
+$userid = $_SESSION['gsc_userid'];
+$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$userid'");
 
 //エージェント選択ページ
 $fm_ag = new form_generator('fm_ag');
@@ -35,9 +35,9 @@ $fm_wn->openList();
 $fm_wn->addList('警告名');
 $fm_wn->addList('警告ログ');
 $fm_wn->closeList();
-$fm_wn->ButtonLg('bt_wd_se', '警告の詳細','button','fas fa-info-circle');
-$fm_wn->Title('警告レベル','fas fa-chart-line');
-$fm_wn->Title('1');
+$fm_wn->ButtonLg('bt_wd_se', '警告の詳細', 'button', 'fas fa-info-circle');
+$fm_wn->Title('警告レベル', 'fas fa-chart-line');
+$fm_wn->Title('1', '');
 $fm_wn->openList();
 $fm_wn->addList('');
 $fm_wn->closeList();
@@ -56,53 +56,53 @@ $fm_wd->Caption('');
 
 <html>
     <head>
-        <?php echo $loader->loadHeader('Virtual Control', 'WARN') ?> <!-- ページタイトル -->
-        <script type="text/javascript">
-            var fm_ag = '<?php echo $fm_ag->Export() ?>';
-            var fm_wn = '<?php echo $fm_wn->Export() ?>';
-            var fm_wd_se = '<?php echo $fm_wd_se->Export() ?>';
-            var fm_wd = '<?php echo $fm_wd->Export() ?>';
-        </script>
+	<?php echo $loader->loadHeader('Virtual Control', 'WARN') ?> <!-- ページタイトル -->
+	<?php echo form_generator::ExportClass([$fm_ag, $fm_wn, $fm_wd_se, $fm_wd]) ?>
     </head>
 
     <body class="text-monospace">
         <!-- Navbar -->
-        <?php echo $loader->navigation($getdata['PERMISSION']) ?> <!-- ナビゲーション設定 -->
-        
-        <?php echo $loader->load_Logo() ?> <!-- ロゴ表示 -->
-        
-        <?php echo $loader->Title('警告画面', 'fas fa-exclamation-triangle') ?><!-- ページタイトル -->
-        
-        <div id="data_output"></div> <!-- 内容表示部分 -->
-        
-        <?php echo $loader->footer(); ?> <!-- フッター表示 -->
+	<?php echo $loader->navigation($getdata['PERMISSION']) ?> <!-- ナビゲーション設定 -->
 
-        <?php echo $loader->footerS() ?> <!-- フッター部分スクリプト読込 -->
+	<?php echo $loader->load_Logo() ?> <!-- ロゴ表示 -->
+
+	<?php echo $loader->Title('警告画面', 'fas fa-exclamation-triangle') ?><!-- ページタイトル -->
+
+        <div id="data_output"></div> <!-- 内容表示部分 -->
+
+	<?php echo $loader->footer(); ?> <!-- フッター表示 -->
+
+	<?php echo $loader->footerS() ?> <!-- フッター部分スクリプト読込 -->
         <script type="text/javascript">
-            
-            //ドキュメントが読み込まれたとき
-            $(document).ready(function() {
-                animation('data_output', 0, fm_ag);
-            });
-            
-            $(document).on('click','#fm_ag_back',function(){
-                animation_to_sites('data_output',400,'./');
-            });
-            $(document).on('click','#bt_wn_bk',function(){
-                animation('data_output',400,fm_ag);
-            });
-            $(document).on('click','#fm_wn_wd',function(){
-                animation('data_output',400,fm_wd_se);
-            });
-            $(document).on('click','#bk_wa',function(){
-                animation_to_sites('data_output',400,'./');
-            });
-            $(document).on('click','#wd_bt',function(){
-                animation('data_output',400,fm_wd);
-            });
-            $(document).on('click','#fm_wd_bt',function(){
-                animation('data_output',400,fm_wd_se);
-            });
+
+	    //ドキュメントが読み込まれたとき
+	    $(document).ready(function () {
+		animation('data_output', 0, fm_ag);
+	    });
+
+	    $(document).on('click', '#fm_ag_back', function () {
+		animation_to_sites('data_output', 400, './');
+	    });
+
+	    $(document).on('click', '#bt_wn_bk', function () {
+		animation('data_output', 400, fm_ag);
+	    });
+
+	    $(document).on('click', '#fm_wn_wd', function () {
+		animation('data_output', 400, fm_wd_se);
+	    });
+	    
+	    $(document).on('click', '#bk_wa', function () {
+		animation_to_sites('data_output', 400, './');
+	    });
+	    
+	    $(document).on('click', '#wd_bt', function () {
+		animation('data_output', 400, fm_wd);
+	    });
+	    
+	    $(document).on('click', '#fm_wd_bt', function () {
+		animation('data_output', 400, fm_wd_se);
+	    });
         </script>
     </body>
 

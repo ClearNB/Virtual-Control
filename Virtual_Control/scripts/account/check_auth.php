@@ -33,14 +33,14 @@ if ($method == 'POST') {
     if (session_chk() != 0) {
 	$r = 1;
     } else {
-	$index = $_SESSION['gsc_userindex'];
-	$result = select(true, "GSC_USERS", "SALT", "WHERE USERINDEX = $index");
+	$id = $_SESSION['gsc_userid'];
+	$result = select(true, "GSC_USERS", "SALT", "WHERE USERID = $id");
 	if (!$result) {
 	    $r = 2;
 	} else {
 	    $salt = $result['SALT'];
 	    $hash = hash('sha256', $pass . $salt);
-	    $result = select(true, "GSC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERINDEX = $index");
+	    $result = select(true, "GSC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERID = $id");
 	    $password_matches = $result['PASSWORD_MATCHES'];
 	    if (!$password_matches) {
 		$r = 1;

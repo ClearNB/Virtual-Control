@@ -11,32 +11,31 @@ if(!session_chk()) {
 $loader = new loader();
 
 $agents = ['agt01', 'agt02', 'agt03', 'agt04', 'agt05']; //エージェントデータはデータベースから取得する
+
+$userid = $_SESSION['gsc_userid'];
+$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$userid'");
 ?>
 
 <html>
     <head>
-        <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
+        <?php echo $loader->loadHeader('Virtual Control', 'ANALY') ?>
     </head>
 
     <body class="text-monospace">
         <!-- Navbar -->
-        <div id="nav"></div>
+        <?php echo $loader->navigation($getdata['PERMISSION']) ?>
         
-        <?php $loader->load_Logo(); ?>
+        <?php echo $loader->load_Logo() ?>
         
-        <div class="py-3">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <?php echo $loader->SubTitle("ANALYTICS", "データを解析しましょう", "fas fa-chart-bar") ?>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?PHP echo $loader->Title('ANALY', '') ?>
         
         <?php echo $loader->footer() ?>
 
         <!-- JavaScript dependencies -->
         <?php echo $loader->footerS() ?>
+	
+	<script type="text/javascript">
+	
+	</script>
     </body>
 </html>
