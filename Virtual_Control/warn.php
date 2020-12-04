@@ -21,9 +21,10 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$u
 $fm_ag = new form_generator('fm_ag');
 $fm_ag->Button('fm_ag_bk', 'ホームに戻る', 'button', 'fas fa-folder-open');
 $fm_ag->SubTitle('エージェント一覧', 'エージェントを選択してください。', 'fas fa-server');
-$fm_ag->Button('fm_ag_open', '', 'button', 'fas fa-folder-open');
-$fm_ag->Button('fm_ag_edit', '', 'button', 'fas fa-folder-open');
-$fm_ag->Button('fm_ag_close', '', 'button', 'fas fa-folder-open');
+$fm_ag->openSelect('sl_ag_ag');
+$fm_ag->addOption(1, 'エージェント1');
+$fm_ag->closeSelect();
+$fm_ag->button();
 
 //エージェント別警告画面
 $fm_wn = new form_generator('fm_wn');
