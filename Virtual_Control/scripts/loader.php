@@ -46,6 +46,7 @@ class loader {
         <link rel="stylesheet" href="' . $hide_text . './style/aquamarine.css" type="text/css">
         <link rel="stylesheet" href="' . $hide_text . './style/dialog.css" type="text/css">
         <link rel="stylesheet" href="' . $hide_text . './style/Roboto.css" type="text/css">
+	    <link rel="stylesheet" href="' . $hide_text . './style/details.css" type="text/css">
         <script src="' . $hide_text . './js/animate-in.js"></script>
         <script src="' . $hide_text . './js/loader.js"></script>';
     }

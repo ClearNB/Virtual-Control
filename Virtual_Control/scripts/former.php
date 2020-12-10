@@ -8,7 +8,6 @@
  * @author ClearNB <clear.navy.blue.star@gmail.com>
  */
 class form_generator {
-
     private $data;
     private $id;
 
@@ -16,8 +15,9 @@ class form_generator {
      * Form Generatorのコンストラクタです。
      * POST通信をベースとしたフォームを作ります。
      * ここでは<form>の内容をを定義します。
-     * @param strng $id          フォームグループの一意なIDを指定します。
-     * @param strng $action     【任意】アクション先の外部ファイル。通常空白。
+     * @param string  $id	    フォームグループの一意なIDを指定します。
+     * @param string  $action	    【任意】アクション先の外部ファイル。通常空白
+     * @param integer $color_flag   背景のフラグを設定します（1..主背景, 2..黒背景）
      */
     function __construct($id, $action = '', $color_flag = 1) {
 	if ($color_flag == 1) {
@@ -27,7 +27,9 @@ class form_generator {
 	}
 	$this->id = $id;
     }
-
+    
+    /* UI表示系 */
+    
     /**
      * タイトルを作成します
      * @param strng $title  タイトル名を指定します
@@ -312,12 +314,45 @@ class form_generator {
 	array_push($this->data, '</select></div>');
     }
 
+    /**
+     * BootStrap カードを黒背景を前提に作成します
+     * @param type $caption_title   キャプション自体のタイトルを設定します
+     * @param type $icon	    タイトル横に設置するアイコンを指定します
+     * @param type $title	    カードタイトルを指定します
+     * @param type $caption	    内容を指定します
+     */
     function Card($caption_title, $icon, $title, $caption) {
 	array_push($this->data, '<div class="card mt-1 rounded"><div class="card-header bg-secondary border-bottom border-dark">' . $caption_title . '</div><div class="card-body bg-primary"><h5 class="text-left text-monospace"><i class="' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
     }
     
+    /**
+     * BootStrap カードを主背景を前提に作成します
+     * @param type $caption_title   キャプション自体のタイトルを設定します
+     * @param type $icon	    タイトル横に設置するアイコンを指定します
+     * @param type $title	    カードタイトルを指定します
+     * @param type $caption	    内容を指定します
+     */
     function CardDark($caption_title, $icon, $title, $caption) {
 	array_push($this->data, '<div class="card mt-1 rounded"><div class="card-header bg-dark border-bottom border-primary">' . $caption_title . '</div><div class="card-body bg-dark"><h5 class="text-left text-monospace"><i class="' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
+    }
+    
+    /**
+     * BootStrap リストグループを開きます
+     */
+    function openListGroup() {
+	array_push($this->data, '<div class="list-group">');
+    }
+    
+    /**
+     * BootStrap リストグループのデータを作成します
+     * @param type $id		    このリストに対するIDを指定します
+     * @param type $title	    リストグループのタイトルを指定します
+     * @param type $icon	    リストグループのアイコンを指定します
+     * @param type $text	    リストグループのテキストを追加します
+     * @param type $small_text	    リストグループの小さなテキストを追加します
+     */
+    function ListGroupData($id, $title, $icon, $text, $small_text) {
+	array_push($this->data, '<div class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2" id="' . $id . '"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1"><i class="fas fa-fw fa-' . $icon . ' fa-lg"></i>'  . $title . '</h5></div><p class="mb-1">' . $text . '</p> <small>' . $small_text . '</small></div>');
     }
 
     /**
@@ -358,3 +393,34 @@ class form_generator {
 	return $js;
     }
 }
+
+/**
+ * ローディング画面を作成します
+ * @param type $id	    フォームに与えるIDを指定します
+ * @param type $title	    ローディング中に出すタイトル部分です
+ * @param type $text	    ローディング中に出すテキスト部分です
+ * @return form_generator   作成したform_generatorオブジェクトとして返します
+ */
+function fm_ld($id, $title = 'しばらくお待ちください', $text = '更新中です。しばらくお待ちください...') {
+    $fm = new form_generator($id, '');
+    $fm->SubTitle($title, $text, 'spinner fa-spin');
+    return $fm;
+}
+
+/**
+ * 失敗画面を作成します
+ * @param type $id	    フォームに与えるIDを指定します
+ * @param type $bt_id	    戻る際のボタンIDを指定します（空の場合作成しない）
+ * @param type $title	    失敗画面でのタイトルを指定します
+ * @param type $text	    その原因となるテキスト部分を指定します
+ * @return form_generator   作成したform_generatorオブジェクトとして返します
+ */
+function fm_fl($id, $bt_id, $title = '失敗しました', $text = '[原因]') {
+    $fm = new form_generator($id, '');
+    $fm->SubTitle($title, $text, 'exclamation-triangle');
+    if($bt_id != '') {
+	$fm->Button($bt_id, '戻る', 'backward', '');
+    }
+    return $fm;
+}
+

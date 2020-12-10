@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <?php
-include ('../scripts/session_chk.php');
+include_once ('../scripts/session_chk.php');
+include_once ('../scripts/sqldata.php');
+include_once ('../scripts/common.php');
+include_once ('../scripts/dbconfig.php');
+include_once ('../scripts/former.php');
+include_once ('../scripts/loader.php');
 if (!session_chk()) {
     http_response_code(403);
     header("Location: ../403.php");
     exit();
 }
 
-include_once ('../scripts/sqldata.php');
-include_once ('../scripts/common.php');
-include_once ('../scripts/dbconfig.php');
-include_once ('../scripts/former.php');
-include_once ('../scripts/loader.php');
-include_once ('../scripts/table_generator.php');
-
 $loader = new loader();
 
-$index = $_SESSION['gsc_userindex'];
-$getdata = select(true, "GSC_USERS", "USERNAME, PERMISSION", "WHERE USERINDEX = $index");
+$index = $_SESSION['gsc_userid'];
+$getdata = select(true, "GSC_USERS", "USERNAME, PERMISSION", "WHERE USERID = $id");
+
+
 ?>
 
 <html>

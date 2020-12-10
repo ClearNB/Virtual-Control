@@ -15,21 +15,19 @@ class initDatabase {
 	    delete('GSC_MIB_SUB');
 	    delete('GSC_MIB_NODE');
 	    delete('GSC_MIB_GROUP');
-	    delete('GSC_SNMP');
-	    delete('GSC_TRAP');
-	    delete('GSC_TRAP_TYPE');
 
-	    reset_auto_increment('GSC_USERS');
-	    reset_auto_increment('GSC_MIB_SUB');
 	    reset_auto_increment('GSC_MIB_NODE');
 	    reset_auto_increment('GSC_MIB_GROUP');
-	    reset_auto_increment('GSC_SNMP');
-	    reset_auto_increment('GSC_TRAP');
-	    reset_auto_increment('GSC_TRAP_TYPE');
 
 	    $user_data = [$this->generateUserData($format_data['USERS_SET'])];
 	    
-	    $e_s = [$user_data, $format_data['MIB_GROUP_SET'], $format_data['MIB_SUB_SET'], $format_data['MIB_NODE_SYSTEM'], $format_data['MIB_NODE_INTERFACE']];
+	    $e_s = [$user_data, 
+		$format_data['MIB_GROUP_SET'],
+		$format_data['MIB_SUB_SET'],
+		$format_data['MIB_NODE_SYSTEM'],
+		$format_data['MIB_NODE_INTERFACE'],
+		$format_data['MIB_NODE_IP'],
+		$format_data['MIB_NODE_SNMP']];
 	    $f = 0;
 	    foreach ($e_s as $e) {
 		$f += $this->insertSet($e);

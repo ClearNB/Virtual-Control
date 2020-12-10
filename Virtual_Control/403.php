@@ -14,16 +14,16 @@ $fm->Button('bt_fm_bk', 'ホームへ戻る', 'button', 'fas fa-home');
 
 include_once ('./scripts/session_chk.php');
 session_start();
-if(isset($_SESSION['gsc_userindex'])) {
-    $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERINDEX = $index");
+if(isset($_SESSION['gsc_userid'])) {
+    $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = $id");
 } else {
-    $getdata = ["PERMISSION"=>2];
+    $getdata = ["PERMISSION"=>0];
 }
 ?>
 
 <html>
     <head>
-        <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
+        <?php echo $loader->loadHeader('Virtual Control', '403 (Forbidden)') ?>
         <script type="text/javascript">
             var fm = '<?php echo $fm->Export() ?>';
         </script>
