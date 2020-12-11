@@ -6,17 +6,21 @@ include_once ('../scripts/common.php');
 include_once ('../scripts/dbconfig.php');
 include_once ('../scripts/former.php');
 include_once ('../scripts/loader.php');
-if (!session_chk()) {
-    http_response_code(403);
-    header("Location: ../403.php");
+
+if(!session_chk()) {
+    http_response_code(301);
+    header('Location: ../403.php');
+    exit();
+}
+$id = $_SESSION['gsc_userid'];
+$getdata = select(true, "GSC_USERS", "USERNAME, PERMISSION", "WHERE USERID = '$id'");
+if(!$getdata && $getdata['PERMISSION'] != 0) {
+    http_response_code(301);
+    header('Location: ../403.php');
     exit();
 }
 
 $loader = new loader();
-
-$index = $_SESSION['gsc_userid'];
-$getdata = select(true, "GSC_USERS", "USERNAME, PERMISSION", "WHERE USERID = $id");
-
 
 ?>
 
@@ -56,14 +60,6 @@ $getdata = select(true, "GSC_USERS", "USERNAME, PERMISSION", "WHERE USERID = $id
                                 <p class="mb-1">アカウントを設定します</p>
                             </a>
 
-                            <!-- Server Option (VCServer Only) -->
-                            <a href="./server.php" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1"><i class="fa fa-fw fa-home"></i>サーバ設定</h5>
-                                </div>
-                                <p class="mb-1 text-monospace">サーバ全般の設定を行います</p>
-                            </a>
-
                             <!-- MIB Option (VCServer Only) -->
                             <a href="./mib.php" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2">
                                 <div class="d-flex w-100 justify-content-between">
@@ -88,9 +84,7 @@ $getdata = select(true, "GSC_USERS", "USERNAME, PERMISSION", "WHERE USERID = $id
         <!-- Footer -->
         <?php echo $loader->footer() ?>
 
-        <script src="../js/jquery.js"></script>
-        <script src="../js/popper.min.js"></script>
-        <script src="../js/bootstrap.min.js"></script>
+        <?php echo $loader->footerS(true) ?>
     </body>
 
 </html>

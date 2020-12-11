@@ -91,7 +91,3 @@ function reset_auto_increment($table, $index = 1) {
     $result = query($query);
     return $result;
 }
-
-function getMIB() {
-    $query = select($one_column, $table, '');
-}

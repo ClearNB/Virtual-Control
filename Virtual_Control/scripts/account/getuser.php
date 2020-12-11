@@ -13,7 +13,7 @@ include_once ('../sqldata.php');
 include_once ('../common.php');
 include_once ('../dbconfig.php');
 include_once ('./checkers.php');
-include_once ('../session_chk.php');
+include_once ('./table_generator.php');
 
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 if ($method === 'POST') {

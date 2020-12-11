@@ -76,8 +76,8 @@ function account_table() {
     $table_title = 'アカウント一覧';
     $table_title_icon = '';
     $table_headers = [
-        ["権限", "ユーザ名", "ユーザID", "メールアドレス", "ログイン日時"],
-        ["PER", "USERNAME", "USERID", "MAILADDRESS", "LOGINUPTIME"]
+        ["ユーザID", "ユーザ名", "権限", "最終ログイン日時"],
+        ["USERID", "USERNAME", "PER", "LOGINUPTIME"]
     ];
     $result = select(false, "GSC_USERS", "CASE PERMISSION WHEN 1 THEN 'VCServer' WHEN 2 THEN 'VCHost' END AS PER, USERID, USERNAME, MAILADDRESS, LOGINUPTIME");
     if ($result) {
