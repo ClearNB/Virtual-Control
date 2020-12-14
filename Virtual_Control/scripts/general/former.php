@@ -163,7 +163,7 @@ class form_generator {
 	if ($selected) {
 	    $sel_text = 'checked';
 	}
-	array_push($this->data, '<input ' . $sel_text . ' required="' . $required . '" id="' . $id . '" type="' . $type_text . '" name="' . $name . '" value="' . $value . '"' . $required . '><label for="' . $id . '" class="' . $class_text . '">' . $outname . '</label>');
+	array_push($this->data, '<input ' . $sel_text . ' required="' . $required . '" id="' . $id . '" type="' . $type_text . '" name="' . $name . '" value="' . $value . '"' . $required . '><label for="' . $id . '" class="' . $class_text . '">' . $outname . '</label><br>');
     }
 
     /**
