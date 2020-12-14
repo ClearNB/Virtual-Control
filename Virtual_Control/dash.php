@@ -18,7 +18,7 @@ $loader = new loader();
 $id = $_SESSION['gsc_userid'];
 $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$id'");
 
-$fm_pg = new form_generator('fm_pg', '', 1);
+$fm_pg = new form_generator('fm_pg');
 $fm_pg->SubTitle($getdata['USERNAME'] . 'さん', 'アクセス監視をしましょう。<br>行動を選択してください。', 'user');
 $fm_pg->openListGroup();
 $fm_pg->ListGroupData('check', 'SNMPチェック', 'vials', 'SNMPの情報を試しに取得することができます', '詳しくはクリック！');

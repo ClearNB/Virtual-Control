@@ -22,7 +22,7 @@ $fm_pg->Button('bt_pg_lk', '戻る', 'button', 'arrow-circle-o-left');
 
 <html>
     <head>
-        <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
+        <?php echo $loader->loadHeader('Virtual Control', 'INDEX', true) ?>
 	<?php echo form_generator::ExportClass([$fm_pg]) ?>
     </head>
 
@@ -35,7 +35,7 @@ $fm_pg->Button('bt_pg_lk', '戻る', 'button', 'arrow-circle-o-left');
         <div id="data_output"></div>
 
         <?php echo $loader->footer() ?>
-        <?php echo $loader->footerS() ?>
+        <?php echo $loader->footerS(true) ?>
 	
 	<script type="text/javascript">
 	    $(document).ready(function() {

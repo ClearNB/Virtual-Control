@@ -102,13 +102,13 @@ class loader {
 	if ($ishideC) {
 	    $hide_text = '.';
 	}
-	echo '<script src="js/jquery.js"></script>
-              <script src="js/pass_modify.js"></script>
-	      <script src="js/ajax_dynamic.js"></script>
-	      <script src="js/animation.js"></script>
-	      <script src="js/acc_check.js"></script>
-              <script src="js/popper.min.js"></script>
-              <script src="js/bootstrap.min.js"></script>';
+	echo '<script src="' . $hide_text . './js/jquery.js"></script>
+              <script src="' . $hide_text . './js/pass_modify.js"></script>
+	      <script src="' . $hide_text . './js/ajax_dynamic.js"></script>
+	      <script src="' . $hide_text . './js/animation.js"></script>
+	      <script src="' . $hide_text . './js/acc_check.js"></script>
+              <script src="' . $hide_text . './js/popper.min.js"></script>
+              <script src="' . $hide_text . './js/bootstrap.min.js"></script>';
     }
 
     function footer() {
