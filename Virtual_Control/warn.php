@@ -56,6 +56,7 @@ $fm_wd->Button('fm_wd_de', '警告の詳細へ', 'button');
 $fm_wd_se = new form_generator('fm_wd_se');
 $fm_wd_se->Button('bt_wd_se_wa', '警告ウィザードに戻る', 'button');
 $fm_wd_se->Button('bt_wd_se_bt', '警告詳細選択ボタン', 'button');
+$fm_wd_se->Button('bt_wd_se_aa', '警告詳細選択ボタン', 'button');
 ?>
 --> 
 
