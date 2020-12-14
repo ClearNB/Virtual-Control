@@ -20,7 +20,11 @@ if(!$getdata && $getdata['PERMISSION'] != 0) {
 $loader = new loader();
 
 $fm_pg = new form_generator('fm_pg');
-$fm_pg->SubTitle('OPTION - AGENT', 'ここは、OPTION - AGENT のページです。', 'book');
+$fm_pg->SubTitle('OPTION - AGENT', 'エージェントを選択してください。', 'book');
+$fm_pg->Check(1, 'rd_01', 'agt', '1', 'AGENT1', true);
+$fm_pg->Check(1, 'rd_02', 'agt', '2', 'AGENT2',false);
+$fm_pg->Check(1, 'rd_03', 'agt', '3', 'AGENT3',false);
+$fm_pg->Button('bt_mk_ag', '作成', 'submit', 'fa-edit');//ボタンの設置
 
 ?>
 
@@ -35,6 +39,7 @@ $fm_pg->SubTitle('OPTION - AGENT', 'ここは、OPTION - AGENT のページで�
 	
 	<?php echo $loader->Title('OPTION - AGENT', 'user') ?>
 	<div id="data_output"></div>
+        
 	
 	<?php echo $loader->footer() ?>
 	<?php echo $loader->footerS(true) ?>
