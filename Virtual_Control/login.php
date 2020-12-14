@@ -61,11 +61,7 @@ $form_failed_02->Button('form_back_form_01', '入力に戻る', 'button', 'caret
         
         <?php echo $loader->load_Logo() ?>
 
-        <div class="bg-dark">
-            <div class="container">
-                <?php echo $loader->Title('LOGIN', 'fas fa-sign-in-alt') ?>
-            </div>
-        </div>
+        <?php echo $loader->Title('LOGIN', 'fas fa-sign-in-alt') ?>
         
         <!-- Login Form -->
         <div id="data_output"></div>
@@ -81,7 +77,7 @@ $form_failed_02->Button('form_back_form_01', '入力に戻る', 'button', 'caret
                 animation('data_output', 0, fdata1);
             });
 
-            //Page1: Login Form
+            //Page1: Login Form 
             $(document).on('submit', '#fm_lg', function (event) {
                 event.preventDefault();
                 var d = $(this).serializeArray();
