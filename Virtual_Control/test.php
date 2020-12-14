@@ -2,10 +2,10 @@
 
 <!-- PHP HEADER MODULE -->
 <?php
-include_once ('./scripts/former.php');
-include_once ('./scripts/loader.php');
 include_once ('./scripts/general/sqldata.php');
-include ('./scripts/session_chk.php');
+include_once ('./scripts/session/session_chk.php');
+include_once ('./scripts/general/loader.php');
+include_once ('./scripts/general/former.php');
 
 session_start();
 if (!session_chk()) {

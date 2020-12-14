@@ -8,6 +8,10 @@
  * @author ClearNB <clear.navy.blue.star@gmail.com>
  */
 class form_generator {
+    /**
+     * @var 
+     * @var type 
+     */
     private $data;
     private $id;
 

@@ -55,6 +55,7 @@ class SNMPData {
 	    if ($chk != 0) {
 		$sub_v = preg_replace("/(" . $res . ")[.]/", '', $oid);
 		$top_oid = preg_replace('/([.][0-9]{1,}){2}$/', '', $res);
+		echo $oid . ' : ' . $res . ' -> ' . $top_oid;
 		if (!in_array($sub_v, self::$set[$top_oid]->index)) {
 		    array_push(self::$set[$top_oid]->index, $sub_v);
 		}

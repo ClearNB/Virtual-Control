@@ -12,9 +12,9 @@
 
 //include
 include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/former.php');
-include_once ('./scripts/loader.php');
-include_once ('./scripts/session_chk.php');
+include_once ('./scripts/session/session_chk.php');
+include_once ('./scripts/general/loader.php');
+include_once ('./scripts/general/former.php');
 
 if (session_chk()) {
     http_response_code(301);
@@ -87,7 +87,7 @@ $form_failed_02->Button('form_back_form_01', '入力に戻る', 'button', 'caret
                 var d = $(this).serializeArray();
                 fdata1 = document.getElementById('data_output').innerHTML;
                 animation('data_output', 400, fdataw);
-                ajax_dynamic_post('./scripts/session.php', d).then(function (data) {
+                ajax_dynamic_post('./scripts/session/session.php', d).then(function (data) {
                     switch (data['res']) {
                         case 0:
                             animation_to_sites('data_output', 400, './dash.php');

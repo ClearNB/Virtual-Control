@@ -1,7 +1,15 @@
 <?php
 
+/**
+ * @var $mysqli MySQLiデータを取得します
+ */
 static $mysqli;
 
+/**
+ * クエリを実行します
+ * @param string $query 手続き文字列を定義します
+ * @return boolean|array
+ */
 function query($query) {
     $mysqli = get_db();
     $result = $mysqli -> query($query);
@@ -9,12 +17,16 @@ function query($query) {
     if (!$result) {
         print "クエリが失敗しました" . "Errormessage: <br>" . $mysqli -> error . "<br>";
 	print "原因クエリ: " . $query . "<br>";
-        return false;
+        $result = false;
     }
 
     return $result;
 }
 
+/**
+ * 
+ * @return boolean|\mysqli
+ */
 function get_db() {
     try {
         $data = loadfile("data/database.json");

@@ -1,6 +1,9 @@
 <?php
 
+include_once ('../general/sqldata.php');
+
 class ACCOUNTData {
+
     private static $set = [];
     private $userid;
     private $username;
@@ -14,26 +17,32 @@ class ACCOUNTData {
 	$this->loginuptime = $loginuptime;
 	array_push(self::$set, $this);
     }
-    
+
     public static function get_all_users(): array {
-	$result = [];
-	foreach(self::$set as $us) {
-	    $data = $us->get_user_data();
-	    array_push($result, $data);
+	//SQL Data
+	$q01 = select('false', 'GSC_USERS', 'USERID, USERNAME, LOGINUPTIME');
+	if ($q01) {
+	    
+	} else {
+	    $result = [];
+	    foreach (self::$set as $us) {
+		$data = $us->get_user_data();
+		array_push($result, $data);
+	    }
+	    return $result;
 	}
-	return $result;
     }
     
     private function get_user_data(): array {
 	return ['USERID' => $this->userid,
-		'USERNAME' => $this->username,
-		'PERMISSION' => $this->permission,
-		'LOGINUPTIME' => $this->loginuptime];
+	    'USERNAME' => $this->username,
+	    'PERMISSION' => $this->permission,
+	    'LOGINUPTIME' => $this->loginuptime];
     }
-    
+
     private function get_permission_text($permission): string {
 	$text = '';
-	switch($permission) {
+	switch ($permission) {
 	    case 0:
 		$text = 'VCServer';
 		break;
@@ -42,5 +51,5 @@ class ACCOUNTData {
 		break;
 	}
     }
-}
 
+}

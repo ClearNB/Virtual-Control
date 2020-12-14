@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <?php
-include_once ('./scripts/loader.php');
+include_once ('./scripts/general/loader.php');
 $loader = new loader();
 
 include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/former.php');
+include_once ('./scripts/general/former.php');
 
 $fm = new form_generator('fm');
 $fm->SubTitle('アクセス禁止', 'あなたはこのページを表示・操作できません。', 'fas fa-times-circle');

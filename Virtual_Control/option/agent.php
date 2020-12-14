@@ -1,11 +1,8 @@
 <?php
-
-include_once '../scripts/former.php';
-include_once '../scripts/loader.php';
-include_once '../scripts/sqldata.php';
-include_once '../scripts/dbconfig.php';
-include_once '../scripts/common.php';
-include_once '../scripts/session_chk.php';
+include_once ('../scripts/general/sqldata.php');
+include_once ('../scripts/session/session_chk.php');
+include_once ('../scripts/general/loader.php');
+include_once ('../scripts/general/former.php');
 
 if(!session_chk()) {
     http_response_code(301);
@@ -22,7 +19,7 @@ if(!$getdata && $getdata['PERMISSION'] != 0) {
 
 $loader = new loader();
 
-$fm_pg = new form_generator();
+$fm_pg = new form_generator('fm_pg');
 $fm_pg->SubTitle('OPTION - AGENT', 'ここは、OPTION - AGENT のページです。', 'book');
 
 ?>

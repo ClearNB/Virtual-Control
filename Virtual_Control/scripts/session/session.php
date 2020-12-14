@@ -8,6 +8,8 @@
  * 1. 異常終了（データベース接続不可能）
  */
 
+include_once ('../general/sqldata.php');
+
 $requestmg = filter_input(INPUT_SERVER, 'HTTP_X_REQUESTED_WITH');
 
 $request = isset($requestmg)
@@ -21,10 +23,6 @@ if($request !== 'xmlhttprequest') {
 //変数の定義
 $session_time = 1500;
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
-
-include_once ('../scripts/sqldata.php');
-include_once ('../scripts/common.php');
-include_once ('../scripts/dbconfig.php');
 
 //フォーム実行時に動的実行される
 if ($method == 'POST') {
