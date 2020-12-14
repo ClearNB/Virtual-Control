@@ -24,8 +24,11 @@ $fm_pg->SubTitle('OPTION - AGENT', 'エージェントを選択してくださ�
 $fm_pg->Check(1, 'rd_01', 'agt', '1', 'AGENT1', true);
 $fm_pg->Check(1, 'rd_02', 'agt', '2', 'AGENT2',false);
 $fm_pg->Check(1, 'rd_03', 'agt', '3', 'AGENT3',false);
-$fm_pg->Button('bt_mk_ag', '作成', 'submit', 'fa-edit');//ボタンの設置
-
+$fm_pg->Button('bt_mk_ag', '作成', 'submit');//作成ボタンの設置
+$fm_pg->Button('bt_ed_ag', '編集', 'submit');//編集ボタンの設置
+$fm_pg->Button('bt_dl_ag', '削除', 'submit');//削除ボタンの設置
+$fm_pg->Button('bt_mk_ag', '作成', 'submit', 'fa-edit');//一覧へ戻る
+        
 ?>
 
 <html>
