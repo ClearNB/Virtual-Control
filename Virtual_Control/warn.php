@@ -26,9 +26,9 @@ $fm_ag->Caption('fm_sl_01');
   $fm_ag->addOption(1, 'エージェント1');
   $fm_ag->closeSelect();
  */
-$fm_ag->Button('fm_ag_ba', '選択', 'button', '');
+$fm_ag->Button('fm_ag_se', '選択', 'button', '');
 
-//エージェント別警告画面
+//警告ウィザード
 $fm_wn = new form_generator('fm_wn');
 $fm_wn->Button('bt_wn_bk', 'エージェント選択画面に戻る', 'button', 'fas fa-');
 $fm_wn->SubTitle('最新の警告', '日時: XXXX/XX/XX', 'fas fa-exclamation-circle');
@@ -37,20 +37,10 @@ $fm_wn->addList('警告名');
 $fm_wn->addList('警告ログ');
 $fm_wn->closeList();
 $fm_wn->ButtonLg('bt_wd_se', '警告の詳細', 'button', 'fas fa-info-circle');
-$fm_wn->Title('警告レベル', 'fas fa-chart-line');
-$fm_wn->Title('1', '');
 $fm_wn->openList();
 $fm_wn->addList('');
 $fm_wn->closeList();
 
-
-
-//警告詳細
-$fm_wd = new form_generator('fm_wd');
-$fm_wd->Button('bt_wd_bk', '戻る', 'button');
-$fm_wd->Title('WARINGS','');
-$fm_wd->SubTitle('ホスト：[エージェントIPアドレス]', '', '');
-$fm_wd->Button('fm_wd_de', '警告の詳細へ', 'button');
 
 //警告詳細
 $fm_wd_se = new form_generator('fm_wd_se');
@@ -63,7 +53,7 @@ $fm_wd_se->Button('bt_wd_se_aa', '警告詳細選択ボタン', 'button');
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'WARN') ?> <!-- ページタイトル -->
-        <?php echo form_generator::ExportClass([$fm_ag, $fm_wn, $fm_wd_se, $fm_wd]) ?>
+        <?php echo form_generator::ExportClass([$fm_ag, $fm_wn, $fm_wd_se]) ?>
     </head>
 
     <body class="text-monospace">
@@ -90,8 +80,8 @@ $fm_wd_se->Button('bt_wd_se_aa', '警告詳細選択ボタン', 'button');
                 animation_to_sites('data_output', 400, './');
             });
 
-            $(document).on('click', '#fm_ag_ba', function () {
-                animation('data_output', 400, fm_wd);
+            $(document).on('click', '#fm_ag_se', function () {
+                animation('data_output', 400, fm_wn);
             });
 
             $(document).on('click', '#bt_wd_bk', function () {
@@ -103,7 +93,7 @@ $fm_wd_se->Button('bt_wd_se_aa', '警告詳細選択ボタン', 'button');
             });
 
             $(document).on('click', '#bt_wd_se_wa', function () {
-                animation_to_sites('data_output', 400, './');
+                animation('data_output', 400, fm_wn);
             });
 
             $(document).on('click', '#fm_wd_bt', function () {
