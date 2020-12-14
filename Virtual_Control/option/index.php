@@ -22,6 +22,8 @@ if(!$getdata && $getdata['PERMISSION'] != 0) {
 
 $loader = new loader();
 
+$fm_pg = new form_generator('fm_pg', '');
+
 ?>
 
 <html>

@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$logfile = "trap_" . date("Ymd") . ".log";
+$logfile = "/var/www/html/data/trap/trap_" . date("Ymd") . ".log";
 $logtime = date("Y-m-d H:i:s ");
 
 file_put_contents($logfile, $logtime . "===== start =====\n", FILE_APPEND);

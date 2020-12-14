@@ -27,7 +27,11 @@ class initDatabase {
 		$format_data['MIB_NODE_SYSTEM'],
 		$format_data['MIB_NODE_INTERFACE'],
 		$format_data['MIB_NODE_IP'],
-		$format_data['MIB_NODE_SNMP']];
+		$format_data['MIB_NODE_ICMP'],
+		$format_data['MIB_NODE_TCP'],
+		$format_data['MIB_NODE_UDP'],
+		$format_data['MIB_NODE_SNMP']
+	    ];
 	    $f = 0;
 	    foreach ($e_s as $e) {
 		$f += $this->insertSet($e);

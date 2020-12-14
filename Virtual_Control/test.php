@@ -2,6 +2,9 @@
 
 <!-- PHP HEADER MODULE -->
 <?php
+include_once ('./scripts/former.php');
+include_once ('./scripts/loader.php');
+include_once ('./scripts/general/sqldata.php');
 include ('./scripts/session_chk.php');
 
 session_start();
@@ -10,12 +13,6 @@ if (!session_chk()) {
     header('location: 403.php');
     exit();
 }
-
-include_once ('./scripts/former.php');
-include_once ('./scripts/loader.php');
-include_once ('./scripts/dbconfig.php');
-include_once ('./scripts/sqldata.php');
-include_once ('./scripts/common.php');
 
 $loader = new loader();
 

@@ -3,9 +3,7 @@
 include_once ('./scripts/loader.php');
 $loader = new loader();
 
-include_once ('./scripts/sqldata.php');
-include_once ('./scripts/common.php');
-include_once ('./scripts/dbconfig.php');
+include_once ('./scripts/general/sqldata.php');
 include_once ('./scripts/former.php');
 
 $fm = new form_generator('fm');
