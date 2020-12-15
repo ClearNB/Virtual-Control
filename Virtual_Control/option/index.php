@@ -63,7 +63,7 @@ $fm_pg->Check(1, 'rd_03', 'agt', 3, 'AGENT3', false);
 	    $(document).on('click', '#bt_pg_bk, #account, #mib, #agent', function() {
 		switch($(this).attr('id')) {
 		    case 'bt_pg_bk':
-			
+			animation_to_sites('data_output', 400, '../');
 			break;
 		    case 'account':
 			animation_to_sites('data_output', 400, './account.php');
