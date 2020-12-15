@@ -47,8 +47,7 @@ class loader {
         <link rel="stylesheet" href="' . $hide_text . './style/dialog.css" type="text/css">
         <link rel="stylesheet" href="' . $hide_text . './style/Roboto.css" type="text/css">
 	    <link rel="stylesheet" href="' . $hide_text . './style/details.css" type="text/css">
-        <script src="' . $hide_text . './js/animate-in.js"></script>
-        <script src="' . $hide_text . './js/loader.js"></script>';
+        <script src="' . $hide_text . './js/animate-in.js"></script>';
     }
 
     function load_Logo() {
@@ -72,18 +71,17 @@ class loader {
             <br></a> <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbar2SupportedContent" aria-controls="navbar2SupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
             <div class="navbar-collapse text-center justify-content-end collapse" id="navbar2SupportedContent">
             <ul class="navbar-nav w-100">';
+	$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../"><i class="fas fa-fw fa-2x fa-home nav-icon"></i><span class="navbar-text">HOME</span></a> </li>';
 	switch ($permission) {
 	    case 1: //VCServer
-		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../index.php"><i class="fas fa-fw fa-2x fa-home nav-icon"></i><span class="navbar-text">HOME</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="fas fa-fw fa-2x fa-bar-chart nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
+		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="fas fa-fw fa-2x fa-bar-chart nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="fas fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-fw fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../option"><i class="fas fa-fw fa-2x fa-wrench nav-icon"></i><span class="navbar-text">OPTION</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout.php"><i class="fas fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
 		break;
 	    case 2: //VCHost
-		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../index.php"><i class="fas fa-fw fa-2x fa-home nav-icon"></i><span class="navbar-text">HOME</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="fas fa-fw fa-2x fa-bar-chart nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
+		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="fas fa-fw fa-2x fa-bar-chart nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="fas fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout.php"><i class="fas fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
