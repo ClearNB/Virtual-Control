@@ -23,7 +23,7 @@ class SNMPData {
 	$this->setOID();
     }
 
-    public function setOID() {
+    public function setOID(): void {
 	//OID部分を取り除く -> $r_oid
 	$r_oid = preg_replace('/^.*[.]/', '', $this->oid);
 
@@ -67,6 +67,11 @@ class SNMPData {
     }
 
     public function getValue(): array {
+	if($this->check != 0) {
+	    if(empty($this->index)) {
+		return false;
+	    }
+	}
 	return ['OID' => $this->oid, 'DESCR' => $this->descr, 'JAPTLANS' => $this->japtlans, 'ICON' => $this->icon, 'CHECK' => $this->check, 'VALUE'=> $this->value, 'INDEX' => $this->index];
     }
 
