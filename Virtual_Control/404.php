@@ -8,8 +8,8 @@ $loader = new loader();
 
 $per = 0;
 if(session_chk()) {
-    $userid = $_SESSION['gsc_userid'];
-    $getdata = select(true, 'GSC_USERS', 'PERMISSION', "WHERE USERID = '$userid'");
+    $id = $_SESSION['gsc_userid'];
+    $getdata = select(true, 'GSC_USERS', 'PERMISSION', "WHERE USERID = '$id'");
     $per = $getdata['PERMISSION'];
 } else {
     $per = 0;
@@ -17,7 +17,7 @@ if(session_chk()) {
 
 $fm_pg = new form_generator('fm_pg', '');
 $fm_pg->SubTitle('指定されたページはありません。', 'ホームにお戻りください。', 'exclamation-triangle');
-$fm_pg->Button('bt_pg_lk', '戻る', 'button', 'arrow-circle-o-left');
+$fm_pg->Button('bt_pg_bk', '戻る', 'button', 'arrow-circle-o-left');
 ?>
 
 <html>
