@@ -28,15 +28,11 @@ $fm_pg->Button('bt_ag_cr', '作成', 'button','plus-square');
 $fm_pg->Button('bt_ag_ed', '編集', 'button','edit');
 $fm_pg->Button('bt_ag_dl', '削除', 'button','trash-alt');
 
-$fm_ag_cr = new form_generator('fm_ag_cr');
+$fm_ag_cr = new form_generator('fm_ag_cr'); //エージェントIPアドレス
 $fm_ag_ed = new form_generator('fm_ag_ed');
 $fm_ag_dl = new form_generator('fm_ag_dl');
 
-
-
-$fm_ag_cr = new form_generator('fm_ag_cr'); //エージェントIPアドレス
 //追加ページ
-
 $fm_ag_cr->Input('in_ag_ad', 'エージェントIPアドレス',
         'IPアドレスのほか、ホスト名、ドメイン名の入力ができます。',
         'server', true);
@@ -56,11 +52,6 @@ $fm_ag_sl->Check(0, 'rd_06', 'agt', '6', 'MIBサブツリー3',false);
 
 $fm_ag_sl->Button('bt_sl_nx', '次へ', 'button', 'arrow-right');
 $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
-
-
-
-$fm_ag_ed = new form_generator('fm_ag_ed'); //編集ページ
-$fm_ag_dl = new form_generator('fm_ag_dl'); //削除ページ
 ?>
 
 <html>

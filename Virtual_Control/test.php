@@ -26,7 +26,7 @@ $fm->Button('fm_bt_sb', 'SNMPWALKを送信', 'submit', 'vials');
 
 $fm_rt = new form_generator('fm_rt');
 $fm_rt->Title('SNMPWALK結果', 'male');
-$fm_rt->CaptionLg('snmpdata');
+$fm_rt->Caption('snmpdata', true, 3);
 $fm_rt->Button('bt_rt_bk', '戻る', 'button', 'chevron-circle-left');
 
 $fm_ld = new form_generator('fm_ld');

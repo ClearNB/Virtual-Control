@@ -13,14 +13,14 @@ if(session_chk()) {
 
 $loader = new loader();
 $fm_dt01 = new form_generator('fm_dt01', '', 2);
-$fm_dt01->SubTitleDark("アクセス監視は、新たな挑戦へ", "Virtual Control は、SNMPを利用したネットワークアクセス監視を実現できる監視ツールです。<br><br>アクセス監視は運用・保守の専門職を問わず、誰でも監視できる環境を整えなければならない時代に差し掛かっています。その状況の中で、私たちは「標準化」を目的に、Webアプリケーションで監視が可能なアプリケーションを開発しました。", 'fas fa-server');
+$fm_dt01->SubTitle("アクセス監視は、新たな挑戦へ", "Virtual Control は、SNMPを利用したネットワークアクセス監視を実現できる監視ツールです。<br><br>アクセス監視は運用・保守の専門職を問わず、誰でも監視できる環境を整えなければならない時代に差し掛かっています。その状況の中で、私たちは「標準化」を目的に、Webアプリケーションで監視が可能なアプリケーションを開発しました。", 'fas fa-server', true);
 
 $fm_dt02 = new form_generator('fm_dt02');
 $fm_dt02->SubTitle('使いやすく、そしてわかりやすく', 'Virtual Control は、できるだけ利用しやすい環境として HTML5 (+ CSS, JavaScript), PHP の2言語を使用しております。', 'fas fa-users');
 $fm_dt02->Button('bt_02_gh', 'GitHubを開く', 'button', 'fab fa-github-square');
 
 $fm_dt03 = new form_generator('fm_dt03', '', 2);
-$fm_dt03->SubTitleDark('もっと気軽に', '', 'fas fa-laptop-code');
+$fm_dt03->SubTitle('もっと気軽に', '', 'fas fa-laptop-code', true);
 $fm_dt03->Card('標準MIBに準拠した監視を', 'server', 'OID識別を日本語メッセージに変換！', '参照しなければ何の項目かわからないOIDを、標準MIBに準拠した日本語メッセージを搭載！安心して気になった項目を監視できます。');
 
 $fm_dt04 = new form_generator('fm_dt04');
