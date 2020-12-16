@@ -111,5 +111,6 @@ $fm_ag_dl = new form_generator('fm_ag_dl'); //削除ページ
                 animation('data_output', 400, fm_ag_cr);
             });
         </script>
+	
     </body>
 </html>
