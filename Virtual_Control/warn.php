@@ -36,7 +36,7 @@ $fm_wn->openList();
 $fm_wn->addList('警告名');
 $fm_wn->addList('警告ログ');
 $fm_wn->closeList();
-$fm_wn->ButtonLg('bt_wd_se', '警告の詳細', 'button', 'fas fa-info-circle');
+$fm_wn->Button('bt_wd_se', '警告の詳細', 'button', 'fas fa-info-circle');
 $fm_wn->openList();
 $fm_wn->addList('');
 $fm_wn->closeList();
