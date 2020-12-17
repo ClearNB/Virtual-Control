@@ -60,20 +60,29 @@ $fm_ag_ed = new form_generator('fm_ag_ed');//エージェント編集
 $fm_ag_ed->SubTitle('[エージェントIPアドレス]', '', '');
 $fm_ag_ed->SubTitle('[コミュニティ名]', '', '');
 //ＩＰアドレスボタン
-$fm_ag_ed->Button('bt_ed_ip', 'IPアドレス', 'button', 'arrow-right');
+$fm_ag_ed->Button('bt_ed_ip', 'IPアドレス', 'button', 'arrow-right');//アイコン未
 //コミュニティ名ボタン
-$fm_ag_ed->Button('bt_ed_cm', 'コミュニティ名', 'button', 'arrow-right');
+$fm_ag_ed->Button('bt_ed_cm', 'コミュニティ名', 'button', 'arrow-right');//アイコン未
 //ＭＩＢボタン
-$fm_ag_ed->Button('bt_ed_mb', 'MIB', 'button', 'arrow-right');
+$fm_ag_ed->Button('bt_ed_mb', 'MIB', 'button', 'arrow-right');//アイコン未
 
 //設定一覧へ戻るボタン
-$fm_ag_ed->Button('bt_ed_bk', '設定一覧へ戻る', 'button', 'arrow-right');
+$fm_ag_ed->Button('bt_ed_bk', '設定一覧へ戻る', 'button', 'arrow-right');//アイコン未
+
+
+
+$fm_ag_ip = new form_generator('fm_ag_ip');//IPアドレス入力画面
+$fm_ag_ip->SubTitle('現在:[エージェントIPアドレス]', '', '');
+$fm_ag_ip->Input('in_ag_ip','エージェントIPアドレス','IPアドレスを入力してください。','user-circle',true);//アイコン未
+$fm_ag_ip->Button('bt_ip_nx', '次へ', 'button', 'arrow-right');
+$fm_ag_ip->Button('bt_ip_bk', '戻る', 'button', 'long-arrow-alt-left');
+
 ?>
 
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'OPTION - AGENT', true) ?>
-        <?php echo form_generator::ExportClass([$fm_pg, $fm_ag_cr, $fm_ag_ed, $fm_ag_dl, $fm_ag_sl, $fm_ag_ed]) ?>
+        <?php echo form_generator::ExportClass([$fm_pg, $fm_ag_cr, $fm_ag_ed, $fm_ag_dl, $fm_ag_sl, $fm_ag_ed, $fm_ag_ip]) ?>
     </head>
     <body>
 <?php echo $loader->navigation($getdata['PERMISSION']) ?>
@@ -119,7 +128,7 @@ $fm_ag_ed->Button('bt_ed_bk', '設定一覧へ戻る', 'button', 'arrow-right');
             });
             
             $(document).on('click', '#bt_ed_ip', function () { //ＩＰアドレスボタンクリック
-                animation('data_output', 400, fm_ag_cr);//遷移先未設定
+                animation('data_output', 400, fm_ag_ip);
             });
             
              $(document).on('click', '#bt_ed_cm', function () { //コミュニティ名ボタンクリック
@@ -132,6 +141,14 @@ $fm_ag_ed->Button('bt_ed_bk', '設定一覧へ戻る', 'button', 'arrow-right');
             
             $(document).on('click', '#bt_ed_bk', function () { //MIBボタンクリック
                 animation('data_output', 400, fm_pg);
+            });
+            
+            $(document).on('click', '#bt_ip_bk', function () { //戻るボタンクリック
+                animation('data_output', 400, fm_ag_ed);
+            });
+            
+            $(document).on('click', '#bt_ip_nx', function () { //次へボタンクリック
+                animation('data_output', 400, fm_ag_ed);//遷移先未設定
             });
         </script>
 	
