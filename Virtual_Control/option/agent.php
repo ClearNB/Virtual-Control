@@ -28,10 +28,8 @@ $fm_pg->Button('bt_ag_cr', '作成', 'button','plus-square');
 $fm_pg->Button('bt_ag_ed', '編集', 'button','edit');
 $fm_pg->Button('bt_ag_dl', '削除', 'button','trash-alt');
 
-$fm_ag_cr = new form_generator('fm_ag_cr'); //エージェントIPアドレス
-$fm_ag_ed = new form_generator('fm_ag_ed');
 $fm_ag_dl = new form_generator('fm_ag_dl');
-
+$fm_ag_cr = new form_generator('fm_ag_cr'); //エージェントIPアドレス
 //追加ページ
 $fm_ag_cr->Input('in_ag_ad', 'エージェントIPアドレス',
         'IPアドレスのほか、ホスト名、ドメイン名の入力ができます。',
@@ -52,12 +50,30 @@ $fm_ag_sl->Check(0, 'rd_06', 'agt', '6', 'MIBサブツリー3',false);
 
 $fm_ag_sl->Button('bt_sl_nx', '次へ', 'button', 'arrow-right');
 $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
+
+
+//①入力チェック
+
+
+
+$fm_ag_ed = new form_generator('fm_ag_ed');//エージェント編集
+$fm_ag_ed->SubTitle('[エージェントIPアドレス]', '', '');
+$fm_ag_ed->SubTitle('[コミュニティ名]', '', '');
+//ＩＰアドレスボタン
+$fm_ag_ed->Button('bt_ed_ip', 'IPアドレス', 'button', 'arrow-right');
+//コミュニティ名ボタン
+$fm_ag_ed->Button('bt_ed_cm', 'コミュニティ名', 'button', 'arrow-right');
+//ＭＩＢボタン
+$fm_ag_ed->Button('bt_ed_mb', 'MIB', 'button', 'arrow-right');
+
+//設定一覧へ戻るボタン
+$fm_ag_ed->Button('bt_ed_bk', '設定一覧へ戻る', 'button', 'arrow-right');
 ?>
 
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'OPTION - AGENT', true) ?>
-        <?php echo form_generator::ExportClass([$fm_pg, $fm_ag_cr, $fm_ag_ed, $fm_ag_dl, $fm_ag_sl]) ?>
+        <?php echo form_generator::ExportClass([$fm_pg, $fm_ag_cr, $fm_ag_ed, $fm_ag_dl, $fm_ag_sl, $fm_ag_ed]) ?>
     </head>
     <body>
 <?php echo $loader->navigation($getdata['PERMISSION']) ?>
@@ -90,7 +106,7 @@ $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
                 animation('data_output', 400, fm_ag_sl);
             });
             
-            $(document).on('click', '#bt_cr_bk', function () { //戻る7ボタンクリック
+            $(document).on('click', '#bt_cr_bk', function () { //戻るボタンクリック
                 animation('data_output', 400, fm_pg);
             });
             
@@ -98,8 +114,24 @@ $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
                 animation('data_output', 400, fm_ag_sl);
             });
             
-            $(document).on('click', '#bt_sl_bk', function () { //戻る7ボタンクリック
+            $(document).on('click', '#bt_sl_bk', function () { //戻るボタンクリック
                 animation('data_output', 400, fm_ag_cr);
+            });
+            
+            $(document).on('click', '#bt_ed_ip', function () { //ＩＰアドレスボタンクリック
+                animation('data_output', 400, fm_ag_cr);//遷移先未設定
+            });
+            
+             $(document).on('click', '#bt_ed_cm', function () { //コミュニティ名ボタンクリック
+                animation('data_output', 400, fm_ag_cr);//遷移先未設定
+            });
+            
+            $(document).on('click', '#bt_ed_mb', function () { //MIBボタンクリック
+                animation('data_output', 400, fm_ag_cr);//遷移先未設定
+            });
+            
+            $(document).on('click', '#bt_ed_bk', function () { //MIBボタンクリック
+                animation('data_output', 400, fm_pg);
             });
         </script>
 	
