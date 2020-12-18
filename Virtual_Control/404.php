@@ -17,13 +17,13 @@ if(session_chk()) {
 
 $fm_pg = new form_generator('fm_pg', '');
 $fm_pg->SubTitle('指定されたページはありません。', 'ホームにお戻りください。', 'exclamation-triangle');
-$fm_pg->Button('bt_pg_bk', '戻る', 'button', 'arrow-circle-o-left');
+$fm_pg->Button('bt_pg_bk', 'ホームに戻る', 'button', 'home');
 ?>
 
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'INDEX', true) ?>
-	<?php echo form_generator::ExportClass([$fm_pg]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">
@@ -42,7 +42,7 @@ $fm_pg->Button('bt_pg_bk', '戻る', 'button', 'arrow-circle-o-left');
 		animation('data_output', 0, fm_pg);
 	    });
 	    
-	    $(document).on('click', '#bt_pg_lk', function() {
+	    $(document).on('click', '#bt_pg_bk', function() {
 		animation_to_sites('data_output', 400, './');
 	    });
 	</script>

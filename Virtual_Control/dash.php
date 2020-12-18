@@ -21,17 +21,17 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$i
 $fm_pg = new form_generator('fm_pg');
 $fm_pg->SubTitle($getdata['USERNAME'] . 'さん', 'アクセス監視をしましょう。<br>行動を選択してください。', 'user');
 $fm_pg->openListGroup();
-$fm_pg->ListGroupData('check', 'SNMPチェック', 'vials', 'SNMPの情報を試しに取得することができます', '詳しくはクリック！');
-$fm_pg->ListGroupData('analy', 'アナリティクス', 'chart-pie', 'アクセス状況をリアルタイムで監視できます', '詳しくはクリック！');
-$fm_pg->ListGroupData('warn', '警告情報', 'file-excel', 'アクセス状況の警告情報をご覧になれます', '詳しくはクリック！');
-$fm_pg->ListGroupData('option', 'オプション', 'wrench', 'アカウントまたはサーバの設定を行います', '詳しくはクリック！');
-$fm_pg->closeDiv();
+$fm_pg->addListGroup('check', 'SNMPチェック', 'vials', 'SNMPの情報を試しに取得することができます', '詳しくはクリック！');
+$fm_pg->addListGroup('analy', 'アナリティクス', 'chart-pie', 'アクセス状況をリアルタイムで監視できます', '詳しくはクリック！');
+$fm_pg->addListGroup('warn', '警告情報', 'file-excel', 'アクセス状況の警告情報をご覧になれます', '詳しくはクリック！');
+$fm_pg->addListGroup('option', 'オプション', 'wrench', 'アカウントまたはサーバの設定を行います', '詳しくはクリック！');
+$fm_pg->closeListGroup();
 ?>
 
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'DASHBOARD') ?>
-	<?php echo form_generator::ExportClass([$fm_pg]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">

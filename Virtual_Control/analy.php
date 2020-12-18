@@ -46,7 +46,7 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$u
 <html>
     <head>
 	<?php echo $loader->loadHeader('Virtual Control', 'ANALY') ?>
-	<?php echo form_generator::ExportClass([$fm_an_sl]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">

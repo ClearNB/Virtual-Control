@@ -1,10 +1,12 @@
 <?php
 
 interface form_in {
+
     const NONE = 0;
     const LOW = 1;
     const MEDIUM = 3;
     const HIGH = 5;
+
 }
 
 /**
@@ -15,10 +17,8 @@ interface form_in {
  * @author ClearNB <clear.navy.blue.star@gmail.com>
  */
 class form_generator implements form_in {
-    /**
-     * @var 
-     * @var type 
-     */
+
+    private static $gen_data = [];
     private $select_data;
     private $fdata;
     private $data;
@@ -29,20 +29,25 @@ class form_generator implements form_in {
      * POST通信をベースとしたフォームを作ります。
      * ここでは<form>の内容をを定義します。
      * @param string  $id	    フォームグループの一意なIDを指定します。
-     * @param string  $action	    【任意】アクション先の外部ファイル。通常空白
+     * @param string  $data	    【任意】アクション先の外部ファイル。通常空白
      * @param integer $color_flag   背景のフラグを設定します（1..主背景, 2..黒背景）
      */
-    function __construct($id, $action = '', $color_flag = 1) {
-	if ($color_flag == 1) {
-	    $this->data = ["<div class=\"bg-primary\"><div class=\"container py-2\"><form id=\"$id\" action=\"$action\" method=\"POST\">"];
-	} else if ($color_flag == 2) {
-	    $this->data = ["<div class=\"bg-dark\"><div class=\"container py-2\"><form id=\"$id\" action=\"$action\" method=\"POST\">"];
+    function __construct($id, $data = '', $color_flag = 1) {
+	if ($data != '') {
+	    $this->data = [$data];
+	} else {
+	    if ($color_flag == 1) {
+		$this->data = ["<div class=\"bg-primary\"><div class=\"container py-2\"><form id=\"$id\" action=\"\" method=\"POST\">"];
+	    } else if ($color_flag == 2) {
+		$this->data = ["<div class=\"bg-dark\"><div class=\"container py-2\"><form id=\"$id\" action=\"\" method=\"POST\">"];
+	    }
 	}
 	$this->id = $id;
+	array_push(self::$gen_data, $this);
     }
-    
+
     /* UI表示系 */
-    
+
     /**
      * タイトルを作成します
      * @param strng $title  タイトル名を指定します
@@ -60,7 +65,7 @@ class form_generator implements form_in {
      * @param string $darkBack	    黒背景を変えるかどうかを指定します（デフォルト: false）
      */
     function SubTitle($title, $caption, $icon, $darkBack = false) {
-	if($darkBack) {
+	if ($darkBack) {
 	    array_push($this->data, "<div class=\"form-group pt-2\"><div class=\"w-100\"><h3><i class=\"fas fa-$icon fa-fw\"></i>$title</h3><hr class=\"orange\"><p class=\"py-2\">$caption</p></div></div>");
 	} else {
 	    array_push($this->data, "<div class=\"form-group pt-2\"><div class=\"w-100\"><h3><i class=\"fas fa-$icon fa-fw\"></i>$title</h3><hr><p class=\"py-2\">$caption</p></div></div>");
@@ -76,12 +81,12 @@ class form_generator implements form_in {
      */
     function Caption($caption, $ishr = true, $py = form_in::NONE): void {
 	$hr_text = '';
-	if($ishr) {
+	if ($ishr) {
 	    $hr_text = '<hr>';
 	}
 	$py_text = '';
-	if($py > 0) {
-	    if($py > 5) {
+	if ($py > 0) {
+	    if ($py > 5) {
 		$py = 5;
 	    }
 	    $py_text = "py-$py";
@@ -176,26 +181,11 @@ class form_generator implements form_in {
      * @param type $disabled	【任意（def: ）】無効化状態にするか設定します（disabled）
      */
     function Button($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = '') {
-	if(strpos($icon, 'fa-') !== false) {
+	if (strpos($icon, 'fa-') !== false) {
 	    array_push($this->data, "<div class=\"py-2\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fa-fw fa-lx $icon\"></i>$desc</button></div>");
 	} else {
 	    array_push($this->data, "<div class=\"py-2\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"fas fa-fw fa-lx fa-$icon\"></i>$desc</button></div>");
 	}
-    }
-
-    /**
-     * <div class="row py-2"> を作成します
-     * ボタンの分割を並ばせたり、コンテンツを分割するのに必要です
-     */
-    function openRow() {
-	array_push($this->data, "<div class=\"row py-2\">");
-    }
-
-    /**
-     * <div> 属性を閉じます
-     */
-    function closeDiv() {
-	array_push($this->data, "</div>");
     }
 
     /**
@@ -273,7 +263,7 @@ class form_generator implements form_in {
     function Card($caption_title, $icon, $title, $caption) {
 	array_push($this->data, '<div class="card mt-1 rounded"><div class="card-header bg-secondary border-bottom border-dark">' . $caption_title . '</div><div class="card-body bg-primary"><h5 class="text-left text-monospace"><i class="' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
     }
-    
+
     /**
      * BootStrap カードを主背景を前提に作成します
      * @param type $caption_title   キャプション自体のタイトルを設定します
@@ -284,14 +274,14 @@ class form_generator implements form_in {
     function CardDark($caption_title, $icon, $title, $caption) {
 	array_push($this->data, '<div class="card mt-1 rounded"><div class="card-header bg-dark border-bottom border-primary">' . $caption_title . '</div><div class="card-body bg-dark"><h5 class="text-left text-monospace"><i class="' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
     }
-    
+
     /**
      * BootStrap リストグループを開きます
      */
     function openListGroup() {
 	array_push($this->data, '<div class="list-group">');
     }
-    
+
     /**
      * BootStrap リストグループのデータを作成します
      * @param type $id		    このリストに対するIDを指定します
@@ -300,8 +290,15 @@ class form_generator implements form_in {
      * @param type $text	    リストグループのテキストを追加します
      * @param type $small_text	    リストグループの小さなテキストを追加します
      */
-    function ListGroupData($id, $title, $icon, $text, $small_text) {
-	array_push($this->data, '<div class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2" id="' . $id . '"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1"><i class="fas fa-fw fa-' . $icon . ' fa-lg"></i>'  . $title . '</h5></div><p class="mb-1">' . $text . '</p> <small>' . $small_text . '</small></div>');
+    function addListGroup($id, $title, $icon, $text, $small_text) {
+	array_push($this->data, '<div class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2" id="' . $id . '"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1"><i class="fas fa-fw fa-' . $icon . ' fa-lg"></i>' . $title . '</h5></div><p class="mb-1">' . $text . '</p> <small>' . $small_text . '</small></div>');
+    }
+
+    /**
+     * BootStrap リストグループのデータを閉じます
+     */
+    function closeListGroup() {
+	array_push($this->data, "</div>");
     }
 
     /**
@@ -328,19 +325,34 @@ class form_generator implements form_in {
 	}
 	return $text;
     }
-    
+
+    static function resetData() {
+	self::$gen_data = [];
+    }
+
+    /**
+     * フォームIDを取得します
+     * @return string
+     */
     function getID() {
 	return $this->id;
     }
-    
-    static function ExportClass($formers) {
+
+    /**
+     * 今まで作成したページをJavaScript上で操作できやすい形にします
+     * これにより、今まで作成したページの「form_id」をもとにJavaScript上の動的な変数を作成します
+     * 変数をanimation() , animation_to_sites() にバインドすることで、画面遷移を実現します
+     * @return string
+     */
+    static function ExportClass(): string {
 	$js = '<script type="text/javascript">';
-	foreach($formers as $f) {
+	foreach (self::$gen_data as $f) {
 	    $js .= 'var ' . $f->getID() . ' = \'' . $f->Export() . '\';';
 	}
 	$js .= '</script>';
 	return $js;
     }
+
 }
 
 /**
@@ -367,9 +379,8 @@ function fm_ld($id, $title = 'しばらくお待ちください', $text = '更�
 function fm_fl($id, $bt_id, $title = '失敗しました', $text = '[原因]') {
     $fm = new form_generator($id, '');
     $fm->SubTitle($title, $text, 'exclamation-triangle');
-    if($bt_id != '') {
+    if ($bt_id != '') {
 	$fm->Button($bt_id, '戻る', 'backward', '');
     }
     return $fm;
 }
-

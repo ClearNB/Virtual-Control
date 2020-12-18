@@ -82,7 +82,7 @@ $fm_ag_ip->Button('bt_ip_bk', '戻る', 'button', 'long-arrow-alt-left');
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'OPTION - AGENT', true) ?>
-        <?php echo form_generator::ExportClass([$fm_pg, $fm_ag_cr, $fm_ag_ed, $fm_ag_dl, $fm_ag_sl, $fm_ag_ed, $fm_ag_ip]) ?>
+        <?php echo form_generator::ExportClass() ?>
     </head>
     <body>
 	<?php echo $loader->navigation($getdata['PERMISSION']) ?>

@@ -66,8 +66,8 @@ $fm_st->Button('bt_st_bk', '戻る', 'button', 'angle-double-left');
     <head>
 	<!-- loadHeader('[SITE_TITLE]', '[PAGE_TITLE]', '[ISOPTION: true or false]') -->
 	<?php echo $loader->loadHeader('Virtual Control', 'FORMAT') ?>
-	<!-- JavaScript部分を自動生成します - ::ExportClass([[Object1], [Object2], ...]) -->
-	<?php echo form_generator::ExportClass([$fm_pg, $fm_st]) ?>
+	<!-- JavaScript部分を自動生成します - ::ExportClass() -->
+	<?php echo form_generator::ExportClass() ?>
     </head>
     <body>
 	<!-- ナビゲーションを表示させる : navigation([PERMISSION] : OTHER(GUEST) , 1(VCSERVER, VCHOST)) -->

@@ -53,7 +53,7 @@ $fm_wd_se->Button('bt_wd_se_aa', '警告詳細選択ボタン', 'button');
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'WARN') ?> <!-- ページタイトル -->
-        <?php echo form_generator::ExportClass([$fm_ag, $fm_wn, $fm_wd_se]) ?>
+        <?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">

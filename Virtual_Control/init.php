@@ -23,7 +23,7 @@ $fm_in_fl->Button('bt_fl_rs', 'やり直す', 'button', 'sync-alt');
 <html>
     <head>
 	<?php echo $loader->loadHeader('Virtual Control', 'INIT') ?>
-	<?php echo form_generator::ExportClass([$fm_in_ld, $fm_in_sc, $fm_in_fl]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">

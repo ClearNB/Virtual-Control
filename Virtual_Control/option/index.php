@@ -22,10 +22,10 @@ $fm_pg = new form_generator('fm_pg', '');
 $fm_pg->Button('bt_pg_bk', 'ホームに戻る', 'button', 'home');
 $fm_pg->SubTitle('設定一覧', '設定したい項目を選んでください。', 'wrench');
 $fm_pg->openListGroup();
-$fm_pg->ListGroupData('account', 'ACCOUNT', 'user', 'アカウント管理ページ', 'アカウント一覧／作成／編集／削除');
-$fm_pg->ListGroupData('mib', 'MIB', 'database', 'MIB管理ページ', 'MIB一覧／作成／編集／削除');
-$fm_pg->ListGroupData('agent', 'AGENT', 'server', 'エージェント管理ページ', 'エージェント一覧／作成／編集／削除');
-$fm_pg->closeDiv();
+$fm_pg->addListGroup('account', 'ACCOUNT', 'user', 'アカウント管理ページ', 'アカウント一覧／作成／編集／削除');
+$fm_pg->addListGroup('mib', 'MIB', 'database', 'MIB管理ページ', 'MIB一覧／作成／編集／削除');
+$fm_pg->addListGroup('agent', 'AGENT', 'server', 'エージェント管理ページ', 'エージェント一覧／作成／編集／削除');
+$fm_pg->closeListGroup();
 
 //Check(type[1..Radio, Other..Check], $id)
 $fm_pg->Check(1, 'rd_01', 'agt', 1, 'AGENT1', true);
@@ -37,7 +37,7 @@ $fm_pg->Check(1, 'rd_03', 'agt', 3, 'AGENT3', false);
 <html>
     <head>
 	<?php echo $loader->loadHeader('Virtual Control', 'OPTION', true); ?>
-	<?php echo form_generator::ExportClass([$fm_pg]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">

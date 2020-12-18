@@ -26,7 +26,7 @@ $fm_pg->SubTitle('OPTION - ACCOUNT', 'ここは、OPTION - ACCOUNT のページ�
 <html>
     <head>
 	<?php echo $loader->loadHeader('Virtual Control', 'OPTION - ACCOUNT', true) ?>
-	<?php echo form_generator::ExportClass([$fm_pg]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
     <body>
 	<?php echo $loader->navigation($getdata['PERMISSION']) ?>

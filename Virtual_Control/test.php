@@ -48,13 +48,7 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$i
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'TEST') ?>
-            <script type="text/javascript">
-                var fm = '<?php echo $fm->Export() ?>';
-                var fm_rt = '<?php echo $fm_rt->Export() ?>';
-                var fm_ld = '<?php echo $fm_ld->Export() ?>';
-                var fm_fl = '<?php echo $fm_fl->Export() ?>';
-                var fm_w;
-            </script>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">
