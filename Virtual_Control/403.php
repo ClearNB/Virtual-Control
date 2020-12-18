@@ -22,7 +22,7 @@ $fm->Button('bt_fm_bk', 'ホームへ戻る', 'button', 'fas fa-home');
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', '403 (Forbidden)', true) ?>
-	<?php echo form_generator::ExportClass([$fm]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">

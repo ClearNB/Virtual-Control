@@ -26,16 +26,16 @@ $fm_dt04 = new form_generator('fm_dt04');
 $fm_dt04->CardDark('WARNING!', 'fas fa-user', 'ログインが必要です', '本サーバはユーザ登録制です。<br>管理者権限により作成されたアカウントでログインしてください。');
 $fm_dt04->Button('bt_04_lg', 'ログインする', 'button', 'sign-in-alt');
 
-$fm_dt = $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04->Export();
+form_generator::resetData();
+$fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04->Export());
+
 ?>
 -->
 
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
-	<script type="text/javascript">
-	    var fm_dt = '<?php echo $fm_dt ?>';
-	</script>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">
@@ -68,5 +68,4 @@ $fm_dt = $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04
 	    });
 	</script>
     </body>
-
 </html>

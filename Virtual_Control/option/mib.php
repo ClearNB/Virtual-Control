@@ -26,7 +26,7 @@ $fm_pg->SubTitle('OPTION - MIB', 'ここは、OPTION - MIB のページです。
 <html>
     <head>
 	<?php echo $loader->loadHeader('Virtual Control', 'OPTION - MIB', true) ?>
-	<?php echo form_generator::ExportClass([$fm_pg]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
     <body>
 	<?php echo $loader->navigation($getdata['PERMISSION']) ?>
