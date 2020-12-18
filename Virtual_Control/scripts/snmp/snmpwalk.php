@@ -63,9 +63,9 @@ if ($method === 'POST') {
 		}
 	    }
 	    $data = SNMPData::getDataArray();
-	    $s_data = new SNMPTable('data', $data, '結果一覧表');
-	    $result .= $s_data->generate_table();
 	    //var_dump($data);
+	    $s_data = new SNMPTable('data', $data, '結果一覧表');
+	    $result .= $s_data->generate_table() . $un_data;
 	}
 	ob_get_clean();
 	echo json_encode(['code' => $code, 'res' => $result]);

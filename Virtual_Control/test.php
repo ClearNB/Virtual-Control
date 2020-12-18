@@ -33,7 +33,7 @@ $fm_ld = new form_generator('fm_ld');
 $fm_ld->SubTitle('接続中です…', 'しばらくお待ちください', 'fas fa-spinner fa-spin');
 
 $fm_fl = new form_generator('fm_fl');
-$fm_fl->SubTitle('接続に失敗しました。', '以下をご確認ください。', 'fas fa-exclamination');
+$fm_fl->SubTitle('接続に失敗しました。', '以下をご確認ください。', 'exclamation-triangle');
 $fm_fl->openList();
 $fm_fl->addList('エージェントと接続できる環境であるか確認してください。');
 $fm_fl->addList('正しい値が入力されているか確認してください。');

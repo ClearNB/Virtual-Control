@@ -47,8 +47,8 @@ $fm_ag_cr->Button('bt_cr_bk', '戻る', 'button', 'long-arrow-alt-left');
 $fm_ag_sl = new form_generator('fm_ag_sl'); //MIBの設定1
 $fm_ag_sl->SubTitle('MIBの設定', '', '');
 $fm_ag_sl->Check(0, 'rd_04', 'agt', '4', 'MIBサブツリー1', true);
-$fm_ag_sl->Check(0, 'rd_05', 'agt', '5', 'MIBサブツリー2',false);
-$fm_ag_sl->Check(0, 'rd_06', 'agt', '6', 'MIBサブツリー3',false);
+$fm_ag_sl->Check(0, 'rd_05', 'agt', '5', 'MIBサブツリー2', false);
+$fm_ag_sl->Check(0, 'rd_06', 'agt', '6', 'MIBサブツリー3', false);
 
 $fm_ag_sl->Button('bt_sl_nx', '次へ', 'button', 'arrow-right');
 $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
@@ -60,13 +60,13 @@ $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
         <?php echo form_generator::ExportClass([$fm_pg, $fm_ag_cr, $fm_ag_ed, $fm_ag_dl, $fm_ag_sl]) ?>
     </head>
     <body>
-<?php echo $loader->navigation($getdata['PERMISSION']) ?>
+	<?php echo $loader->navigation($getdata['PERMISSION']) ?>
         <?php echo $loader->load_Logo() ?>
 
         <?php echo $loader->Title('OPTION - AGENT', 'user') ?>
         <div id="data_output"></div>
 
-<?php echo $loader->footer() ?>
+	<?php echo $loader->footer() ?>
         <?php echo $loader->footerS(true) ?>
 
         <script type="text/javascript">

@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <!--
 <?php
 include_once ('./scripts/general/sqldata.php');

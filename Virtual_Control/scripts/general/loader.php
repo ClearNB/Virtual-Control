@@ -1,23 +1,6 @@
 <?php
 
 class loader {
-
-    function button($id, $caption, $disabled, $icon = '', $color = 'dark') {
-	$d_text = '';
-	if ($disabled) {
-	    $d_text = 'disabled';
-	}
-	return "<button type=\"button\" class=\"btn btn-" . $color . " btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $d_text><i class=\"$icon\"></i>$caption</button>";
-    }
-
-    function button_s($id, $caption, $disabled, $icon = '', $color = 'dark') {
-	$d_text = '';
-	if ($disabled) {
-	    $d_text = 'disabled';
-	}
-	return "<button type=\"button\" class=\"btn btn-" . $color . "-smart btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $d_text><i class=\"$icon\"></i>$caption</button>";
-    }
-
     function Title($title, $icon) {
 	return "<div class=\"py-2 bg-dark\"><div class=\"container\"><div class=\"col-md-12 py-2\"><h2><i class=\"fas fa-$icon px-2\"></i>$title</h2></div></div></div>";
     }
@@ -29,7 +12,7 @@ class loader {
 	}
 	return '<meta charset="utf-8">
         <meta name="application-name" content="' . $site_title . '">
-        <link rel="icon" href="' . $hide_text . './images/favicon.ico">
+        <link rel="icon" type="image/svg+xml" href="' . $hide_text . './images/favicon.svg">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>' . $title . ' - ' . $site_title . '</title>
         <meta name="description" content="' . $site_title . '">
