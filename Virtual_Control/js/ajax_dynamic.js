@@ -7,9 +7,9 @@ function ajax_dynamic_post(url, data) {
         dataType: 'json'
     });
 }
-function ajax_dynamic_get(url) {
+function ajax_dynamic_post_toget(url) {
     return $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: url,
         crossDomain: false,
         dataType: 'json'
