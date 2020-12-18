@@ -6,7 +6,7 @@ function session_start_once() {
     }
 }
 
-function session_per_chk() {
+function session_per_chk():bool {
     if(session_chk()) {
 	$id = $_SESSION['gsc_userid'];
 	$sql = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', 'WHERE USERID = ' . $id);
@@ -16,7 +16,7 @@ function session_per_chk() {
     }
 }
 
-function session_chk() {
+function session_chk():bool {
     session_start_once();
     return isset($_SESSION['gsc_userid']);
 }
