@@ -1,31 +1,24 @@
-<!DOCTYPE html>
-
-<!-- PHP HEADER MODULE -->
 <?php
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
 
-session_start();
-if (!session_chk()) {
-    http_response_code(301);
-    header('location: 403.php');
-    exit();
-}
+session_action_user();
+$getdata = session_get_userdata();
 
 $loader = new loader();
 
-$fm = new form_generator('fm');
-$fm->Button('bt_fm_bk', 'ホームに戻る', 'button', 'chevron-circle-left');
-$fm->SubTitle('SNMPWALKテスト', '情報の取得をテストします', 'fas fa-server');
-$fm->Input('host', 'ホストアドレス', '接続先を指定します。', 'id-card-alt', true);
-$fm->Input('community', 'コミュニティ', 'エージェントが属するコミュニティを設定します。', 'users', true);
-$fm->Input('oid', 'OID', 'フィルタリングするOIDを設定します。', 'object-ungroup', false);
-$fm->Button('fm_bt_sb', 'SNMPWALKを送信', 'submit', 'vials');
+$fm_ld = fm_ld('fm_ld', 'テーブルデータの取得中', 'しばらくお待ちください...');
 
-$id = $_SESSION['gsc_userid'];
-$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$id'");
+$fm_rs = new form_generator('fm_rs');
+$fm_rs->Button('bt_ac_bk', 'ホームに戻る', 'button', 'home');
+$fm_rs->Caption('[data]');
+
+$fm_fl = new form_generator('fm_fl');
+$fm_fl->SubTitle('データの取得に失敗しました', 'データベースに接続していない可能性があります。', 'exclamation-triangle');
+$fm_fl->Button('bt_ac_rs', '再試行', 'button', 'undo-alt');
+$fm_fl->Button('bt_ac_bk', 'ホームに戻る', 'button', 'home');
 ?>
 
 <html>
@@ -54,9 +47,34 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$i
         <?php echo $loader->footerS(); ?>
         <script type="text/javascript">
             $(document).ready(function() {
-                animation('data_output', 0, fm);
+                animation('data_output', 0, fm_ld);
+		get_account();
             });
+	    
+	    $(document).on('click', '#bt_ac_bk, #bt_ac_rs', function() {
+		switch($(this).attr('id')) {
+		    case "bt_ac_bk":
+			animation_to_sites('data_output', 400, './');
+			break;
+		    case "bt_ac_rs":
+			get_account();
+			break;
+		}
+	    });
+	    
+	    function get_account() {
+		ajax_dynamic_post_toget('./scripts/account/account_get.php').then(function(data) {
+		    switch(data['code']) {
+			case 0:
+			    var fm_w = fm_rs.replace('[data]', data['data']);
+			    animation('data_output', 400, fm_w);
+			    break;
+			case 1:
+			    animation('data_output', 400, fm_fl);
+			    break;
+		    }
+		});
+	    }
         </script>
     </body>
-
 </html>

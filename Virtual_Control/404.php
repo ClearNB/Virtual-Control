@@ -1,18 +1,16 @@
-<!DOCTYPE html>
 <?php
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
+
 $loader = new loader();
 
-$per = 0;
-if(session_chk()) {
-    $id = $_SESSION['gsc_userid'];
-    $getdata = select(true, 'GSC_USERS', 'PERMISSION', "WHERE USERID = '$id'");
+$per = 2;
+
+if(session_chk() == 0) {
+    $getdata = session_get_userdata();
     $per = $getdata['PERMISSION'];
-} else {
-    $per = 0;
 }
 
 $fm_pg = new form_generator('fm_pg', '');

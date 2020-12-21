@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-
-<!-- ログアウトページ(LOGOUT)
-概要: Virtual Control 上でユーザとしてのログインセッションを解除するページ
-遷移元: 各ページ
-遷移方法: 各ページのヘッダからログアウトボタンを押下
-遷移先: ゲスト専用ページ（INDEX）
--->
-
 <?php
-session_start();
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+
+session_start_once();
+$userid = $_SESSION['gsc_userid'];
+update("GSC_USERS", "LOGINSTATE", 0, "WHERE USERID='$userid'");
 unset($_SESSION['gsc_userid']);
 http_response_code(301);
 header("Location: index.php");

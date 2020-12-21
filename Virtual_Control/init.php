@@ -1,9 +1,8 @@
-<!--
 <?php
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
 
 $loader = new loader();
 
@@ -18,7 +17,6 @@ $fm_in_fl->SubTitle('初期化に失敗しました', '以下のログをご確�
 $fm_in_fl->Caption('cap_log');
 $fm_in_fl->Button('bt_fl_rs', 'やり直す', 'button', 'sync-alt');
 ?>
--->
 
 <html>
     <head>

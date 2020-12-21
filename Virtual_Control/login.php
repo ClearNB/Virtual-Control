@@ -1,26 +1,12 @@
-<!DOCTYPE html>
-
-<!--
 <?php
-/*
- * ログインページ（LOGIN）
- * 概要: Virtual Control 上でユーザとしてのログインセッションを行うページ
- * 遷移元: INDEX, HELP
- * 遷移方法: INDEXからログインボタンを押下したとき
- * 遷移先: DASHBOARD (SESSION-IN), HELP, INDEX
- */
 
 //include
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
 
-if (session_chk()) {
-    http_response_code(301);
-    header('location: dash.php');
-    exit();
-}
+session_action_guest();
 
 $loader = new loader();
 
@@ -48,7 +34,6 @@ $fm_lg_fl_02->addList('この件は管理者に必ず相談してください。
 $fm_lg_fl_02->closeList();
 $fm_lg_fl_02->Button('bt_lg_bk', '入力に戻る', 'button', 'caret-square-o-left');
 ?>
--->
 
 <html>
     <head>
@@ -57,23 +42,18 @@ $fm_lg_fl_02->Button('bt_lg_bk', '入力に戻る', 'button', 'caret-square-o-le
     </head>
 
     <body class="text-monospace">
-        <!-- Navbar -->
-        <?php echo $loader->navigation(0) ?>
+        <?php echo $loader->navigation(2) ?>
         
         <?php echo $loader->load_Logo() ?>
 
         <?php echo $loader->Title('LOGIN', 'fas fa-sign-in-alt') ?>
         
-        <!-- Login Form -->
         <div id="data_output"></div>
 
-        <!-- Footer -->
         <?php echo $loader->footer() ?>
 
-        <!-- JavaScript dependencies -->
         <?php echo $loader->footerS() ?>
         <script type="text/javascript">
-
             $(document).ready(function () {
                 animation('data_output', 0, fm_lg);
             });

@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-
 <?php
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
-if (!session_chk()) {
-    http_response_code(301);
-    header('location: 403.php');
-    exit();
-}
-$loader = new loader();
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
 
+session_action_user();
+
+$loader = new loader();
 
 $fm_an_sl = new form_generator('fm_an_sl', '');
 

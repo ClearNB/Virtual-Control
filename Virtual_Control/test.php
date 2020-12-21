@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-
-<!-- PHP HEADER MODULE -->
 <?php
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
 
-session_start();
-if (!session_chk()) {
-    http_response_code(301);
-    header('location: 403.php');
-    exit();
-}
+session_action_user();
+$getdata = session_get_userdata();
 
 $loader = new loader();
 
@@ -40,9 +33,6 @@ $fm_fl->addList('正しい値が入力されているか確認してください
 $fm_fl->addList('エージェントのファイアウォール設定をご確認ください。');
 $fm_fl->closeList();
 $fm_fl->Button('bt_fl_bk', '戻る', 'button', 'chevron-circle-left');
-
-$id = $_SESSION['gsc_userid'];
-$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$id'");
 ?>
 
 <html>
@@ -52,33 +42,22 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$i
     </head>
 
     <body class="text-monospace">
-        <!-- HEADER NAVIGATION -->
         <?php echo $loader->navigation($getdata['PERMISSION']) ?>
 
-        <!-- HEADER SECTION -->
         <?php echo $loader->load_logo() ?>
-
-        <!-- TITLE SECTION -->
-        <div class="bg-dark">
-            <div class="container">
-                <?php echo $loader->Title('SNMP TEST', 'fas fa-server') ?>
-            </div>
-        </div>
-
-        <!-- CONTENT SECTION -->
+	
+        <?php echo $loader->Title('SNMP TEST', 'fas fa-server') ?>
+	
         <div id="data_output"></div>
-
-        <!-- FOOTER -->
+	
         <?php echo $loader->footer() ?>
-
-        <!-- FOOTER SCRIPTS -->
+	
         <?php echo $loader->footerS(); ?>
         <script type="text/javascript">
             $(document).ready(function() {
                 animation('data_output', 0, fm);
             });
 
-            /* Ajax - SNMPWALKER */
             $(document).on('submit', '#fm', function (event) {
                 event.preventDefault();
                 //ボタンによる実行を阻止
