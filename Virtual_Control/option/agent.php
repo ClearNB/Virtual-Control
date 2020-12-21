@@ -19,15 +19,17 @@ $fm_pg->Button('bt_ag_cr', '作成', 'button','plus-square');
 $fm_pg->Button('bt_ag_ed', '編集', 'button','edit');
 $fm_pg->Button('bt_ag_dl', '削除', 'button','trash-alt');
 
-$fm_pg_fl_db = new form_generator('fm_pg_fl_db');
-$fm_pg_fl_db->SubTitle('接続失敗', 'エージェント・MIBの取得に<br>失敗しました。', '');//アイコン未
-$fm_pg_fl_db->SubTitle('', 'データベースに接続できません。', '');
+$fm_fl = new form_generator('fm_fl');
+$fm_fl->fm_fl('fm_fl','','失敗しました','[原因]');
 
-$fm_pg_fl_ps = new form_generator('fm_pg_fl_ps');
-$fm_pg_fl_ps->SubTitle('', '認証に失敗しました。', '');
+
+
+
+
 
 $fm_ag_cr = new form_generator('fm_ag_cr'); //エージェントIPアドレス
 //追加ページ
+$fm_ag_cr->SubTitle('エージェント作成', '以下の情報を入力してください', '', false, '1:エージェント情報入力');
 $fm_ag_cr->Input('in_ag_ad', 'エージェントIPアドレス',
         'IPアドレスのほか、ホスト名、ドメイン名の入力ができます。',
         'server', true);
@@ -54,8 +56,7 @@ $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
 
 
 $fm_ag_ed = new form_generator('fm_ag_ed');//エージェント編集
-$fm_ag_ed->SubTitle('[エージェントIPアドレス]', '', '');
-$fm_ag_ed->SubTitle('[コミュニティ名]', '', '');
+$fm_ag_ed->SubTitle('[エージェントIPアドレス]', '以下から変更したい項目を選択してください。', '',false,'[コミュニティ名]');
 //ＩＰアドレスボタン
 $fm_ag_ed->Button('bt_ed_ip', 'IPアドレス', 'button', 'arrow-right');//アイコン未
 //コミュニティ名ボタン
@@ -88,11 +89,11 @@ $fm_ag_cm->Button('bt_cm_bk', '戻る', 'button', 'long-arrow-alt-left');
 //①入力チェック
 
 
-$fm_ag_mb = new form_generator('fm_ag_mb');//コミュニティ名入力画面
+$fm_ag_mb = new form_generator('fm_ag_mb');//MIB設定画面
 $fm_ag_mb->SubTitle('MIBの設定', '', '');
-$fm_ag_mb->Check(0, 'rd_07', 'agt', '7', 'MIBサブツリー1', true);
-$fm_ag_mb->Check(0, 'rd_08', 'agt', '8', 'MIBサブツリー2', false);
-$fm_ag_mb->Check(0, 'rd_09', 'agt', '9', 'MIBサブツリー3', false);
+$fm_ag_mb->Check(0, 'rd_07', 'in_ag_mb', '7', 'MIBサブツリー1', true);
+$fm_ag_mb->Check(0, 'rd_08', 'in_ag_mb', '8', 'MIBサブツリー2', false);
+$fm_ag_mb->Check(0, 'rd_09', 'in_ag_mb', '9', 'MIBサブツリー3', false);
 $fm_ag_mb->Button('bt_mb_nx', '次へ', 'button', 'arrow-right');
 $fm_ag_mb->Button('bt_mb_bk', '戻る', 'button', 'long-arrow-alt-left');
 
