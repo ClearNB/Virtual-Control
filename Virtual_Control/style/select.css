@@ -1,21 +1,24 @@
-@font-face{font-family:"Font Awesome 5 Brands";font-style:normal;font-weight:400;font-display:block;src:url(../font-awesome/webfonts/fa-brands-400.eot);src:url(../font-awesome/webfonts/fa-brands-400.eot?#iefix) format("embedded-opentype"),url(../font-awesome/webfonts/fa-brands-400.woff2) format("woff2"),url(../font-awesome/webfonts/fa-brands-400.woff) format("woff"),url(../font-awesome/webfonts/fa-brands-400.ttf) format("truetype"),url(../font-awesome/webfonts/fa-brands-400.svg#fontawesome) format("svg")}.fab{font-family:"Font Awesome 5 Brands"}
-@font-face{font-family:"Font Awesome 5 Free";font-style:normal;font-weight:400;font-display:block;src:url(../font-awesome/webfonts/fa-regular-400.eot);src:url(../font-awesome/webfonts/fa-regular-400.eot?#iefix) format("embedded-opentype"),url(../font-awesome/webfonts/fa-regular-400.woff2) format("woff2"),url(../font-awesome/webfonts/fa-regular-400.woff) format("woff"),url(../font-awesome/webfonts/fa-regular-400.ttf) format("truetype"),url(../font-awesome/webfonts/fa-regular-400.svg#fontawesome) format("svg")}.fab,.far{font-weight:400}
-@font-face{font-family:"Font Awesome 5 Free";font-style:normal;font-weight:900;font-display:block;src:url(../font-awesome/webfonts/fa-solid-900.eot);src:url(../font-awesome/webfonts/fa-solid-900.eot?#iefix) format("embedded-opentype"),url(../font-awesome/webfonts/fa-solid-900.woff2) format("woff2"),url(../font-awesome/webfonts/fa-solid-900.woff) format("woff"),url(../font-awesome/webfonts/fa-solid-900.ttf) format("truetype"),url(../font-awesome/webfonts/fa-solid-900.svg#fontawesome) format("svg")}
+@font-face{font-family:"Font Awesome 5 Free Regular";font-style:normal;font-weight:400;font-display:block;src:url('../font-awesome/otfs/Font Awesome 5 Free-Regular-400.otf') format('opentype');}
+@font-face{font-family:"Font Awesome 5 Free Solid";font-style:normal;font-weight:900;font-display:block;src:url('../font-awesome/otfs/Font Awesome 5 Free-Solid-900.otf') format('opentype');}
 
 .sel {
-    font-size: 1rem;
+    font-size: 0.8rem;
     display: inline-block;
     margin: 2em 0;
     width: 100%;
-    background-color: transparent;
+    background-color: #000;
+    border-radius: 0.7em;
     position: relative;
     cursor: pointer;
+    transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease;
 }
 
 .sel::before {
     position: absolute;
-    font-family: 'Font Awesome 5 Free';
-    content: '\f358';
+    font-family: 'Font Awesome 5 Free Solid';
+    content: '\f078';
     font-size: 2em;
     color: #fff;
     right: 20px;
@@ -33,7 +36,7 @@
 .sel__placeholder {
     display: block;
     font-size: 1.5em;
-    color: #000;
+    color: #fff;
     padding: 0.2em 0.5em;
     text-align: left;
     pointer-events: none;
@@ -72,6 +75,7 @@
     width: calc(100% + 8px);
     box-sizing: border-box;
     margin-top: 3px;
+    box-shadow: black 0px 0px 4px;
 }
 
 .sel.active .sel__box {
@@ -89,8 +93,8 @@
 }
 
 .sel__box__options::after {
-    font-family: 'Font Awesome 5 Free';
-    content: '\f058';
+    font-family: 'Font Awesome 5 Free Solid';
+    content: '\f35b';
     font-size: 1em;
     color: #fff;
     margin-left: 5px;
@@ -102,14 +106,11 @@
 }
 
 .sel__box__options:hover {
-    background-color: #000;
+    background-color: #333;
     color: #fff;
 }
 
 /* ----- Select Box Black Panther ----- */
-.sel {
-    border-bottom: 4px solid rgba(0, 0, 0, 0.3);
-}
 
 .sel--black-panther {
     z-index: 9999;

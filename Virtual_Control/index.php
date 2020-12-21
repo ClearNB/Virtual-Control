@@ -1,14 +1,10 @@
-<!--
 <?php
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
-if(session_chk()) {
-    http_response_code(301);
-    header('location: dash.php');
-    exit();
-}
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
+
+session_action_guest();
 
 $loader = new loader();
 $fm_dt01 = new form_generator('fm_dt01', '', 2);
@@ -30,7 +26,6 @@ form_generator::resetData();
 $fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04->Export());
 
 ?>
--->
 
 <html>
     <head>
@@ -40,7 +35,7 @@ $fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $
 
     <body class="text-monospace">
         <!-- Navbar -->
-        <?php echo $loader->navigation(0) ?>
+        <?php echo $loader->navigation(2) ?>
 	<?php echo $loader->load_Logo() ?>
 	
         <div id="data_output"></div>

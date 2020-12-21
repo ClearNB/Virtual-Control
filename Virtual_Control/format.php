@@ -1,10 +1,10 @@
 <?php
 
 //FormGenerator の使い方
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
 
 //ローダオブジェクトの作成
 $loader = new loader();

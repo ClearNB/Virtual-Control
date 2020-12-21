@@ -50,14 +50,14 @@ class loader {
             <ul class="navbar-nav w-100">';
 	$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../"><i class="fas fa-fw fa-2x fa-home nav-icon"></i><span class="navbar-text">HOME</span></a> </li>';
 	switch ($permission) {
-	    case 1: //VCServer
+	    case 0: //VCServer
 		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="fas fa-fw fa-2x fa-chart-bar nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="fas fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-fw fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../option"><i class="fas fa-fw fa-2x fa-wrench nav-icon"></i><span class="navbar-text">OPTION</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout.php"><i class="fas fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
 		break;
-	    case 2: //VCHost
+	    case 1: //VCHost
 		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="fas fa-fw fa-2x fa-chart-bar nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="fas fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>

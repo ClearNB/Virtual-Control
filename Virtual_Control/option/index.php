@@ -1,20 +1,11 @@
 <?php
-include_once ('../scripts/general/sqldata.php');
-include_once ('../scripts/session/session_chk.php');
-include_once ('../scripts/general/loader.php');
-include_once ('../scripts/general/former.php');
-if (!session_chk()) {
-    http_response_code(301);
-    header('Location: ../403.php');
-    exit();
-}
-$id = $_SESSION['gsc_userid'];
-$getdata = select(true, "GSC_USERS", "USERNAME, PERMISSION", "WHERE USERID = '$id'");
-if (!$getdata && $getdata['PERMISSION'] != 0) {
-    http_response_code(301);
-    header('Location: ../403.php');
-    exit();
-}
+include_once '../scripts/general/loader.php';
+include_once '../scripts/session/session_chk.php';
+include_once '../scripts/general/sqldata.php';
+include_once '../scripts/general/former.php';
+
+session_action_vcserver();
+$getdata = session_get_userdata();
 
 $loader = new loader();
 
@@ -26,12 +17,6 @@ $fm_pg->addListGroup('account', 'ACCOUNT', 'user', 'アカウント管理ペー�
 $fm_pg->addListGroup('mib', 'MIB', 'database', 'MIB管理ページ', 'MIB一覧／作成／編集／削除');
 $fm_pg->addListGroup('agent', 'AGENT', 'server', 'エージェント管理ページ', 'エージェント一覧／作成／編集／削除');
 $fm_pg->closeListGroup();
-
-//Check(type[1..Radio, Other..Check], $id)
-$fm_pg->Check(1, 'rd_01', 'agt', 1, 'AGENT1', true);
-$fm_pg->Check(1, 'rd_02', 'agt', 2, 'AGENT2', false);
-$fm_pg->Check(1, 'rd_03', 'agt', 3, 'AGENT3', false);
-
 ?>
 
 <html>

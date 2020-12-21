@@ -92,6 +92,7 @@ details.main[open] .details-content {
     margin-bottom: 10px;
     margin-right: 2.5em;
     margin-left: 10px;
+    overflow-wrap: break-word;
 }
 
 .summary-sub:hover {
@@ -147,4 +148,5 @@ details.sub[open] .details-content-sub {
 .details-content-sub {
     border-left: #333 dotted 5px;
     margin-left: 10px;
+    overflow-wrap: break-word;
 }

@@ -104,6 +104,7 @@ class SNMPTable extends Table {
 	    $start_oid = $this->table_data['OID'][$start_id - 1];
 	    $index = $i + 1;
 	    if (isset($this->table_data['INDEX'][$start_oid])) {
+		//echo $start_oid . '<br />';
 		$index = $this->table_data['INDEX'][$start_oid][$i];
 	    }
 	    $result .= '<details class="sub"><summary class="summary-sub">【' . $index . '】</summary><div class="details-content-sub">';
