@@ -65,7 +65,7 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$u
 	    });
 
 	    $(document).on('click', '#bt_st_lk', function () {
-		animation_to_sites('data_output', 400, './index.php');
+			animation_to_sites('data_output', 400, './index.php');
 	    });
 	</script>
     </body>

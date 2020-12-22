@@ -8,10 +8,10 @@
 function getIPType($data): string {
     $res = '該当なし';
     switch($data) {
-	case 4:
+	case 1:
 	    $res = 'IPv4';
 	    break;
-	case 16:
+	case 2:
 	    $res = 'IPv6';
 	    break;
     }
