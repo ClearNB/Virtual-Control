@@ -9,9 +9,14 @@ $getdata = session_get_userdata();
 
 $loader = new loader();
 
+
+//トップページ
 $fm_pg = new form_generator('fm_pg');
 $fm_pg->Button('bt_ag_bk', '設定一覧へ', 'button', 'list');//OPTIONの最初へ
 $fm_pg->SubTitle('OPTION - AGENT', 'エージェントを選択してください。', 'book');
+
+//$fm_pg->Caption('[data]');
+
 $fm_pg->Check(1, 'rd_01', 'agt', '1', 'AGENT1', true);
 $fm_pg->Check(1, 'rd_02', 'agt', '2', 'AGENT2',false);
 $fm_pg->Check(1, 'rd_03', 'agt', '3', 'AGENT3',false);
@@ -19,16 +24,14 @@ $fm_pg->Button('bt_ag_cr', '作成', 'button','plus-square');
 $fm_pg->Button('bt_ag_ed', '編集', 'button','edit');
 $fm_pg->Button('bt_ag_dl', '削除', 'button','trash-alt');
 
-$fm_fl = new form_generator('fm_fl');
-$fm_fl->fm_fl('fm_fl','','失敗しました','[原因]');
+$fm_pg_fl = new form_generator('fm_pg_fl');
+$fm_pg_fl->SubTitle('エージェント・MIBの取得に失敗しました。', 'データベースに接続できません。', 'book');
 
 
 
 
-
-
+//エージェント作成
 $fm_ag_cr = new form_generator('fm_ag_cr'); //エージェントIPアドレス
-//追加ページ
 $fm_ag_cr->SubTitle('エージェント作成', '以下の情報を入力してください', '', false, '1:エージェント情報入力');
 $fm_ag_cr->Input('in_ag_ad', 'エージェントIPアドレス',
         'IPアドレスのほか、ホスト名、ドメイン名の入力ができます。',
@@ -41,7 +44,8 @@ $fm_ag_cr->Input('in_ag_co', 'コミュニティ名',
 $fm_ag_cr->Button('bt_cr_nx', '次へ', 'button', 'arrow-right');
 $fm_ag_cr->Button('bt_cr_bk', 'キャンセル', 'button', 'long-arrow-alt-left');
 
-$fm_ag_sl = new form_generator('fm_ag_sl'); //MIBの設定1
+
+$fm_ag_sl = new form_generator('fm_ag_sl'); //MIBの設定
 $fm_ag_sl->SubTitle('MIBの設定', '', '');
 $fm_ag_sl->Check(0, 'rd_04', 'agt', '4', 'MIBサブツリー1', true);
 $fm_ag_sl->Check(0, 'rd_05', 'agt', '5', 'MIBサブツリー2', false);
@@ -53,9 +57,19 @@ $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
 
 //①入力チェック
 
+//パスワード入力画面（fm_ag_ps）
+
+//②認証
+
+//確認画面　or　認証失敗 (fm_ag_cf or fm_af)
+
+//③入力チェック・更新
+
+//更新成功画面　or　更新失敗画面
 
 
-$fm_ag_ed = new form_generator('fm_ag_ed');//エージェント編集
+//エージェント編集
+$fm_ag_ed = new form_generator('fm_ag_ed');
 $fm_ag_ed->SubTitle('[エージェントIPアドレス]', '以下から変更したい項目を選択してください。', '',false,'[コミュニティ名]');
 //ＩＰアドレスボタン
 $fm_ag_ed->Button('bt_ed_ip', 'IPアドレス', 'button', 'arrow-right');//アイコン未
@@ -100,23 +114,65 @@ $fm_ag_mb->Button('bt_mb_bk', '戻る', 'button', 'long-arrow-alt-left');
 
 //①入力チェック
 
+//①入力チェック後
+//パスワード入力画面(fm_ag_ps)
 
+//②認証
+
+//確認画面　or　認証失敗 (fm_ag_cf or fm_af)
+
+//③入力チェック・更新
+
+//更新成功画面　or　更新失敗画面
+
+
+
+//エージェント削除
 $fm_ag_dl = new form_generator('fm_ag_dl');//削除
 $fm_ag_dl->SubTitle('エージェント削除', '[エージェントIPアドレス]<br>のエージェント情報を削除します。', '');
 $fm_ag_dl->Button('bt_dl_nx', '次へ', 'button', 'arrow-right');
 $fm_ag_dl->Button('bt_dl_bk', 'キャンセル', 'button', 'long-arrow-alt-left');
 
-$fm_ag_ps = new form_generator('fm_ag_ps');//パスワード入力画面（共通で使う）
+
+//パスワード入力画面(fm_ag_ps)
+
+//①認証
+
+//確認画面　or　認証失敗 (fm_ag_cf or fm_af)
+
+//②入力チェック・更新
+
+//更新成功画面　or　更新失敗画面
+
+
+
+//共通画面
+$fm_ag_ps = new form_generator('fm_ag_ps');//パスワード入力画面（共通）
 $fm_ag_ps->SubTitle('パスワード入力', '設定の完了には<br>パスワードが必要です。', '');
 $fm_ag_ps->Input('in_ag_ps','パスワード','パスワードを入力してください','user-circle',true);//アイコン未
 $fm_ag_ps->Button('bt_ps_nx', '認証', 'button', 'arrow-right');
 $fm_ag_ps->Button('bt_ps_bk', 'キャンセル', 'button', 'long-arrow-alt-left');
 
 
-//①認証
+$fm_ag_cf = new form_generator('fm_ag_cf');//確認画面（共通）
+$fm_ag_cf->SubTitle('エージェントを[処理内容]します', '以下の内容を確認してください。', '');
+$fm_ag_cf->Caption('[登録・変更・削除]');
+$fm_ag_cf->addList('エージェントホスト：●●');
+$fm_ag_cf->addList('コミュニティ名：●●');
+$fm_ag_cf->addList('監視対象MIB：●●,●●...');
+$fm_ag_cf->Button('bt_cf_nx', '変更', 'button', 'arrow-right');
+$fm_ag_cf->Button('bt_cf_bk', 'キャンセル', 'button', 'long-arrow-alt-left');
 
+$fm_af = new form_generator('fm_af');//認証失敗画面（共通）
+$fm_af->SubTitle('認証に失敗しました。', '[解決方法]', '');
 
+$fm_ud_sc = new form_generator('fm_ud_sc');//更新成功（共通）
+$fm_ud_sc->SubTitle('更新に成功しました！', '', '');
+$fm_ud_sc->Button('bt_sc', 'エージェント設定画面へ', 'button', 'arrow-right');
 
+$fm_fl=fm_fl('fm_fl','','更新に失敗しました','');//更新失敗(共通)
+$fm_fl->SubTitle('', '[原因]', '');
+$fm_fl->Button('bt_fl', 'エージェント設定画面へ', 'button', 'arrow-right');
 ?>
 
 <html>
@@ -137,7 +193,19 @@ $fm_ag_ps->Button('bt_ps_bk', 'キャンセル', 'button', 'long-arrow-alt-left'
         <script type="text/javascript">
             $(document).ready(function () {
                 animation('data_output', 0, fm_pg);
+             /*  ajax_dynamic_post_toget('../scripts/agent/agent_get.php').then(function(data){
+                   switch(data['code']){
+                       case 0:
+                           var fm_w = fm_pg.replace('[data]', data['data']);
+                           animation('data_output', 0, fm_w);
+                           break;
+                       case 1:
+                           animation('data_output', 0, fm_pg_fl);
+                           break;
+                   }
+               });*/
             });
+            
             $(document).on('click', '#bt_ag_bk, #bt_ag_cr, #bt_ag_ed, #bt_ag_dl', function () { //OPTION-AGENT
                 switch($(this).attr('id')){
                     case "bt_ag_bk":
@@ -240,17 +308,33 @@ $fm_ag_ps->Button('bt_ps_bk', 'キャンセル', 'button', 'long-arrow-alt-left'
                         
             $(document).on('click', '#bt_ps_bk, #bt_ps_nx', function () { //パスワード入力
                 switch($(this).attr('id')){
-                    case "bt_ps_bk":
-                        animation('data_output', 400, fm_pg);   
-                        break;
                     case "bt_ps_nx":
+                        animation('data_output', 400, fm_pg);//遷移先未設定   
+                        break;
+                    case "bt_ps_bk":
                         animation('data_output', 400, fm_pg);   
                         break;
                 }
             });
             
+            $(document).on('click', '#bt_cf_bk, #bt_cf_nx', function () { //確認画面
+                switch($(this).attr('id')){
+                    case "bt_cf_nx":
+                        animation('data_output', 400, fm_pg);//遷移先未設定   
+                        break;
+                    case "bt_cf_bk":
+                        animation('data_output', 400, fm_pg);   
+                        break;
+                }
+            });
             
+            $(document).on('click', '#bt_sc', function() {//更新成功画面
+		animation('data_output', 400, fm_pg);
+	    });
             
+            $(document).on('click', '#bt_fl', function() {//更新失敗画面
+		animation('data_output', 400, fm_pg);
+	    });
             
             
             
