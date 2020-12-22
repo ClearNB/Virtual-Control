@@ -73,7 +73,7 @@ class SNMPData {
 	if ($res) {
 	    $data = str_replace('"', '', str_replace('iso', '1', preg_replace('/^.*[:]\s/', '', $data)));
 	    //数値の場合は、数値として3桁ごとのコンマをつける
-	    if(preg_match('/^[0-9]{1,}/', $data) && !strpos($data, '.')) {
+	    if (preg_match('/^[0-9]{1,}/', $data) && !strpos($data, '.')) {
 		$data = number_format(intval($data));
 	    }
 	    array_push(self::$set[$res]->value, $data);
@@ -115,24 +115,19 @@ class SNMPData {
 		    $add_i = 1;
 		    $isport = true;
 		}
-		if ($i - 1 >= 0 && $arr[$i - 1][1] == 'iptype') {
-		    switch ($sub_cat[$sub_i - 1]) {
-			case 4:
-			    $data = getIPv4(array_slice($sub_cat, $sub_i, 4 + $add_i), $isport);
-			    $dem = 4 + $add_i;
-			    break;
-			case 16:
-			    $data = getIPv6(array_slice($sub_cat, $sub_i, 16 + $add_i), $isport);
-			    $dem = 16 + $add_i;
-			    break;
-		    }
-		} else {
-		    $data = getIPv4(array_slice($sub_cat, $sub_i, 4 + $add_i), $isport);
-		    $dem = 4 + $add_i;
+		switch ($sub_cat[$sub_i]) {
+		    case 4:
+			$data = getIPv4(array_slice($sub_cat, $sub_i + 1, 4 + $add_i), $isport);
+			$dem = 5 + $add_i;
+			break;
+		    case 16:
+			$data = getIPv6(array_slice($sub_cat, $sub_i + 1, 16 + $add_i), $isport);
+			$dem = 17 + $add_i;
+			break;
 		}
 	    } else if ($var_v == 'iptype') {
-		$data = getIPType($sub_cat[$sub_i + 1]);
-		$dem = 2;
+		$data = getIPType($sub_cat[$sub_i]);
+		$dem = 1;
 	    } else if ($var_v == 'rtpolicy') {
 		$dem = intval($val_host['1.3.6.1.2.1.4.24.7.1.3']);
 		$data = implode(' ', array_slice($sub_cat, $sub_i, $dem));

@@ -2,38 +2,38 @@
 
 include_once ('../general/sqldata.php');
 
-class ACCOUNTData {
+class AGENTData {
 
     private static $set = [];
-    private $userid;
-    private $username;
-    private $permission;
-    private $loginuptime;
+    private $agentid;
+    private $agenthost;
+    private $community;
+    private $agentuptime;
 
-    public function __construct($userid, $username, $permission, $loginuptime) {
-	$this->userid = $userid;
-	$this->username = $username;
-	$this->permission = $this->get_permission_text($permission);
-	$this->loginuptime = $this->get_time($loginuptime);
+    public function __construct($agentid, $agenthost, $community, $agentuptime) {
+	$this->agentid = $agentid;
+	$this->agenthost = $agenthost;
+	$this->community = $this->get_permission_text($community);
+	$this->agentuptime = $this->get_time($agentuptime);
 	array_push(self::$set, $this);
     }
 
-    public static function get_all_users() {
-	$q01 = select(false, 'GSC_USERS', 'USERID, USERNAME, PERMISSION, LOGINUPTIME');
+    public static function get_agent_info() {
+	$q01 = select(false, 'GSC_AGENT', 'AGENTID, AGENTHOST, COMMUNITY, AGENTUPTIME');
 	if ($q01) {
 	    $result = [
 		"COLUMN" => [
-		    ["ユーザID", "ユーザ名", "権限", "最終ログイン日時"],
-		    ["USERID", "USERNAME", "PERMISSION", "LOGINUPTIME"]
+		    ["エージェントID", "ホストアドレス", "コミュニティ名", "最終更新日時"],
+		    ["AGENTID", "AGENTHOST", "COMMUNITY", "AGENTUPTIME"]
 		],
 		"VALUE" => []
 	    ];
 	    while ($var = $q01->fetch_assoc()) {
-		new ACCOUNTData($var['USERID'], $var['USERNAME'], $var['PERMISSION'], $var['LOGINUPTIME']);
+		new AGENTData($var['AGENTID'], $var['AGENTHOST'], $var['COMMUNITY'], $var['AGENTUPTIME']);
 	    }
 	    foreach (self::$set as $var) {
 		if(!empty($var)) {
-		    array_push($result['VALUE'], $var->get_user_data());
+		    array_push($result['VALUE'], $var->get_agent_data());
 		}
 	    }
 	    return $result;
@@ -42,31 +42,18 @@ class ACCOUNTData {
 	}
     }
 
-    private function get_user_data(): array {
-	return ['USERID' => $this->userid,
-	    'USERNAME' => $this->username,
-	    'PERMISSION' => $this->permission,
-	    'LOGINUPTIME' => $this->loginuptime];
-    }
-
-    private function get_permission_text($permission): string {
-	$text = '';
-	switch ($permission) {
-	    case 0:
-		$text = 'VCServer';
-		break;
-	    case 1:
-		$text = 'VCHost';
-		break;
-	}
-	return $text;
+    private function get_agent_data(): array {
+	return ['AGENTID' => $this->agentid,
+	    'AGENTHOST' => $this->agenthost,
+	    'COMMUNITY' => $this->community,
+	    'AGENTUPTIME' => $this->agentuptime];
     }
 
     private function get_time($date): string {
 	if ($date) {
 	    return $date;
 	} else {
-	    return '<未ログイン>';
+	    return '<新規>';
 	}
     }
 }
