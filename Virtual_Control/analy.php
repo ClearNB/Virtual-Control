@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-
 <?php
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
-if (!session_chk()) {
-    http_response_code(301);
-    header('location: 403.php');
-    exit();
-}
-$loader = new loader();
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
 
+session_action_user();
+
+$loader = new loader();
 
 $fm_an_sl = new form_generator('fm_an_sl', '');
 
@@ -46,7 +41,7 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$u
 <html>
     <head>
 	<?php echo $loader->loadHeader('Virtual Control', 'ANALY') ?>
-	<?php echo form_generator::ExportClass([$fm_an_sl]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">
@@ -70,7 +65,7 @@ $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$u
 	    });
 
 	    $(document).on('click', '#bt_st_lk', function () {
-		animation_to_sites('data_output', 400, './index.php');
+			animation_to_sites('data_output', 400, './index.php');
 	    });
 	</script>
     </body>

@@ -1,20 +1,13 @@
-<!DOCTYPE html>
-<!--
 <?php
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
-include ('./scripts/session/session_chk.php');
-session_start();
-if (!session_chk()) {
-    http_response_code(301);
-    header('location: 403.php');
-    exit();
-}
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
+
+session_action_user();
+$getdata = session_get_userdata();
 
 $loader = new loader();
-$userid = $_SESSION['gsc_userid'];
-$getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$userid'");
 
 //エージェント選択ページ
 $fm_ag = new form_generator('fm_ag');
@@ -41,19 +34,17 @@ $fm_wn->openList();
 $fm_wn->addList('');
 $fm_wn->closeList();
 
-
 //警告詳細
 $fm_wd_se = new form_generator('fm_wd_se');
 $fm_wd_se->Button('bt_wd_se_wa', '警告ウィザードに戻る', 'button');
 $fm_wd_se->Button('bt_wd_se_bt', '警告詳細選択ボタン', 'button');
 $fm_wd_se->Button('bt_wd_se_aa', '警告詳細選択ボタン', 'button');
 ?>
---> 
 
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'WARN') ?> <!-- ページタイトル -->
-        <?php echo form_generator::ExportClass([$fm_ag, $fm_wn, $fm_wd_se]) ?>
+        <?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">

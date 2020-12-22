@@ -1,8 +1,10 @@
 <?php
 
 //FormGenerator の使い方
-include_once './scripts/former.php';
-include_once './scripts/loader.php';
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
 
 //ローダオブジェクトの作成
 $loader = new loader();
@@ -65,7 +67,7 @@ $fm_st->Button('bt_st_bk', '戻る', 'button', 'angle-double-left');
 	<!-- loadHeader('[SITE_TITLE]', '[PAGE_TITLE]', '[ISOPTION: true or false]') -->
 	<?php echo $loader->loadHeader('Virtual Control', 'FORMAT') ?>
 	<!-- JavaScript部分を自動生成します - ::ExportClass([[Object1], [Object2], ...]) -->
-	<?php echo form_generator::ExportClass([$fm_pg, $fm_st]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
     <body>
 	<!-- ナビゲーションを表示させる : navigation([PERMISSION] : OTHER(GUEST) , 1(VCSERVER, VCHOST)) -->

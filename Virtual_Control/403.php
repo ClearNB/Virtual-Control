@@ -1,18 +1,17 @@
-<!DOCTYPE html>
 <?php
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/general/former.php');
-
-session_start();
-if(isset($_SESSION['gsc_userid'])) {
-    $getdata = select(true, 'GSC_USERS', 'USERNAME, PERMISSION', "WHERE USERID = '$id'");
-} else {
-    $getdata = ["PERMISSION"=>0];
-}
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
 
 $loader = new loader();
+
+$per = 2;
+
+if(session_chk() == 0) {
+    $getdata = session_get_userdata();
+    $per = $getdata['PERMISSION'];
+}
 
 $fm = new form_generator('fm');
 $fm->SubTitle('アクセス禁止', 'あなたはこのページを表示・操作できません。', 'fas fa-times-circle');
@@ -22,12 +21,12 @@ $fm->Button('bt_fm_bk', 'ホームへ戻る', 'button', 'fas fa-home');
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', '403 (Forbidden)', true) ?>
-	<?php echo form_generator::ExportClass([$fm]) ?>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">
         <!-- Navbar & Logo -->
-        <?php echo $loader->navigation($getdata['PERMISSION']) ?>
+        <?php echo $loader->navigation($per) ?>
 
         <?php echo $loader->load_Logo() ?>
         

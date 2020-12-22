@@ -1,3 +1,4 @@
+//データ送信→処理
 function ajax_dynamic_post(url, data) {
     return $.ajax({
         type: 'POST',
@@ -7,9 +8,11 @@ function ajax_dynamic_post(url, data) {
         dataType: 'json'
     });
 }
-function ajax_dynamic_get(url) {
+
+//データを要求
+function ajax_dynamic_post_toget(url) {
     return $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: url,
         crossDomain: false,
         dataType: 'json'

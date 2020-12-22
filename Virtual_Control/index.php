@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<!--
 <?php
-include_once ('./scripts/general/sqldata.php');
-include_once ('./scripts/session/session_chk.php');
-include_once ('./scripts/general/loader.php');
-include_once ('./scripts/general/former.php');
-if(session_chk()) {
-    http_response_code(301);
-    header('location: dash.php');
-    exit();
-}
+include_once './scripts/general/loader.php';
+include_once './scripts/session/session_chk.php';
+include_once './scripts/general/sqldata.php';
+include_once './scripts/general/former.php';
+
+session_action_guest();
 
 $loader = new loader();
 $fm_dt01 = new form_generator('fm_dt01', '', 2);
@@ -27,21 +22,20 @@ $fm_dt04 = new form_generator('fm_dt04');
 $fm_dt04->CardDark('WARNING!', 'fas fa-user', 'ログインが必要です', '本サーバはユーザ登録制です。<br>管理者権限により作成されたアカウントでログインしてください。');
 $fm_dt04->Button('bt_04_lg', 'ログインする', 'button', 'sign-in-alt');
 
-$fm_dt = $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04->Export();
+form_generator::resetData();
+$fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04->Export());
+
 ?>
--->
 
 <html>
     <head>
         <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
-	<script type="text/javascript">
-	    var fm_dt = '<?php echo $fm_dt ?>';
-	</script>
+	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">
         <!-- Navbar -->
-        <?php echo $loader->navigation(0) ?>
+        <?php echo $loader->navigation(2) ?>
 	<?php echo $loader->load_Logo() ?>
 	
         <div id="data_output"></div>
@@ -69,5 +63,4 @@ $fm_dt = $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04
 	    });
 	</script>
     </body>
-
 </html>

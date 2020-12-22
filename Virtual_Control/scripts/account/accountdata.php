@@ -8,35 +8,47 @@ class ACCOUNTData {
     private $userid;
     private $username;
     private $permission;
+    private $loginstate;
     private $loginuptime;
 
-    public function __construct($userid, $username, $permission, $loginuptime) {
+    public function __construct($userid, $username, $permission, $loginstate, $loginuptime) {
 	$this->userid = $userid;
 	$this->username = $username;
 	$this->permission = $this->get_permission_text($permission);
-	$this->loginuptime = $loginuptime;
+	$this->loginstate = $this->get_login_state($loginstate);
+	$this->loginuptime = $this->get_time($loginuptime);
 	array_push(self::$set, $this);
     }
 
-    public static function get_all_users(): array {
-	//SQL Data
-	$q01 = select('false', 'GSC_USERS', 'USERID, USERNAME, LOGINUPTIME');
+    public static function get_all_users() {
+	$q01 = select(false, 'GSC_USERS', 'USERID, USERNAME, PERMISSION, LOGINSTATE, LOGINUPTIME');
 	if ($q01) {
-	    
-	} else {
-	    $result = [];
-	    foreach (self::$set as $us) {
-		$data = $us->get_user_data();
-		array_push($result, $data);
+	    $result = [
+		"COLUMN" => [
+		    ["ユーザID", "ユーザ名", "権限", "ログイン状態", "最終ログイン日時"],
+		    ["USERID", "USERNAME", "PERMISSION", "LOGINSTATE", "LOGINUPTIME"]
+		],
+		"VALUE" => []
+	    ];
+	    while ($var = $q01->fetch_assoc()) {
+		new ACCOUNTData($var['USERID'], $var['USERNAME'], $var['PERMISSION'], $var['LOGINSTATE'], $var['LOGINUPTIME']);
+	    }
+	    foreach (self::$set as $var) {
+		if(!empty($var)) {
+		    array_push($result['VALUE'], $var->get_user_data());
+		}
 	    }
 	    return $result;
+	} else {
+	    return false;
 	}
     }
-    
+
     private function get_user_data(): array {
 	return ['USERID' => $this->userid,
 	    'USERNAME' => $this->username,
 	    'PERMISSION' => $this->permission,
+	    'LOGINSTATE' => $this->loginstate,
 	    'LOGINUPTIME' => $this->loginuptime];
     }
 
@@ -49,6 +61,28 @@ class ACCOUNTData {
 	    case 1:
 		$text = 'VCHost';
 		break;
+	}
+	return $text;
+    }
+    
+    private function get_login_state($state): string {
+	$text = '';
+	switch ($state) {
+	    case 0:
+		$text = '未ログイン';
+		break;
+	    case 1:
+		$text = 'ログイン済み';
+		break;
+	}
+	return $text;
+    }
+
+    private function get_time($date): string {
+	if ($date) {
+	    return $date;
+	} else {
+	    return '<未ログイン>';
 	}
     }
 

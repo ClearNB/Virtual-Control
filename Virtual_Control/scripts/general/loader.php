@@ -1,23 +1,6 @@
 <?php
 
 class loader {
-
-    function button($id, $caption, $disabled, $icon = '', $color = 'dark') {
-	$d_text = '';
-	if ($disabled) {
-	    $d_text = 'disabled';
-	}
-	return "<button type=\"button\" class=\"btn btn-" . $color . " btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $d_text><i class=\"$icon\"></i>$caption</button>";
-    }
-
-    function button_s($id, $caption, $disabled, $icon = '', $color = 'dark') {
-	$d_text = '';
-	if ($disabled) {
-	    $d_text = 'disabled';
-	}
-	return "<button type=\"button\" class=\"btn btn-" . $color . "-smart btn-block mb-2 btn-lg shadow-lg\" id=\"$id\" $d_text><i class=\"$icon\"></i>$caption</button>";
-    }
-
     function Title($title, $icon) {
 	return "<div class=\"py-2 bg-dark\"><div class=\"container\"><div class=\"col-md-12 py-2\"><h2><i class=\"fas fa-$icon px-2\"></i>$title</h2></div></div></div>";
     }
@@ -29,7 +12,7 @@ class loader {
 	}
 	return '<meta charset="utf-8">
         <meta name="application-name" content="' . $site_title . '">
-        <link rel="icon" href="' . $hide_text . './images/favicon.ico">
+        <link rel="icon" type="image/svg+xml" href="' . $hide_text . './images/favicon.svg">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>' . $title . ' - ' . $site_title . '</title>
         <meta name="description" content="' . $site_title . '">
@@ -67,14 +50,14 @@ class loader {
             <ul class="navbar-nav w-100">';
 	$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../"><i class="fas fa-fw fa-2x fa-home nav-icon"></i><span class="navbar-text">HOME</span></a> </li>';
 	switch ($permission) {
-	    case 1: //VCServer
+	    case 0: //VCServer
 		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="fas fa-fw fa-2x fa-chart-bar nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="fas fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-fw fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../option"><i class="fas fa-fw fa-2x fa-wrench nav-icon"></i><span class="navbar-text">OPTION</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout.php"><i class="fas fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
 		break;
-	    case 2: //VCHost
+	    case 1: //VCHost
 		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../analy.php"><i class="fas fa-fw fa-2x fa-chart-bar nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn.php"><i class="fas fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-github-square fa-2x nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
