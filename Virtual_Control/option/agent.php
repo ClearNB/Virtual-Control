@@ -14,6 +14,9 @@ $loader = new loader();
 $fm_pg = new form_generator('fm_pg');
 $fm_pg->Button('bt_ag_bk', '設定一覧へ', 'button', 'list');//OPTIONの最初へ
 $fm_pg->SubTitle('OPTION - AGENT', 'エージェントを選択してください。', 'book');
+
+//$fm_pg->Caption('[data]');
+
 $fm_pg->Check(1, 'rd_01', 'agt', '1', 'AGENT1', true);
 $fm_pg->Check(1, 'rd_02', 'agt', '2', 'AGENT2',false);
 $fm_pg->Check(1, 'rd_03', 'agt', '3', 'AGENT3',false);
@@ -21,7 +24,8 @@ $fm_pg->Button('bt_ag_cr', '作成', 'button','plus-square');
 $fm_pg->Button('bt_ag_ed', '編集', 'button','edit');
 $fm_pg->Button('bt_ag_dl', '削除', 'button','trash-alt');
 
-
+$fm_pg_fl = new form_generator('fm_pg_fl');
+$fm_pg_fl->SubTitle('エージェント・MIBの取得に失敗しました。', 'データベースに接続できません。', 'book');
 
 
 
@@ -64,8 +68,8 @@ $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
 //更新成功画面　or　更新失敗画面
 
 
-
-$fm_ag_ed = new form_generator('fm_ag_ed');//エージェント編集
+//エージェント編集
+$fm_ag_ed = new form_generator('fm_ag_ed');
 $fm_ag_ed->SubTitle('[エージェントIPアドレス]', '以下から変更したい項目を選択してください。', '',false,'[コミュニティ名]');
 //ＩＰアドレスボタン
 $fm_ag_ed->Button('bt_ed_ip', 'IPアドレス', 'button', 'arrow-right');//アイコン未
@@ -110,18 +114,35 @@ $fm_ag_mb->Button('bt_mb_bk', '戻る', 'button', 'long-arrow-alt-left');
 
 //①入力チェック
 
+//①入力チェック後
+//パスワード入力画面(fm_ag_ps)
 
+//②認証
+
+//確認画面　or　認証失敗 (fm_ag_cf or fm_af)
+
+//③入力チェック・更新
+
+//更新成功画面　or　更新失敗画面
+
+
+
+//エージェント削除
 $fm_ag_dl = new form_generator('fm_ag_dl');//削除
 $fm_ag_dl->SubTitle('エージェント削除', '[エージェントIPアドレス]<br>のエージェント情報を削除します。', '');
 $fm_ag_dl->Button('bt_dl_nx', '次へ', 'button', 'arrow-right');
 $fm_ag_dl->Button('bt_dl_bk', 'キャンセル', 'button', 'long-arrow-alt-left');
 
-//パスワード入力画面表示
 
+//パスワード入力画面(fm_ag_ps)
 
 //①認証
 
+//確認画面　or　認証失敗 (fm_ag_cf or fm_af)
 
+//②入力チェック・更新
+
+//更新成功画面　or　更新失敗画面
 
 
 
@@ -172,7 +193,19 @@ $fm_fl->Button('bt_fl', 'エージェント設定画面へ', 'button', 'arrow-ri
         <script type="text/javascript">
             $(document).ready(function () {
                 animation('data_output', 0, fm_pg);
+             /*  ajax_dynamic_post_toget('../scripts/agent/agent_get.php').then(function(data){
+                   switch(data['code']){
+                       case 0:
+                           var fm_w = fm_pg.replace('[data]', data['data']);
+                           animation('data_output', 0, fm_w);
+                           break;
+                       case 1:
+                           animation('data_output', 0, fm_pg_fl);
+                           break;
+                   }
+               });*/
             });
+            
             $(document).on('click', '#bt_ag_bk, #bt_ag_cr, #bt_ag_ed, #bt_ag_dl', function () { //OPTION-AGENT
                 switch($(this).attr('id')){
                     case "bt_ag_bk":
