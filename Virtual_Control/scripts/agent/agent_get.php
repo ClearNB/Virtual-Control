@@ -15,8 +15,8 @@
 
 include_once ('../general/sqldata.php');
 include_once ('../general/table.php');
-include_once ('./accountdata.php');
-include_once ('./accounttable.php');
+include_once ('./agentdata.php');
+include_once ('./agentselect.php');
 
 $requestmg = filter_input(INPUT_SERVER, 'HTTP_X_REQUESTED_WITH');
 
@@ -29,11 +29,11 @@ if ($request !== 'xmlhttprequest') {
 
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 if ($method === 'POST') {
-    $data = ACCOUNTData::get_all_users();
+    $data = AGENTData::get_agent_info();
     $res = ["code" => 1];
     if($data) {
-	$table = new AccountTable($data);
-	$res = ["code" => 0, "data" => $table->generate_table()];
+	$select = new AgentSelect($data);
+	$res = ["code" => 0, "data" => $select->getSelect()];
     }
     ob_get_clean();
     echo json_encode($res);
