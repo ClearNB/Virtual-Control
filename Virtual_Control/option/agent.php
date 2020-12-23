@@ -15,11 +15,11 @@ $fm_pg = new form_generator('fm_pg');
 $fm_pg->Button('bt_ag_bk', '設定一覧へ', 'button', 'list');//OPTIONの最初へ
 $fm_pg->SubTitle('OPTION - AGENT', 'エージェントを選択してください。', 'book');
 
-//$fm_pg->Caption('[data]');
+$fm_pg->Caption('[data]');
 
-$fm_pg->Check(1, 'rd_01', 'agt', '1', 'AGENT1', true);
+/*$fm_pg->Check(1, 'rd_01', 'agt', '1', 'AGENT1', true);
 $fm_pg->Check(1, 'rd_02', 'agt', '2', 'AGENT2',false);
-$fm_pg->Check(1, 'rd_03', 'agt', '3', 'AGENT3',false);
+$fm_pg->Check(1, 'rd_03', 'agt', '3', 'AGENT3',false);*/
 $fm_pg->Button('bt_ag_cr', '作成', 'button','plus-square');
 $fm_pg->Button('bt_ag_ed', '編集', 'button','edit');
 $fm_pg->Button('bt_ag_dl', '削除', 'button','trash-alt');
@@ -47,9 +47,9 @@ $fm_ag_cr->Button('bt_cr_bk', 'キャンセル', 'button', 'long-arrow-alt-left'
 
 $fm_ag_sl = new form_generator('fm_ag_sl'); //MIBの設定
 $fm_ag_sl->SubTitle('MIBの設定', '', '');
-$fm_ag_sl->Check(0, 'rd_04', 'agt', '4', 'MIBサブツリー1', true);
-$fm_ag_sl->Check(0, 'rd_05', 'agt', '5', 'MIBサブツリー2', false);
-$fm_ag_sl->Check(0, 'rd_06', 'agt', '6', 'MIBサブツリー3', false);
+$fm_ag_sl->Check(0, 'rd_04', 'in_ag_mb', '4', 'MIBサブツリー1', true);
+$fm_ag_sl->Check(0, 'rd_05', 'in_ag_mb', '5', 'MIBサブツリー2', false);
+$fm_ag_sl->Check(0, 'rd_06', 'in_ag_mb', '6', 'MIBサブツリー3', false);
 
 $fm_ag_sl->Button('bt_sl_nx', '次へ', 'button', 'arrow-right');
 $fm_ag_sl->Button('bt_sl_bk', '戻る', 'button', 'long-arrow-alt-left');
@@ -192,8 +192,8 @@ $fm_fl->Button('bt_fl', 'エージェント設定画面へ', 'button', 'arrow-ri
 
         <script type="text/javascript">
             $(document).ready(function () {
-                animation('data_output', 0, fm_pg);
-             /*  ajax_dynamic_post_toget('../scripts/agent/agent_get.php').then(function(data){
+                //animation('data_output', 0, fm_pg);
+               ajax_dynamic_post_toget('../scripts/agent/agent_get.php').then(function(data){
                    switch(data['code']){
                        case 0:
                            var fm_w = fm_pg.replace('[data]', data['data']);
@@ -203,7 +203,7 @@ $fm_fl->Button('bt_fl', 'エージェント設定画面へ', 'button', 'arrow-ri
                            animation('data_output', 0, fm_pg_fl);
                            break;
                    }
-               });*/
+               });
             });
             
             $(document).on('click', '#bt_ag_bk, #bt_ag_cr, #bt_ag_ed, #bt_ag_dl', function () { //OPTION-AGENT
