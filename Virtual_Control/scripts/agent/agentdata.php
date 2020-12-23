@@ -19,7 +19,7 @@ class AGENTData {
     }
 
     public static function get_agent_info() {
-	$q01 = select(false, 'GSC_AGENT', 'AGENTID, AGENTHOST, COMMUNITY, AGENTUPTIME');
+	$q01 = select(false, 'GSC_AGT', 'AGENTID, AGENTHOST, COMMUNITY, AGENTUPTIME');
 	if ($q01) {
 	    $result = [
 		"COLUMN" => [

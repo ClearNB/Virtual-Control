@@ -28,6 +28,7 @@ class AgentSelect {
 	    $res .= $this->Radio('ag_rd_' . ($i + 1), 'sl_ag', $val['AGENTID'], '【' . $val['COMMUNITY'] . '】' . $val['AGENTHOST'], $sel);
 	    $i += 1;
 	}
+	return $res;
     }
     
     private function Radio($id, $name, $value, $outname, $selected) {
