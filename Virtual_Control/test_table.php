@@ -63,7 +63,7 @@ $fm_fl->Button('bt_ac_bk', 'ホームに戻る', 'button', 'home');
 	    });
 	    
 	    function get_account() {
-		ajax_dynamic_post_toget('./scripts/account/account_get.php').then(function(data) {
+		ajax_dynamic_post_toget('./scripts/agent/agent_get.php').then(function(data) {
 		    switch(data['code']) {
 			case 0:
 			    var fm_w = fm_rs.replace('[data]', data['data']);

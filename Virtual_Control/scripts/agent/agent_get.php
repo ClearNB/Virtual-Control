@@ -14,7 +14,6 @@
  */
 
 include_once ('../general/sqldata.php');
-include_once ('../general/table.php');
 include_once ('./agentdata.php');
 include_once ('./agentselect.php');
 
@@ -35,6 +34,6 @@ if ($method === 'POST') {
 	$select = new AgentSelect($data);
 	$res = ["code" => 0, "data" => $select->getSelect()];
     }
-    ob_get_clean();
+    //ob_get_clean();
     echo json_encode($res);
 }
