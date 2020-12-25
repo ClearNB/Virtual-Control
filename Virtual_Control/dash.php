@@ -12,6 +12,7 @@ $loader = new loader();
 $fm_pg = new form_generator('fm_pg');
 $fm_pg->SubTitle($getdata['USERNAME'] . 'さん', 'アクセス監視をしましょう。<br>行動を選択してください。', 'user', false, $getdata['PERMISSION_TEXT']);
 $fm_pg->openListGroup();
+$fm_pg->addListGroup('refresh', 'データベース初期化', 'sync', '【デバッグ専用】テーブルデータを初期化します。', 'クリックして実行');
 $fm_pg->addListGroup('check', 'SNMPチェック', 'vials', 'SNMPの情報を試しに取得することができます', '詳しくはクリック！');
 $fm_pg->addListGroup('analy', 'アナリティクス', 'chart-pie', 'アクセス状況をリアルタイムで監視できます', '詳しくはクリック！');
 $fm_pg->addListGroup('warn', '警告情報', 'file-excel', 'アクセス状況の警告情報をご覧になれます', '詳しくはクリック！');
@@ -48,8 +49,11 @@ $fm_pg->closeListGroup();
 		animation('data_output', 0, fm_pg);
 	    });
 	    
-	    $(document).on('click', '#check, #analy, #warn, #option', function() {
+	    $(document).on('click', '#refresh, #check, #analy, #warn, #option', function() {
 		switch($(this).attr('id')) {
+		    case "refresh":
+			animation_to_sites("data_output", 400, "./init.php");
+			break;
 		    case "check":
 			animation_to_sites("data_output", 400, "./test.php");
 			break;

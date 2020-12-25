@@ -32,7 +32,7 @@ if ($method === 'POST') {
     $res = ["code" => 1];
     if($data) {
 	$select = new AgentSelect($data);
-	$res = ["code" => 0, "data" => $select->getSelect()];
+	$res = $select->getSelect();
     }
     //ob_get_clean();
     echo json_encode($res);

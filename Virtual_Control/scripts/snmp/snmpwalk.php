@@ -32,12 +32,17 @@ if ($method === 'POST') {
     }
 
     //→ OBJECTID, DESCR, JAPTLANS, ICON
-    $f_f = select(false, "GSC_MIB_NODE", "OBJECTID, DESCR, JAPTLANS, ICON", "WHERE SUBOBJECTID = '$oid' ORDER BY NODEID");
+    $f_f01 = select(true, "GSC_MIB_SUB", "SUBID", "WHERE SUBOBJECTID = '$oid'");
+    $subid = 1;
+    if($f_f01) {
+	$subid = $f_f01['SUBID'];
+    }
+    $f_f = select(false, "GSC_MIB_NODE", "NODEOBJECTID, DESCR, JAPTLANS, ICON", "WHERE SUBID = $subid ORDER BY NODEID");
 
     //OID別に格納（DESCR, JAPLTLANS, ICON, VALUE はOIDの連想配列として扱う）
     if ($f_f) {
 	while ($var = $f_f->fetch_assoc()) {
-	    $d = new SNMPData($var['OBJECTID'], $var['DESCR'], $var['JAPTLANS'], $var['ICON']);
+	    $d = new SNMPData($var['NODEOBJECTID'], $var['DESCR'], $var['JAPTLANS'], $var['ICON']);
 	}
 
 	$code = 0;

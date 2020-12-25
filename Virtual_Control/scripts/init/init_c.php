@@ -9,18 +9,10 @@ class initDatabase {
 	if (!$format_data) {
 	    return 1;
 	}
-	$result = setTableStatus($format_data['tables']);
-	if ($result) {
-	    delete('GSC_USERS');
-	    delete('GSC_MIB_SUB');
-	    delete('GSC_MIB_NODE');
-	    delete('GSC_MIB_GROUP');
-
-	    reset_auto_increment('GSC_MIB_NODE');
-	    reset_auto_increment('GSC_MIB_GROUP');
-
+	$res01 = dropAllTable($format_data['tables']);
+	$res02 = setTableStatus($format_data['tables']);
+	if ($res01 && $res02) {
 	    $user_data = [$this->generateUserData($format_data['USERS_SET'])];
-	    
 	    $e_s = [$user_data, 
 		$format_data['MIB_GROUP_SET'],
 		$format_data['MIB_SUB_SET'],
@@ -40,6 +32,8 @@ class initDatabase {
 		$f = 1;
 	    }
 	    return $f;
+	} else {
+	    return 1;
 	}
     }
 

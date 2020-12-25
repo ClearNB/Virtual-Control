@@ -16,9 +16,12 @@ class AgentSelect {
     public function getSelect() {
 	$value = $this->data['VALUE'];
 	$i = 0;
+	$code = 0;
 	$res = '';
+	$oid_select = $this->data['OID'];
 	if(sizeof($value) == 0) {
 	    $res = '（選択できるエージェントはありません）';
+	    $code = 2;
 	}
 	foreach($value as $val) {
 	    $sel = false;
@@ -28,7 +31,7 @@ class AgentSelect {
 	    $res .= $this->Radio('ag_rd_' . ($i + 1), 'sl_ag', $val['AGENTID'], '【' . $val['COMMUNITY'] . '】' . $val['AGENTHOST'], $sel);
 	    $i += 1;
 	}
-	return $res;
+	return ["code" => $code, "data" => $res];
     }
     
     private function Radio($id, $name, $value, $outname, $selected) {
