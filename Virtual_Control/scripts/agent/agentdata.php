@@ -20,13 +20,18 @@ class AGENTData {
 
     public static function get_agent_info() {
 	$q01 = select(false, 'GSC_AGT', 'AGENTID, AGENTHOST, COMMUNITY, AGENTUPTIME');
-	if ($q01) {
+	$q02 = select(false, 'GSC_AGT_MIB', 'AGENTID, SUBOBJECTID');
+	$q03 = select(false, 'GSC_MIB_SUB a INNER JOIN GSC_MIB_GROUP b ON a.MIBGROUPOBJECTID = b.MIGROUPOBECTID',
+			     'a.MIBGROUPOBJECTID, b.MIBGROUPNAME, a.SUBOBJECTID, a.MIBNAME',
+			     'GROUP BY a.MIBGROUPOBJECTID, b.MIBGROUPNAME, a.SUBOBJECTID, a.MIBNAME');
+	if ($q01 && $q02 && $q03) {
 	    $result = [
 		"COLUMN" => [
 		    ["エージェントID", "ホストアドレス", "コミュニティ名", "最終更新日時"],
 		    ["AGENTID", "AGENTHOST", "COMMUNITY", "AGENTUPTIME"]
 		],
-		"VALUE" => []
+		"VALUE" => [],
+		"OID" => []
 	    ];
 	    while ($var = $q01->fetch_assoc()) {
 		new AGENTData($var['AGENTID'], $var['AGENTHOST'], $var['COMMUNITY'], $var['AGENTUPTIME']);

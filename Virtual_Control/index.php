@@ -21,6 +21,7 @@ $fm_dt03->Card('標準MIBに準拠した監視を', 'server', 'OID識別を日�
 $fm_dt04 = new form_generator('fm_dt04');
 $fm_dt04->CardDark('WARNING!', 'fas fa-user', 'ログインが必要です', '本サーバはユーザ登録制です。<br>管理者権限により作成されたアカウントでログインしてください。');
 $fm_dt04->Button('bt_04_lg', 'ログインする', 'button', 'sign-in-alt');
+$fm_dt04->Button('bt_04_rf', 'データベースを初期化', 'button', 'sync');
 
 form_generator::resetData();
 $fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04->Export());
@@ -51,13 +52,16 @@ $fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $
 		animation('data_output', 0, fm_dt);
 	    });
 	    
-	    $(document).on('click', '#bt_02_gh, #bt_04_lg', function() {
+	    $(document).on('click', '#bt_02_gh, #bt_04_lg, #bt_04_rf', function() {
 		switch($(this).attr('id')) {
 		    case "bt_02_gh":
 			animation_to_sites('data_output', 400, 'https://github.com/ClearNB/Virtual-Control');
 			break;
 		    case "bt_04_lg":
 			animation_to_sites('data_output', 400, './login.php');
+			break;
+		    case "bt_04_rf":
+			animation_to_sites('data_output', 400, './init.php');
 			break;
 		}
 	    });
