@@ -12,12 +12,12 @@ static $mysqli;
  */
 function query($query) {
     $mysqli = get_db();
-    $result = $mysqli -> query($query);
+    $result = $mysqli->query($query);
 
     if (!$result) {
-        print "クエリが失敗しました" . "Errormessage: <br>" . $mysqli -> error . "<br>";
+	print "クエリが失敗しました" . "Errormessage: <br>" . $mysqli->error . "<br>";
 	print "原因クエリ: " . $query . "<br>+------------------------+<br>";
-        $result = false;
+	$result = false;
     }
 
     return $result;
@@ -29,24 +29,24 @@ function query($query) {
  */
 function get_db() {
     try {
-        $data = loadfile("data/database.json");
+	$data = loadfile("data/setting.json");
 
-        $HOST = $data['host'];
-        $USERNAME = $data['user'];
-        $PASSWORD = $data['password'];
-        $DBNAME = $data['database'];
-        $PORT = $data['port'];
+	$HOST = $data['host'];
+	$USERNAME = $data['user'];
+	$PASSWORD = $data['password'];
+	$DBNAME = $data['database'];
+	$PORT = $data['port'];
 
-        /* [追加プログラム]
-         * ・上記4つのデータにいずれかの不備があった場合、初期設定に移行する
-         */
+	/* [追加プログラム]
+	 * ・上記4つのデータにいずれかの不備があった場合、初期設定に移行する
+	 */
 
-        $mysqli = new mysqli($HOST, $USERNAME, $PASSWORD, $DBNAME, $PORT);
-        $mysqli->set_charset("utf8");
-        return $mysqli;
+	$mysqli = new mysqli($HOST, $USERNAME, $PASSWORD, $DBNAME, $PORT);
+	$mysqli->set_charset("utf8");
+	return $mysqli;
     } catch (Exception $ex) {
-        print "データベースへのアクセスに失敗:\n$ex";
-        return false;
+	print "データベースへのアクセスに失敗:\n$ex";
+	return false;
     }
 }
 
@@ -57,8 +57,8 @@ function escape($str) {
 
 function loadfile($filename) {
     $ip = filter_input(INPUT_SERVER, 'SERVER_ADDR', FILTER_SANITIZE_STRING);
-    if($ip == '::1') {
-        $ip = '127.0.0.1';
+    if (!$ip || $ip == '::1') {
+	$ip = '127.0.0.1';
     }
     $json = file_get_contents("http://" . $ip . "/" . $filename);
     $arr = json_decode($json, true);
@@ -80,11 +80,11 @@ function setTableStatus($tables, $isText = false) {
     $true_table = '【存在する表】</br>';
     $false_table = '【存在しない表】</br>';
     foreach ($tables as $var) {
-        $data = create($var[0], $var[1]);
-        $r = $r && $data;
+	$data = create($var[0], $var[1]);
+	$r = $r && $data;
     }
     if ($isText) {
-        print $true_table . '<hr>' . $false_table;
+	print $true_table . '<hr>' . $false_table;
     }
     return $r;
 }
@@ -111,9 +111,9 @@ function create($table, $column) {
 function insert($table, $column, $value) {
     $column_text = implode($column, ', ');
     for ($i = 0; $i < sizeof($value); $i++) {
-        if (gettype($value[$i]) === 'string') {
-            $value[$i] = "'" . $value[$i] . "'";
-        }
+	if (gettype($value[$i]) === 'string') {
+	    $value[$i] = "'" . $value[$i] . "'";
+	}
     }
     $value_text = implode($value, ", ");
     $query = "INSERT INTO $table ($column_text) VALUES ($value_text)";
@@ -148,9 +148,9 @@ function select($one_column, $table, $column, $other = '') {
     $query = "SELECT $column FROM $table $other";
     $result = query($query);
     if ($one_column) {
-        if ($result) {
-            $result = $result->fetch_assoc();
-        }
+	if ($result) {
+	    $result = $result->fetch_assoc();
+	}
     }
     return $result;
 }
@@ -162,13 +162,26 @@ function select($one_column, $table, $column, $other = '') {
  */
 function dropAllTable($tables) {
     $res = true;
-    foreach($tables as $var) {
+    foreach ($tables as $var) {
 	$query = "DROP TABLE IF EXISTS " . $var[0];
 	$result = query($query);
 	$res &= $result;
-	if(!$res) {
+	if (!$res) {
 	    break;
 	}
     }
     return $res;
+}
+
+/**
+ * SQLクエリで取得したデータを順列・副連想配列として作成します。
+ * @param mixed $data SQLクエリで取得したデータを指定します
+ * @return array データレコードは順列、データ内は各テーブル項目の連想配列となっています。
+ */
+function getArray($data): array {
+    $result = [];
+    while ($var = $data->fetch_assoc()) {
+	array_push($result, $var);
+    }
+    return $result;
 }

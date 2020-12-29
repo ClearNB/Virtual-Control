@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/../general/loader.php';
 
 /**
  * AgentSelect
@@ -6,7 +7,7 @@
  *
  * @author clearnb
  */
-class AgentSelect {
+class AgentSelect extends loader {
     private $data;
     
     public function __construct($data) {
@@ -18,7 +19,7 @@ class AgentSelect {
 	$i = 0;
 	$code = 0;
 	$res = '';
-	$oid_select = $this->data['OID'];
+	$subids = $this->data['SUBID'];
 	if(sizeof($value) == 0) {
 	    $res = '（選択できるエージェントはありません）';
 	    $code = 2;
@@ -28,19 +29,10 @@ class AgentSelect {
 	    if($i == 0) {
 		$sel = true;
 	    }
-	    $res .= $this->Radio('ag_rd_' . ($i + 1), 'sl_ag', $val['AGENTID'], '【' . $val['COMMUNITY'] . '】' . $val['AGENTHOST'], $sel);
+	    $subid = implode('_', $subids[$val['AGENTID']]);
+	    $res .= $this->Radio('ag_rd_' . ($i + 1), 'sl_ag', $val['AGENTID'] . '+' . $subid, '【' . $val['COMMUNITY'] . '】' . $val['AGENTHOST'], $sel);
 	    $i += 1;
 	}
 	return ["code" => $code, "data" => $res];
-    }
-    
-    private function Radio($id, $name, $value, $outname, $selected) {
-	$type_text = 'radio';
-	$class_text = 'radio02';
-	$sel_text = '';
-	if($selected) {
-	    $sel_text = 'selected';
-	}
-	return '<input ' . $sel_text . ' required id="' . $id . '" type="' . $type_text . '" name="' . $name . '" value="' . $value . '"><label for="' . $id . '" class="' . $class_text . '">' . $outname . '</label><br>';
     }
 }

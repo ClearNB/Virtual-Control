@@ -38,7 +38,7 @@ $fm_in_fl->Button('bt_fl_ln', 'ホームに戻る', 'button', 'home');
 
     <body class="text-monospace">
         <!-- Navbar -->
-	<?php echo $loader->navigation(0) ?>
+	<?php echo $loader->navigation(999) ?>
 	<?php echo $loader->load_Logo() ?>
 	<?php echo $loader->Title('INIT', 'sync-alt') ?>
 

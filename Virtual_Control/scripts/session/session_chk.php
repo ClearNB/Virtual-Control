@@ -1,7 +1,19 @@
 <?php
 
 /**
- * セッションを開始します
+ * [FUNCTIONS] セッション系処理ファンクション群
+ * 
+ * ここでは、セッションに関する全てのファンクションがあります。<br>
+ * セッション処理に関する呼び出しは、ここから行ってください。
+ * 
+ * @package VirtualControl_scripts_session
+ * @author ClearNB<clear.navy.blue.star@gmail.com>
+ */
+
+/**
+ * [FUNCTION] セッション開始（既実行確認）
+ * 
+ * セッションを開始します<br>
  * （すでに開始している場合は開始されません）
  */
 function session_start_once(): void {
@@ -11,7 +23,9 @@ function session_start_once(): void {
 }
 
 /**
- * セッションおよび権限情報を判定します
+ * [FUNCTION] セッション・権限確認
+ * 
+ * セッションおよび権限情報を判定します<br>
  * （セッションがある かつ 照合したユーザ情報が一致する かつ VCServerである）
  * @return bool
  */
@@ -26,11 +40,11 @@ function session_per_chk(): bool {
 }
 
 /**
- * 【ユーザ専用】
+ * [FUNCTION] VCServerページセッションアクション
+ * 
  * セッション行動についてユーザ確認を行い、適切な処理を行います
- * 1.. 403.php へ
  * @param type $isdirectory
- * @return void
+ * @return void セッションにおいて、VCServerのアクセスでない場合、403.phpへセッションされます
  */
 function session_action_vcserver(): void {
     if (!session_per_chk()) {

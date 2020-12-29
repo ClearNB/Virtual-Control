@@ -2,6 +2,18 @@
 
 include_once '../general/table.php';
 
+/**
+ * [CLASS] SNMPTable
+ * 
+ * 【クラス概要】<br>
+ * SNMPDataで取得したデータをテーブル形式にHTML変換します。<br>
+ * SNMPWALKで使用します。
+ * 
+ * @package VirtualControl_scripts_snmp
+ * @author ClearNB<clear.navy.blue.star@gmail.com>
+ * @category class
+ * @requires Table
+ */
 class SNMPTable extends Table {
 
     private $table_data;

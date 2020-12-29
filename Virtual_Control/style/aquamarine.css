@@ -3032,22 +3032,24 @@ input[type="button"].btn-block {
         top: 50%;
         background-color: #ff5a00;
         margin:0;
-        padding:0;
+        padding:0 0.6rem 0 0.6rem;
         opacity: 0%;
         -ms-transform: translate(-50%,-50%);
         -moz-transform: translate(-50%,-50%);
         -webkit-transform: translate(-50%,-50%);
         transform: translate(-50%,-50%);
+	border-radius: 0.6rem;
     }
 
     .nav-item:hover .navbar-text {
-        -ms-transform: translate(0%, 0%);
-        -moz-transform: translate(0%, 0%);
-        -webkit-transform: translate(0%, 0%);
-        transform: translate(0%, 0%);
+        -ms-transform: translate(-50%, 0%);
+        -moz-transform: translate(-50%, 0%);
+        -webkit-transform: translate(-50%, 0%);
+        transform: translate(-50%, 0%);
         opacity: 100%;
         animation: fade-in 0.5s;
         -webkit-animation: fade-in 0.5s;
+	-moz-animation: fade-in 0.5s;
     }
 }
 
@@ -3178,10 +3180,27 @@ input[type="button"].btn-block {
 
 .navbar-dark .navbar-toggler {
     color: rgba(255, 255, 255, 0.5);
-    border-color: rgba(255, 255, 255, 0.1); }
+    border: #fff solid 2px;
+    -webkit-transition: 0.2s;
+    -moz-transition:  0.2s;
+    transition: 0.2s;
+}
 
 .navbar-dark .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); }
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    -webkit-transition: 0.2s;
+    -moz-transition:  0.2s;
+    transition: 0.2s;
+}
+
+.navbar-dark .navbar-toggler:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-dark .navbar-toggler:hover > .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    
+}
 
 .navbar-dark .navbar-text {
     color: rgba(255, 255, 255, 1); }

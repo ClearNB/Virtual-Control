@@ -29,11 +29,14 @@ if ($request !== 'xmlhttprequest') {
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 if ($method === 'POST') {
     $data = AGENTData::get_agent_info();
-    $res = ["code" => 1];
+    $res = [];
     if($data) {
 	$select = new AgentSelect($data);
 	$res = $select->getSelect();
+    } else {
+	$log = ob_get_contents();
+	$res = ["CODE" => 1, "LOG" => $log];
     }
-    //ob_get_clean();
+    ob_get_clean();
     echo json_encode($res);
 }

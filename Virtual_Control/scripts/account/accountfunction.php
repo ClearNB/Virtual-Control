@@ -8,6 +8,7 @@ class AccountSet {
 	['CODE' => 1, 'ERR_TEXT' => "手続きに失敗しました。<br>手続き上で正しく入力してください。<br>システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。"],
 	['CODE' => 1, 'ERR_TEXT' => "入力チェックエラーです。<br>以下の入力したデータをご確認ください。"],
 	['CODE' => 1, 'ERR_TEXT' => "認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。"],
+	['CODE' => 1, 'ERR_TEXT' => "このユーザはログイン中のため、ユーザ情報を変更できません"],
 	['CODE' => 2, 'ERR_TEXT' => ""],
     ];
     private $userid;
@@ -124,10 +125,29 @@ class AccountSet {
     }
 
     private function edit(): int {
+	$res_code = 0;
 	//1: フィルタリングで値を確認する
-	//2: authidを確認する
-	//3: INSERT文の実行
-	//4: 全てのチェックの完了
+	$chk = $this->check();
+	//2: ログイン中か確認する
+	$chk_login = check_user_login($this->userid);
+	if($chk != 0) {
+	    $res_code = 3;
+	}
+	if(!$chk_login) {
+	    $res_code = 5;
+	}
+	//3: authidを確認する
+	if (session_auth()) {
+	    $res = update('GSC_USERS', '', '');
+	    if($res) {
+		$res_code = 0;
+	    } else {
+		$res_code = 1;
+	    }
+	} else {
+	    $res_code = 6;
+	}
+	return $res_code;
     }
 
     private function delete(): int {
@@ -145,7 +165,7 @@ class AccountSet {
 		$res_code = 1;
 	    }
 	} else {
-	    $res_code = 5;
+	    $res_code = 6;
 	}
 	return $res_code;
     }
@@ -154,18 +174,18 @@ class AccountSet {
 	$chk_text = '<ul class="black-view">[ERROR_LOG]</ul>';
 	$chk = '';
 	switch ($this->funid) {
-	    case 1:
+	    case 1: //作成（ユーザID・ユーザ名・パスワード確認）
 		$chk .= check_userid($this->userid);
 		$chk .= check_username($this->username);
 		$chk .= check_password($this->pass, $this->r_pass);
 		break;
-	    case 2:
+	    case 2: //編集1（ユーザID確認）
 		$chk .= check_userid($this->userid);
 		break;
-	    case 3:
+	    case 3: //編集2（ユーザ名確認）
 		$chk .= check_username($this->username);
 		break;
-	    case 4:
+	    case 4: //編集3（パスワード確認）
 		$chk .= check_password($this->pass, $this->r_pass);
 		break;
 	}
@@ -181,6 +201,8 @@ class AccountSet {
 }
 
 /**
+ * [FUNCTION] 指定ユーザセッション一致確認
+ * 
  * 削除しようとしている情報が自分のユーザであるか確認します。
  * ユーザが自分である場合はfalseを返し、それ以外はtrueを返します。
  * @param string $userid    手続き元のユーザIDを指定します
@@ -196,7 +218,9 @@ function check_users_me($userid): bool {
 }
 
 /**
- * 指定したユーザがログイン中かどうかを判定します。
+ * [FUNCTION] ユーザログインチェック
+ * 
+ * 指定したユーザがログイン中かどうかを判定します。<br>
  * ログイン中である場合は true, でない場合は false が返されます。
  * @return bool
  */
@@ -209,9 +233,18 @@ function check_user_login($userid): bool {
     return $res;
 }
 
-function check_username($data) {
+/**
+ * [FUNCTION] ユーザ名確認
+ * 
+ * ユーザ名の記述についてチェックします。<br>
+ * 【判定条件】ユーザ名が最大50バイトを超えていないか
+ * 
+ * @param string $data ユーザ名（手続き元）
+ * @return string|null 
+ */
+function check_username($data): string {
     if (strlen(mb_convert_encoding($data, 'SJIS', 'UTF-8')) > 50) {
-	return '<li>ユーザ名が最大半角文字数30文字をを超えています。</li>';
+	return '<li>ユーザ名が最大半角文字数50文字をを超えています。</li>';
     } else {
 	return null;
     }

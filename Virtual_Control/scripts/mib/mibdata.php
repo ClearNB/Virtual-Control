@@ -1,20 +1,52 @@
 <?php
 
+/**
+ * [CLASS] MIBData
+ * 
+ * <h4>MIB Data v1.2.0</h4><hr>
+ * MIB Dataは、MIBをデータベースから取得・データの加工を行うクラスです。
+ * クラスメソッドとしてMIBの取得をオブジェクト生成を行わなくても可能です。
+ * 
+ * @package VirtualControl_scripts_mib
+ * @author ClearNB <clear.navy.blue.star@gmail.com>
+ */
 class MIBData {
 
     /**
-     * @var integer $oid_type	    (0..Group, 1..Subtree, 2..Node)
-     * @var string  $oid	    (Ex: 1.3.6.1.2.1.1) without INDEX OPTION
-     * @var string  $parent_oid	    (Ex: 1.3.6.1.2.1.1.1 -> 1.3.6.1.2.1.1)
-     * @var string  $parent_name    Name for Parent
-     * @var string  $descr	    Description for OID, the Language by RFC 1394
-     * @var string  $jap_tlans	    Description for OID, the Language is Japanese. (translated by Project GSC)
-     */
+     * (0..Group, 1..Subtree, 2..Node)
+     * 
+     * @var integer $oid_type */
     private $oid_type;
+
+    /**
+     * (Ex: 1.3.6.1.2.1.1) without INDEX OPTION
+     * 
+     * @var string  $oid */
     private $oid;
+
+    /**
+     * (Ex: 1.3.6.1.2.1.1.1 -> 1.3.6.1.2.1.1)
+     * 
+     * @var string  $parent_oid */
     private $parent_oid;
+
+    /**
+     * Name for Parent
+     * 
+     * @var string  $parent_name */
     private $parent_name;
+
+    /**
+     * Description for OID, the Language by RFC 1394
+     * 
+     * @var string  $descr */
     private $descr;
+
+    /**
+     * Description for OID, the Language is Japanese. (translated by Project GSC)
+     * 
+     * @var string  $jap_tlans
+     */
     private $jap_tlans;
 
     public function __construct($oid_type, $oid, $parent_oid, $parent_name, $descr, $jap_tlans) {
@@ -27,13 +59,26 @@ class MIBData {
     }
 
     /**
+     * [GET] MIBデータ取得
+     * 
      * MIBデータをグループから取得します
      * @param integer	$from_id    取得出発地点を設定します（1..グループ, 2..サブツリー, 3..ノード）
-     * @param integer	$to_id	    取得到達地点を設定します（0..グループ, 1..サブツリー, 2..ノード）
+     * @param integer	$to_id	    取得到達地点を設定します（1..グループ, 2..サブツリー, 3..ノード）
+     * @return array|null 取得に成功した場合はarray、失敗した場合はnullとして返されます。<br>arrayの場合は、データ項目が[[0]->["COL01" => "VALUE01", ...], [1]->{Table_data}, ...]となります。
      */
-    public static function getMIB($from_id, $to_id) {
+    public static function getMIB($from_id, $to_id): array {
 	$query_num = self::setMIBQueryNum($from_id, $to_id);
-	$data = self::setMIBParam($query_num);
+	if ($query_num != 999) {
+	    $data = self::setMIBParam($query_num);
+	    $select = select(false, $data[0], $data[1], $data[2]);
+	    $st = '';
+	    if ($select) {
+		$st = getArray($data);
+	    }
+	    return $st;
+	} else {
+	    return [];
+	}
     }
 
     private static function setMIBQueryNum($from_id, $to_id) {
@@ -64,25 +109,27 @@ class MIBData {
 	}
     }
 
+
     private static function setMIBParam($query_num) {
+	$query = '';
 	switch ($query_num) {
-	    case 0:
-		$query = ['GSC_MIB_GROUP', 'MIBGROUPOBJECTID, MIBGROUPNAME', ''];
+	    case 0: //グループのみ
+		$query = ['GSC_MIB_GROUP', 'GROUPID, GROUPOBJECTID, GROUPNAME', 'ORDER BY GROUPID'];
 		break;
-	    case 1:
-		$query = ['GSC_MIB_SUB', 'SUBOBJECTID, MIBNAME, MIBGROUPOBJECTID, MIBUPDATE', ''];
+	    case 1: //サブツリーのみ
+		$query = ['GSC_MIB_SUB', 'SUBID, SUBOBJECTID, SUBNAME, GROUPOBJECTID, UPDATETIME', 'ORDER BY SUBID'];
 		break;
-	    case 2:
-		$query = ['GSC_MIB_NODE', 'NODEID, OBJECTID, SUBOBJECTID, DESCR, JAPTLANS, ICON', ''];
+	    case 2: //ノードのみ
+		$query = ['GSC_MIB_NODE', 'NODEID, NODEOBJECTID, SUBID, DESCR, JAPTLANS, ICON', 'ORDER BY NODEID'];
 		break;
-	    case 3:
-		$query = ['GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.MIBGROUPOBECTID = b.MIBGROUPOBECTID', 'a.MIBGROUPOBJECTID, b.MIBGROUPNAME, a.SUBOBJECTID, a.MIBNAME, a.MIBUPDATE', 'GROUP BY a.MIBGROUPOBJECTID, b.MIBGROUPNAME, a.SUBOBJECTID, a.MIBNAME, a.MIBUPDATE'];
+	    case 3: //グループ - サブツリー
+		$query = ['GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GROUPID = b.GROUPID', 'GROUP BY a.GROUPID, a.GROUPNAME, b.SUBID, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME', 'a.GROUPID, a.GROUPNAME, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME'];
 		break;
-	    case 4:
-		$query = [''];
+	    case 4: //サブツリー - ノード
+		$query = ['GSC_MIB_SUB a INNER JOIN GSC_MIB_NODE b ON a.SUBID = b.SUBID', 'a.SUBID, a.SUBOBJECTID, a.SUBNAME, a.UPDATETIME, b.NODEID, b.NODEOBJECTID, b.DESCR, b.JAPTLANS, b.ICON', 'GROUP BY a.SUBID, a.SUBOBJECTID, a.SUBNAME, a.UPDATETIME, b.NODEID, b.NODEOBJECTID, b.DESCR, b.JAPTLANS, b.ICON'];
 		break;
-	    case 5:
-		$query = ['GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.MIBGROUPOBECTID = b.MIBGROUPOBECTID INNER JOIN GSC_MIB_NODE c ON b.SUBOBJECTID = c.SUBOBJECTID'];
+	    case 5: //グループ - ノード
+		$query = ['GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GROUPID = b.GROUPID INNER JOIN GSC_MIB_NODE c ON b.SUBID = c.SUBID', 'a.GROUPID, a.GROUPNAME, b.SUBID, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME, c.NODEID, c.NODEOBJECTID, c.DESCR, c.JAPTLANS, c.ICON', 'GROUP BY a.GROUPID, a.GROUPNAME, b.SUBID, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME, c.NODEID, c.NODEOBJECTID, c.DESCR, c.JAPTLANS, c.ICON'];
 		break;
 	}
     }
