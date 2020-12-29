@@ -22,11 +22,6 @@ $fm_pg->Button('bt_ac_dl', '削除', 'button','trash-alt');
 $fm_pg_fl = new form_generator('fm_pg_fl');
 $fm_pg_fl->SubTitle('アカウント情報の取得に失敗しました。', 'データベースに接続できません。', 'book');
 
-
-
-
-
-
 //アカウント作成
 $fm_ac_cr = new form_generator('fm_ac_cr');
 $fm_ac_cr->SubTitle('アカウント作成', '以下の情報を入力してください', '', false, '1:アカウント情報入力');
@@ -36,8 +31,8 @@ $fm_ac_cr->Input('in_ac_nm', 'ユーザ名','ユーザ名の入力ができま�
 $fm_ac_cr->Input('in_ac_ps', 'パスワード','パスワードの入力ができます。','server', true);//アイコン
 $fm_ac_cr->Input('in_ac_ps_02', 'パスワードの確認','確認の為、もう一度パスワードを入力してください。','server', true);//アイコン
 
-$fm_ac_cr->Check(0, 'rd_01', 'in_ac_vc', '1', 'VCServer', true);
-$fm_ac_cr->Check(0, 'rd_02', 'in_ac_vc', '2', 'VCHost', false);
+$fm_ac_cr->Check(0, 'rd_01', 'in_ac_vc', 1, 'VCServer', true);
+$fm_ac_cr->Check(0, 'rd_02', 'in_ac_vc', 2, 'VCHost', false);
 
 $fm_ac_cr->Button('bt_cr_nx', '次へ', 'button', 'arrow-right');
 $fm_ac_cr->Button('bt_cr_bk', 'キャンセル', 'button', 'long-arrow-alt-left');

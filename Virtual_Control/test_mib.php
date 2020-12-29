@@ -11,26 +11,23 @@ $loader = new loader();
 
 $fm = new form_generator('fm');
 $fm->Button('bt_fm_bk', 'ホームに戻る', 'button', 'chevron-circle-left');
-$fm->SubTitle('SNMPWALKテスト', '情報の取得をテストします', 'fas fa-server');
-$fm->Input('host', 'ホストアドレス', '接続先を指定します。', 'id-card-alt', true);
-$fm->Input('community', 'コミュニティ', 'エージェントが属するコミュニティを設定します。', 'users', true);
-$fm->Input('oid', 'OID', 'フィルタリングするOIDを設定します。', 'object-ungroup', false);
-$fm->Button('fm_bt_sb', 'SNMPWALKを送信', 'submit', 'vials');
+$fm->SubTitle('SNMPTRAPテスト', 'トラップ情報の取得をテストします', 'fas fa-server');
+$fm->Button('fm_bt_sb', 'SNMPTRAP結果を表示', 'submit', 'vials');
 
 $fm_rt = new form_generator('fm_rt');
-$fm_rt->Title('SNMPWALK結果', 'male');
+$fm_rt->Title('SNMPTRAP結果', 'male');
 $fm_rt->Caption('snmpdata', true, 3);
 $fm_rt->Button('bt_rt_bk', '戻る', 'button', 'chevron-circle-left');
 
 $fm_ld = new form_generator('fm_ld');
-$fm_ld->SubTitle('接続中です…', 'しばらくお待ちください', 'fas fa-spinner fa-spin');
+$fm_ld->SubTitle('MIBを取得中です…', 'しばらくお待ちください', 'fas fa-spinner fa-spin');
 
 $fm_fl = new form_generator('fm_fl');
-$fm_fl->SubTitle('接続に失敗しました。', '以下をご確認ください。', 'exclamation-triangle');
+$fm_fl->SubTitle('MIBを取得中の取得に失敗しました。', '以下をご確認ください。', 'exclamation-triangle');
 $fm_fl->openList();
-$fm_fl->addList('エージェントと接続できる環境であるか確認してください。');
-$fm_fl->addList('正しい値が入力されているか確認してください。');
-$fm_fl->addList('エージェントのファイアウォール設定をご確認ください。');
+$fm_fl->addList('アプリケーション単体に、何らかの例外が発生していると思われます。');
+$fm_fl->addList('ログファイル（/var/www/html/data/trap/*）において、全てのファイルが書き込み・読み込みが可能であるか確認してください。');
+$fm_fl->addList('ログファイル内が正しい値を格納していない恐れも考えられます。ファイル内をご確認ください。');
 $fm_fl->closeList();
 $fm_fl->Button('bt_fl_bk', '戻る', 'button', 'chevron-circle-left');
 ?>
@@ -63,7 +60,7 @@ $fm_fl->Button('bt_fl_bk', '戻る', 'button', 'chevron-circle-left');
                 //ボタンによる実行を阻止
                 var d = $(this).serialize();
                 animation('data_output', 400, fm_ld);
-                ajax_dynamic_post('./scripts/snmp/snmpwalk.php', d).then(function (data) {
+                ajax_dynamic_post('./scripts/warn/snmpwarn.php', d).then(function (data) {
                     switch(data['code']) {
                         case 0:
                             fm_w = fm_rt.replace('snmpdata', data['res']);

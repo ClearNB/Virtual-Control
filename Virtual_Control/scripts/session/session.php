@@ -1,12 +1,18 @@
 <?php
 
 /**
+ * [FUNCTION] セッション処理
+ * 
  * ログインセッション処理を行います。
  * 使用先: LOGIN
  * ['res']
  * 0. 正常終了
  * 1. 異常終了	（データベース接続不可能）
  * 2. 異常終了	（ユーザまたはパスワードが間違っている）
+ */
+
+/**
+ * 
  */
 class MySessionHandler implements SessionHandlerInterface {
 
