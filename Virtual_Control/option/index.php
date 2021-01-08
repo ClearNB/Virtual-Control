@@ -1,8 +1,8 @@
 <?php
-include_once '../scripts/general/loader.php';
-include_once '../scripts/session/session_chk.php';
-include_once '../scripts/general/sqldata.php';
-include_once '../scripts/general/former.php';
+include_once __DIR__ . '/../scripts/general/loader.php';
+include_once __DIR__ . '/../scripts/session/session_chk.php';
+include_once __DIR__ . '/../scripts/general/sqldata.php';
+include_once __DIR__ . '/../scripts/general/former.php';
 
 session_action_vcserver();
 $getdata = session_get_userdata();

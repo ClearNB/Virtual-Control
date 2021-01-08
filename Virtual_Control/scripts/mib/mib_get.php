@@ -1,11 +1,11 @@
 <?php
 
 /**
- * ACCOUNT_GET (アカウント取得処理ファンクション)
- * ここでは、アカウント情報の取得およびアカウント情報表の作成を行います
+ * AGENT_GET (エージェント取得処理ファンクション)
+ * ここでは、エージェント情報の取得およびエージェント選択の作成を行います
  * 処理される内容は以下の通りです
  * 1. アカウントデータの取得（取得できたらデータ、取得できなかったらfalseを返される）
- * 2-1-1. 取得できたら、アカウント情報表を作成します（クラス受け渡し）
+ * 2-1-1. 取得できたら、アカウント選択を作成します（クラス受け渡し）
  * 2-1-2. ['code']を0にします
  * 2-2. 取得できない場合は['code']を1にします
  * 返される値は以下の通りです
@@ -13,11 +13,9 @@
  * ['data'] -> [テーブルHTML] (成功) or [なし] (失敗)
  */
 
-include_once __DIR__ . '/../session/session_chk.php';
-include_once __DIR__ . '/../general/sqldata.php';
-include_once __DIR__ . '/../general/table.php';
-include_once __DIR__ . '/accountdata.php';
-include_once __DIR__ . '/accounttable.php';
+include_once ('../general/sqldata.php');
+include_once ('./mibdata.php');
+include_once ('./mibselect.php');
 
 $requestmg = filter_input(INPUT_SERVER, 'HTTP_X_REQUESTED_WITH');
 
@@ -30,14 +28,14 @@ if ($request !== 'xmlhttprequest') {
 
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 if ($method === 'POST') {
-    unset_authid();
-    $data = ACCOUNTData::get_all_users();
+    $data = AGENTData::get_agent_info();
     $res = [];
     if($data) {
-	$table = new AccountTable($data);
-	$res = ["code" => 0, "data" => $table->generate_table(), "a_data" => $data['VALUE']];
+	$select = new AgentSelect($data);
+	$res = $select->getSelect();
     } else {
-	$res = ["code" => 1, "data" => ob_get_contents()];
+	$log = ob_get_contents();
+	$res = ["CODE" => 1, "LOG" => $log];
     }
     ob_get_clean();
     echo json_encode($res);

@@ -24,7 +24,7 @@ $fm_lg_fl_01->openList();
 $fm_lg_fl_01->addList('各項目の入力事項をご確認ください');
 $fm_lg_fl_01->addList('ユーザID・パスワードを忘れたら、管理者に相談してください');
 $fm_lg_fl_01->closeList();
-$fm_lg_fl_01->Button('bt_lg_bk', '入力に戻る', 'button', 'caret-square-o-left');
+$fm_lg_fl_01->Button('bt_lg_bk', '入力に戻る', 'button', 'chevron-circle-left');
 
 $fm_lg_fl_02 = new form_generator('fm_lg_fl_02');
 $fm_lg_fl_02->SubTitle("ログインに失敗しました。", "データベースの状態を確認してください。", "exclamation-triangle");
@@ -32,7 +32,7 @@ $fm_lg_fl_02->openList();
 $fm_lg_fl_02->addList('データベースの設定を見直してください。');
 $fm_lg_fl_02->addList('この件は管理者に必ず相談してください。');
 $fm_lg_fl_02->closeList();
-$fm_lg_fl_02->Button('bt_lg_bk', '入力に戻る', 'button', 'caret-square-o-left');
+$fm_lg_fl_02->Button('bt_lg_bk', '入力に戻る', 'button', 'chevron-circle-left');
 ?>
 
 <html>

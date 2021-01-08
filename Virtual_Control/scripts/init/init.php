@@ -19,7 +19,6 @@ $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 if ($method === 'POST') {
     $d = new initDatabase();
     $v = $d->init();
-    $err_d = ob_get_contents();
     ob_get_clean();
-    echo json_encode(["code" => $v, "s_text" => $err_d]);
+    echo json_encode($v);
 }
