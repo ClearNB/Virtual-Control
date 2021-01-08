@@ -11,6 +11,12 @@
  * @author ClearNB <clear.navy.blue.star@gmail.com>
  */
 class MIBData {
+    /**
+     * Data Stack of "MIBData"
+     * 
+     * @var array $set
+     */
+    private static $set;
 
     /**
      * (0..Group, 1..Subtree, 2..Node)
@@ -25,10 +31,10 @@ class MIBData {
     private $oid;
 
     /**
-     * (Ex: 1.3.6.1.2.1.1.1 -> 1.3.6.1.2.1.1)
+     * (Ex: 1.3.6.1.2.1.1.1 -> 1)
      * 
-     * @var string  $parent_oid */
-    private $parent_oid;
+     * @var string  $parent_id */
+    private $parent_id;
 
     /**
      * Name for Parent
@@ -49,13 +55,14 @@ class MIBData {
      */
     private $jap_tlans;
 
-    public function __construct($oid_type, $oid, $parent_oid, $parent_name, $descr, $jap_tlans) {
+    public function __construct($oid_type, $oid, $parent_id, $parent_name, $descr, $jap_tlans) {
 	$this->oid_type = $oid_type;
 	$this->oid = $oid;
-	$this->parent_oid = $parent_oid;
+	$this->parent_id = $parent_id;
 	$this->parent_name = $parent_name;
 	$this->descr = $descr;
 	$this->jap_tlans = $jap_tlans;
+	array_push(self::$set, $this);
     }
 
     /**
@@ -73,40 +80,60 @@ class MIBData {
 	    $select = select(false, $data[0], $data[1], $data[2]);
 	    $st = '';
 	    if ($select) {
-		$st = getArray($data);
+		$st = getArray($select);
 	    }
 	    return $st;
 	} else {
-	    return [];
+	    return '';
+	}
+    }
+    
+    public static function getFullMIB(): array {
+	$query_num = self::setMIBQueryNum(2, 2);
+	$data = self::setMIBParam($query_num);
+	$select = select(false, $data[0], $data[1], $data[2]);
+	if($select) {
+	    $result = [
+		"VALUE" => [],
+		"OPTION" => []
+	    ];
+	    while($var = $select->fetch_assoc()) {
+		new MIBData(1, $var[''], $parent_oid, $parent_name, $descr, $jap_tlans);
+	    }
+	    foreach(self::$set as $s) {
+		
+	    }
+	} else {
+	    return '';
 	}
     }
 
     private static function setMIBQueryNum($from_id, $to_id) {
+	$query_num = 999;
 	if ($to_id - $from_id == 0) {
 	    switch ($from_id) {
-		case 0: $query_num = 0;
+		case 1: $query_num = 0;
 		    break;     //グループのみ
-		case 1: $query_num = 1;
+		case 2: $query_num = 1;
 		    break;     //サブツリーのみ
-		case 2: $query_num = 2;
+		case 3: $query_num = 2;
 		    break;     //ノードのみ
 	    }
 	} else {
 	    if ($to_id > $from_id) {
 		if ($to_id - $from_id == 1) {
 		    switch ($to_id) {
-			case 1: $query_num = 3;
+			case 2: $query_num = 3;
 			    break;  //グループ -> サブツリー
-			case 2: $query_num = 4;
+			case 3: $query_num = 4;
 			    break;  //サブツリー -> ノード
 		    }
 		} else {
 		    $query_num = 5; //グループ -> ノード
 		}
-	    } else {
-		$query_num = 999;
 	    }
 	}
+	return $query_num;
     }
 
 
@@ -117,21 +144,22 @@ class MIBData {
 		$query = ['GSC_MIB_GROUP', 'GROUPID, GROUPOBJECTID, GROUPNAME', 'ORDER BY GROUPID'];
 		break;
 	    case 1: //サブツリーのみ
-		$query = ['GSC_MIB_SUB', 'SUBID, SUBOBJECTID, SUBNAME, GROUPOBJECTID, UPDATETIME', 'ORDER BY SUBID'];
+		$query = ['GSC_MIB_SUB', 'SUBID, SUBOBJECTID, SUBNAME, GROUPID, UPDATETIME', 'ORDER BY SUBID'];
 		break;
 	    case 2: //ノードのみ
-		$query = ['GSC_MIB_NODE', 'NODEID, NODEOBJECTID, SUBID, DESCR, JAPTLANS, ICON', 'ORDER BY NODEID'];
+		$query = ['GSC_MIB_NODE', 'NODEID, NODEOBJECTID, SUBID, DESCR, JAPTLANS, ICONID', 'ORDER BY NODEID'];
 		break;
 	    case 3: //グループ - サブツリー
 		$query = ['GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GROUPID = b.GROUPID', 'GROUP BY a.GROUPID, a.GROUPNAME, b.SUBID, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME', 'a.GROUPID, a.GROUPNAME, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME'];
 		break;
 	    case 4: //サブツリー - ノード
-		$query = ['GSC_MIB_SUB a INNER JOIN GSC_MIB_NODE b ON a.SUBID = b.SUBID', 'a.SUBID, a.SUBOBJECTID, a.SUBNAME, a.UPDATETIME, b.NODEID, b.NODEOBJECTID, b.DESCR, b.JAPTLANS, b.ICON', 'GROUP BY a.SUBID, a.SUBOBJECTID, a.SUBNAME, a.UPDATETIME, b.NODEID, b.NODEOBJECTID, b.DESCR, b.JAPTLANS, b.ICON'];
+		$query = ['GSC_MIB_SUB a INNER JOIN GSC_MIB_NODE b ON a.SUBID = b.SUBID', 'a.SUBID, a.SUBOBJECTID, a.SUBNAME, a.UPDATETIME, b.NODEID, b.NODEOBJECTID, b.DESCR, b.JAPTLANS, b.ICONID', 'GROUP BY a.SUBID, a.SUBOBJECTID, a.SUBNAME, a.UPDATETIME, b.NODEID, b.NODEOBJECTID, b.DESCR, b.JAPTLANS, b.ICONID'];
 		break;
 	    case 5: //グループ - ノード
-		$query = ['GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GROUPID = b.GROUPID INNER JOIN GSC_MIB_NODE c ON b.SUBID = c.SUBID', 'a.GROUPID, a.GROUPNAME, b.SUBID, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME, c.NODEID, c.NODEOBJECTID, c.DESCR, c.JAPTLANS, c.ICON', 'GROUP BY a.GROUPID, a.GROUPNAME, b.SUBID, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME, c.NODEID, c.NODEOBJECTID, c.DESCR, c.JAPTLANS, c.ICON'];
+		$query = ['GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GROUPID = b.GROUPID INNER JOIN GSC_MIB_NODE c ON b.SUBID = c.SUBID', 'a.GROUPID, a.GROUPNAME, b.SUBID, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME, c.NODEID, c.NODEOBJECTID, c.DESCR, c.JAPTLANS, c.ICONID', 'GROUP BY a.GROUPID, a.GROUPNAME, b.SUBID, b.SUBOBJECTID, b.SUBNAME, b.UPDATETIME, c.NODEID, c.NODEOBJECTID, c.DESCR, c.JAPTLANS, c.ICONID'];
 		break;
 	}
+	return $query;
     }
 
 }

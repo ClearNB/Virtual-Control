@@ -1,5 +1,7 @@
 <?php
 
+include_once __DIR__ . '/loader.php';
+
 /**
  * [CLASS] Table
  * 
@@ -11,7 +13,7 @@
  * @author ClearNB<clear.navy.blue.star@gmail.com>
  * @category class
  */
-class Table {
+class Table extends loader {
     
     /**
      * [GET] テーブル開始
@@ -44,7 +46,7 @@ class Table {
      */
     public function add_table_data($column, $value): string {
 	return '<tr>'
-		. '<td>' . $column . '</td>'
+		. '<th>' . $column . '</th>'
 		. '<td>' . $value  . '</td>'
 		. '</tr>';
     }
@@ -59,11 +61,11 @@ class Table {
      * @param bool  $isradio	    ラジオボタンが必須かどうかを設定します
      * @return string \<tr\>..\</tr\>内のHTMLコードを返します
      */
-    public function add_table_data_hor($column_array, $value_array, $isradio = false, $radio_id = '', $radio_key = '', $radio_name = ''): string {
+    public function add_table_data_hor($column_array, $value_array, $isradio = false, $radio_id = '', $radio_value = '', $radio_name = '', $radio_selected = ''): string {
 	$res = '<tr>';
 	if($isradio) {
-	    $radio_value = $value_array[$radio_key];
-	    $res .= '<td><input class="radio02" type="radio" required="required" name="' . $radio_name . '" value="' . $radio_value . '" id="' . $radio_id . '"><label for="' . $radio_id . '" class="radio02"></label></td>';
+	    $radio_text = $this->Radio($radio_id, $radio_name, $radio_value, '', $radio_selected);
+	    $res .= '<td>' . $radio_text . '</td>';
 	}
 	foreach($column_array as $var) {
 	    $res .= '<td>' . $value_array[$var] . '</td>';

@@ -48,7 +48,7 @@ interface form_in {
  * @author ClearNB <clear.navy.blue.star@gmail.com>
  */
 class form_generator implements form_in {
-
+    
     /**
      * オブジェクト作成時に自動的にプッシュされる順序配列です
      * 
@@ -187,12 +187,14 @@ class form_generator implements form_in {
      * @param string $icon アイコン情報です
      * @param bool $required 【任意】入力必要かを入力します（Default: false）
      * @param bool $auto_completed 【任意】補完入力を可能にするか判定します（Default: false）
+     * @param string $pattern 【任意】パターン入力オプションです（Default: null）
      * 
      * @return void 入力フォームがオブジェクト内のデータの1番後ろに追加されます。
      */
-    function Input($id, $desc, $small_desc, $icon, $required = false, $auto_completed = false): void {
+    function Input($id, $desc, $small_desc, $icon, $required = false, $auto_completed = false, $pattern = ''): void {
 	$r_text = "任意";
 	$r_flag = "";
+	$p_text = "";
 	if ($required) {
 	    $r_text = "必須";
 	    $r_flag = "required=\"required\"";
@@ -202,7 +204,28 @@ class form_generator implements form_in {
 	} else {
 	    $r_flag .= " autocomplete=\"off\"";
 	}
-	array_push($this->data, "<div class=\"form-group pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label><input type=\"text\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\"><small class=\"form-text text-body\" id=\"$id-label\">$small_desc</small></div>");
+	if($pattern) {
+	    $p_text = " pattern=\"$pattern\"";
+	}
+	array_push($this->data, "<div class=\"form-group pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label><input type=\"text\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\" $p_text><small class=\"form-text text-body\" id=\"$id-label\">$small_desc</small></div>");
+    }
+    
+    /**
+     * [SET] フォームタイトル設置
+     * 
+     * フォームタイトルのみが必要な場合は、ここで作成ができます。
+     * 
+     * @param string $desc 項目名を指定します
+     * @param string $icon アイコンを指定します
+     * @param boolean $required 【任意】必須入力かどうかを指定します（Default: true）
+     * @return void フォームタイトルがオブジェクト内のデータの1番後ろに追加されます。
+     */
+    function FormTitle($desc, $icon, $required = true): void {
+	$r_text = "任意";
+	if ($required) {
+	    $r_text = "必須";
+	}
+	array_push($this->data, "<label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label>");
     }
 
     /**
@@ -290,7 +313,7 @@ class form_generator implements form_in {
 	    $fmat = 'fab';
 	}
 	$icon_r = str_replace('fab fa-', '', $icon);
-	array_push($this->data, "<div class=\"py-2\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color btn-block btn-lg shadow-lg mb-2\" $disabled><i class=\"$fmat fa-fw fa-lx fa-$icon_r\"></i>$desc</button></div>");
+	array_push($this->data, "<div class=\"py-1\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color btn-block btn-lg shadow-lg mb-1\" $disabled><i class=\"$fmat fa-fw fa-lx fa-$icon_r\"></i>$desc</button></div>");
     }
 
     /**
@@ -444,7 +467,7 @@ class form_generator implements form_in {
      * @return void リストグループのリストがオブジェクト内のデータの1番後ろに追加されます。
      */
     function addListGroup($id, $title, $icon, $text, $small_text): void {
-	array_push($this->data, '<div class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2" id="' . $id . '"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1"><i class="fas fa-fw fa-' . $icon . ' fa-lg"></i>' . $title . '</h5></div><p class="mb-1">' . $text . '</p> <small>' . $small_text . '</small></div>');
+	array_push($this->data, '<div tabindex="0" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2" id="' . $id . '"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1"><i class="fas fa-fw fa-' . $icon . ' fa-lg"></i>' . $title . '</h5></div><p class="mb-1">' . $text . '</p> <small>' . $small_text . '</small></div>');
     }
 
     /**
@@ -528,9 +551,9 @@ class form_generator implements form_in {
  * @param string $text ローディング中に出すテキスト部分です
  * @return \form_generator 作成したform_generatorオブジェクトとして返します
  */
-function fm_ld($id, $title = 'しばらくお待ちください', $text = '更新中です。しばらくお待ちください...') {
+function fm_ld($id, $title = '更新反映中です...', $text = '反映されるまで、ページを変えずにしばらくお待ちください...') {
     $fm = new form_generator($id, '');
-    $fm->SubTitle($title, $text, 'spinner fa-spin');
+    $fm->SubTitle($title, $text, 'circle-notch fa-spin');
     return $fm;
 }
 
@@ -545,7 +568,7 @@ function fm_ld($id, $title = 'しばらくお待ちください', $text = '更�
  * @param string $text その原因となるテキスト部分を指定します
  * @return \form_generator 作成したform_generatorオブジェクトとして返します
  */
-function fm_fl($id, $bt_id, $title = '失敗しました', $text = '[原因]') {
+function fm_fl($id, $bt_id = '', $title = '失敗しました', $text = '[原因]') {
     $fm = new form_generator($id, '');
     $fm->SubTitle($title, $text, 'exclamation-triangle');
     if ($bt_id != '') {

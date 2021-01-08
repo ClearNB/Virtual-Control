@@ -35,7 +35,7 @@ class ACCOUNTData {
 	    }
 	    foreach (self::$set as $var) {
 		if(!empty($var)) {
-		    array_push($result['VALUE'], $var->get_user_data());
+		    $result['VALUE'][$var->userid] = $var->get_user_data();
 		}
 	    }
 	    return $result;

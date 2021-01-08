@@ -18,17 +18,12 @@ if ($request !== 'xmlhttprequest') {
 
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 if ($method === 'POST') {
-    unset_authid();
     $data = AGENTData::get_agent_info();
-    $mibdata = MIBData::getMIB(2, 2);
     $res = [];
-    if($data && $mibdata) {
+    if($data) {
 	$select = new AgentSelect($data);
-	$mibsub = new MIBSubSelect($mibdata);
-	$res1 = $select->getSelect();
-	$res2 = $mibsub->getSubSelect();
-	$res3 = $mibsub->getSubSelectOnAgent($data['SUBID']);
-	$res = ["CODE" => 0, "SELECT" => $res1, "MIB" => $res2, "MIB_AGENT" => $res3, "DATA" => $data['VALUE']];
+	$data = $select->getSelect();
+	$res = ["CODE" => 0, "DATA" => $data];
     } else {
 	$log = ob_get_contents();
 	$res = ["CODE" => 1, "LOG" => $log];

@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @var $mysqli MySQLiデータを取得します
- */
-static $mysqli;
+include_once __DIR__ . '/output.php';
 
 /**
  * クエリを実行します
@@ -29,7 +26,7 @@ function query($query) {
  */
 function get_db() {
     try {
-	$data = loadfile("data/setting.json");
+	$data = loadSetting();
 
 	$HOST = $data['host'];
 	$USERNAME = $data['user'];
@@ -53,16 +50,6 @@ function get_db() {
 function escape($str) {
     $mysqli = get_db();
     return $mysqli->real_escape_string($str);
-}
-
-function loadfile($filename) {
-    $ip = filter_input(INPUT_SERVER, 'SERVER_ADDR', FILTER_SANITIZE_STRING);
-    if (!$ip || $ip == '::1') {
-	$ip = '127.0.0.1';
-    }
-    $json = file_get_contents("http://" . $ip . "/" . $filename);
-    $arr = json_decode($json, true);
-    return $arr;
 }
 
 function random($length = 8) {
@@ -103,9 +90,9 @@ function create($table, $column) {
 
 /**
  * すでにあるテーブルにデータを挿入します。
- * @param string $table	    
- * @param array	 $column    
- * @param string $value	    
+ * @param string $table	    テーブル名を指定します
+ * @param array	 $column    項目名（順序配列）を指定します
+ * @param array $value	    値（順序配列）を指定します
  * @return bool	【判定条件】テーブルにデータが挿入されたかどうか
  */
 function insert($table, $column, $value) {

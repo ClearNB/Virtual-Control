@@ -1,8 +1,8 @@
 <?php
-include_once './scripts/general/loader.php';
-include_once './scripts/session/session_chk.php';
-include_once './scripts/general/sqldata.php';
-include_once './scripts/general/former.php';
+include_once __DIR__ . '/scripts/general/loader.php';
+include_once __DIR__ . '/scripts/session/session_chk.php';
+include_once __DIR__ . '/scripts/general/sqldata.php';
+include_once __DIR__ . '/scripts/general/former.php';
 
 session_action_user();
 $getdata = session_get_userdata();
@@ -13,7 +13,7 @@ $loader = new loader();
 $fm_ag = new form_generator('fm_ag');
 $fm_ag->Button('fm_ag_bk', 'ホームに戻る', 'button', 'home');
 $fm_ag->SubTitle('エージェント一覧', 'エージェントを選択してください。', 'server');
-$fm_ag->Caption('ag_sl_01');
+$fm_ag->Caption('[AGENT_SELECT]');
 $fm_ag->Button('fm_ag_se', '選択して警告を取得する', 'button', 'chevron-circle-right');
 
 //警告ウィザード
