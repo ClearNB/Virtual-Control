@@ -17,22 +17,14 @@ class AgentSelect extends loader {
     public function getSelect() {
 	$value = $this->data['VALUE'];
 	$i = 0;
-	$code = 0;
 	$res = '';
-	$subids = $this->data['SUBID'];
 	if(sizeof($value) == 0) {
 	    $res = '（選択できるエージェントはありません）';
-	    $code = 2;
 	}
 	foreach($value as $val) {
-	    $sel = false;
-	    if($i == 0) {
-		$sel = true;
-	    }
-	    $subid = implode('_', $subids[$val['AGENTID']]);
-	    $res .= $this->Radio('ag_rd_' . ($i + 1), 'sl_ag', $val['AGENTID'] . '+' . $subid, '【' . $val['COMMUNITY'] . '】' . $val['AGENTHOST'], $sel);
+	    $res .= $this->Radio('ag_rd_' . ($i + 1), 'sl_ag', $val['AGENTID'], '【' . $val['COMMUNITY'] . '】（最終更新日時: ' . $val['AGENTUPTIME'] . ') ' . $val['AGENTHOST'], false);
 	    $i += 1;
 	}
-	return ["code" => $code, "data" => $res];
+	return $res;
     }
 }

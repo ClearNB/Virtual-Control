@@ -1,0 +1,143 @@
+@keyframes large_circle {
+    0% {
+	height: 0rem;
+	width: 0rem;
+    }
+    100% {
+	height: 0.7rem;
+	width: 0.7rem;
+    }
+}
+
+/* ラジオボタン01 */
+
+.radio01 {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    padding: 5px 5px;
+    text-align: center;
+    width: 100%;
+    transition: all 0.5s ease;
+    -moz-transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+.radio01::before {
+    background: none;
+    border: 3px solid #000;
+    border-radius: 50%;
+    content: '';
+    display: block;
+    margin-top: -0.8em;
+    position: absolute;
+    left: 0.1rem;
+    top: 50%;
+    height: 1.5em;
+    width: 1.5em;
+}
+
+input[type=radio]:hover + .radio01::before {
+    border-color: #000;
+}
+
+.radio01::after {
+    background: #000;
+    border-radius: 50%;
+    content: '';
+    display: block;
+    left: 0.48em;
+    margin-top: -0.386em;
+    opacity: 1;
+    position: absolute;
+    top: 50%;
+    height: 0rem;
+    width: 0rem;
+}
+
+input[type=radio]:active + .radio01::before {
+    border-color: #ffa500;
+}
+
+input[type=radio]:checked + .radio01::before {
+    border-color: #000;
+}
+
+input[type=radio]:focus + .radio01::before {
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.4);
+}
+
+input[type=radio]:checked + .radio01::after {
+    animation: large_circle 0.25s ease;
+    height: 0.7rem;
+    width: 0.7rem;
+}
+
+/* ラジオボタン02 */
+
+.radio02 {
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 30px;
+    position: relative;
+    width: 100%;
+    transition: all 0.5s ease;
+    -moz-transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+}
+
+.radio02::before {
+    background: none;
+    border: 3px solid #000;
+    border-radius: 50%;
+    content: '';
+    display: block;
+    margin-top: -0.8em;
+    position: absolute;
+    left: 0.1rem;
+    top: 50%;
+    height: 1.5em;
+    width: 1.5em;
+}
+
+input[type=radio]:hover + .radio02::before {
+    border-color: #000;
+}
+
+.radio02::after {
+    background: #000;
+    border-radius: 50%;
+    content: '';
+    display: block;
+    left: 0.48em;
+    margin-top: -0.386em;
+    opacity: 1;
+    position: absolute;
+    top: 50%;
+    height: 0rem;
+    width: 0rem;
+}
+
+input[type=radio]:active + .radio02::before {
+    border-color: #ffa500;
+}
+
+input[type=radio]:checked + .radio02::before {
+    border-color: #000;
+}
+
+input[type=radio]:checked + .radio02 {
+    border-bottom: 2px solid #000;
+}
+
+input[type=radio]:focus + .radio02::before {
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.4);
+}
+
+input[type=radio]:checked + .radio02::after {
+    animation: large_circle 0.25s ease;
+    height: 0.7rem;
+    width: 0.7rem;
+}

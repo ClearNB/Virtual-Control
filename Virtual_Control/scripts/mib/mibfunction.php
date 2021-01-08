@@ -1,6 +1,6 @@
 <?php
 
-class AgentSet {
+class MIBSet {
 
     /**
      * [VAR] リザルトフォーム
@@ -28,10 +28,7 @@ class AgentSet {
 	['CODE' => 5],
 	['CODE' => 6],
     ];
-    private $agenthost;
-    private $pre_agentid;
-    private $community;
-    private $mibs;
+    
     private $a_pass;
     private $funid;
 

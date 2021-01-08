@@ -8,6 +8,9 @@
 function getIPType($data): string {
     $res = '該当なし';
     switch($data) {
+	case 0:
+	    $res = '特定不可';
+	    break;
 	case 1:
 	    $res = 'IPv4';
 	    break;
@@ -21,7 +24,7 @@ function getIPType($data): string {
 /**
  * 4桁のIPv4アドレスを左から読み、アドレス表記にします
  * @param array $data	IPアドレスの数値配列です
- * @return string	IPv4アドレスデータを提供します
+ * @return string	IPv4アドレスデータを返します
  */
 function getIPv4($data, $issubnet = false): string {
     if($issubnet) {
@@ -35,14 +38,16 @@ function getIPv4($data, $issubnet = false): string {
 
 /**
  * 16桁のIPv6アドレスを左側から読み、16進数化・0省略化を行います。
- * @param array $data
+ * @param array $data IPv6アドレスが格納されている配列です
+ * @param bool $issubnet サブネットが必要かどうかを指定します（Default: false）
+ * @return string IPv6アドレスデータを返します
  */
 function getIPv6($data, $issubnet = false): string {
     $start_first_zero = false;
     $end_first_zero = false;
     $res = [];
     $res_i = 0;
-    for ($i = 0; $i < 16; $i++) {
+    for ($i = 0; $i < sizeof($data); $i++) {
 	$var = $data[$i];
 	if ($var == 0) {
 	    if($end_first_zero) {
@@ -63,7 +68,7 @@ function getIPv6($data, $issubnet = false): string {
     }
     
     $dataset = str_replace(':::', '::', implode(':', $res));
-    if(!$dataset) {
+    if(!$dataset || $dataset == ':') {
 	$dataset = '::';
     }
     if($issubnet) {

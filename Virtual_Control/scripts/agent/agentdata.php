@@ -47,7 +47,7 @@ class AGENTData {
 	    //エージェントデータを配列に格納
 	    foreach (self::$set as $var) {
 		if(!empty($var) && isset($result['SUBID'][$var->agentid])) {
-		    array_push($result['VALUE'], $var->get_agent_data());
+		    $result['VALUE'][$var->agentid] = $var->get_agent_data();
 		}
 	    }
 	    return $result;

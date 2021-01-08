@@ -43,7 +43,7 @@ function session_per_chk(): bool {
  * [FUNCTION] VCServerページセッションアクション
  * 
  * セッション行動についてユーザ確認を行い、適切な処理を行います
- * @param type $isdirectory
+ * 
  * @return void セッションにおいて、VCServerのアクセスでない場合、403.phpへセッションされます
  */
 function session_action_vcserver(): void {
@@ -129,6 +129,43 @@ function session_auth(): bool {
 }
 
 /**
+ * [FUNCTION] セッション認証チェック
+ * 
+ * セッションに必要なユーザIDとパスワードを用意し、それで認証を行います。
+ * 
+ * @param string $userid ユーザIDを指定します
+ * @param string $pass $useridに対してのパスワードを指定します
+ * @return int 成功した場合は0、データベースが原因で失敗した場合は1、ユーザIDまたはパスワードが違う場合は2が返されます。
+ */
+function session_auth_check($userid, $pass, $isauthid = false): int {
+    $res = 0;
+    
+    $q01 = select(true, "GSC_USERS", "SALT", "WHERE USERID = '$userid'");
+    if (!$q01) {
+	$res = 1;
+    }
+    $salt = $q01['SALT'];
+
+    if ($salt === "") {
+	$res = 2;
+    } else {
+	$hash = hash('sha256', $pass . $salt);
+
+	$result = select(true, "GSC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERID = '$userid'");
+	$password_matches = $result['PASSWORD_MATCHES'];
+
+	if ($password_matches) {
+	    if($isauthid) {
+		$_SESSION['gsc_authid'] = $userid;
+	    }
+	} else {
+	    $res = 2;
+	}
+    }
+    return $res;
+}
+
+/**
  * 現在のセッションからユーザ情報を取得します。
  * ユーザID, ユーザ名, 権限, ログイン状態を取得可能です。
  * 【重要】必ずセッションチェックを行ってからやりましょう
@@ -140,6 +177,16 @@ function session_get_userdata(): array {
     $sql = select(true, "GSC_USERS", "USERID, USERNAME, PERMISSION, LOGINSTATE", "WHERE USERID = '$userid'");
     session_set_data($sql);
     return $sql;
+}
+
+function session_get_userid(): string {
+    $userid = $_SESSION['gsc_userid'];
+    return $userid;
+}
+
+function unset_authid(): void {
+    session_start_once();
+    unset($_SESSION['gsc_authid']);
 }
 
 /**

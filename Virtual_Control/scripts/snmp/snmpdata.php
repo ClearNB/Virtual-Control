@@ -18,13 +18,13 @@ class SNMPData {
 
     /** @var int $pre_check OIDのデータに取り込む際に、テーブルデータの項目、かつ1件でもインデックスから値を取る必要のある項目があるかどうかを判定する値です。<br>必要な項目があった際は3を、必要でない場合は2を格納します。 */
     static private $pre_check = 0;
-    
+
     /** @var array $oids OID情報をここに格納します。 */
     static private $oids = [];
 
     /** @var array $set SNMPDataでオブジェクトを作成すると、ここにプッシュされます。 */
     static private $set = [];
-    
+
     /** @var array $inedx_option OIDに記載されたインデックスオプション情報をここに記録します。 */
     static private $index_option = [];
 
@@ -39,19 +39,18 @@ class SNMPData {
 
     /** @var string $japtlans OIDに対する日本語の説明を格納します。 */
     private $japtlans;
-    
+
     /** @var string $icon OIDの説明に合ったアイコン情報を格納します。 */
     private $icon;
-    
+
     /** @var array|int $value OID別に値を格納します。テーブルデータの場合を考え、格納配列型になります。 */
     private $value;
-    
+
     /** @var string $index テーブルのインデックスデータを格納します（テーブルのみ有効）。 */
     private $index;
-    
+
     /** @var int $check (0..通常データ, 1..テーブル, 2..テーブルデータ, 3..テーブルデータ【インデックスがデータ】) */
     private $check;
-
 
     /**
      * オブジェクトを生成するコンストラクタです。
@@ -122,11 +121,7 @@ class SNMPData {
     public static function setValue($oid, $data): bool {
 	$res = self::data_search($oid);
 	if ($res) {
-	    $data = str_replace('"', '', str_replace('iso', '1', preg_replace('/^.*[:]\s/', '', $data)));
-	    //数値の場合は、数値として3桁ごとのコンマをつける
-	    if (preg_match('/^[0-9]{1,}/', $data) && !strpos($data, '.')) {
-		$data = number_format(intval($data));
-	    }
+	    $data = str_replace('iso', '1', preg_replace('/(["]|[\r\n|\n|\r]|^.*[:]\s)/', '', $data));
 	    array_push(self::$set[$res]->value, $data);
 	    $chk = self::$set[$res]->check;
 	    if ($chk != 0) {
@@ -147,6 +142,7 @@ class SNMPData {
     }
 
     public static function setValueFromIndex($top_oid, $sub_v) {
+	//echo "$top_oid : $sub_v <br />";
 	$sub_cat = explode('.', $sub_v);
 	$arr = self::$index_option[$top_oid];
 	$val_host = [];
@@ -167,18 +163,27 @@ class SNMPData {
 		    $isport = true;
 		}
 		switch ($sub_cat[$sub_i]) {
+		    case 0:
+			$data = 'IPアドレス特定不可';
+			$dem = 1 + $add_i;
+			break;
 		    case 4:
 			$data = getIPv4(array_slice($sub_cat, $sub_i + 1, 4 + $add_i), $isport);
 			$dem = 5 + $add_i;
 			break;
-		    case 16:
-			$data = getIPv6(array_slice($sub_cat, $sub_i + 1, 16 + $add_i), $isport);
-			$dem = 17 + $add_i;
-			break;
+		}
+		if ($sub_cat[$sub_i] >= 16) {
+		    $size = $sub_cat[$sub_i] + $add_i;
+		    $data = getIPv6(array_slice($sub_cat, $sub_i + 1, $size), $size, $isport);
+		    $dem = $size + 1;
 		}
 	    } else if ($var_v == 'iptype') {
 		$data = getIPType($sub_cat[$sub_i]);
-		$dem = 1;
+		if ($sub_cat[$sub_i] != 0) {
+		    $dem = 1;
+		} else {
+		    $dem = 0;
+		}
 	    } else if ($var_v == 'rtpolicy') {
 		$dem = intval($val_host['1.3.6.1.2.1.4.24.7.1.3']);
 		$data = implode(' ', array_slice($sub_cat, $sub_i, $dem));
@@ -207,7 +212,7 @@ class SNMPData {
     public static function getDataArray(): array {
 	//var_dump(self::$set);
 	//var_dump(self::$index_option);
-	$result = ['OID' => [], 'DESCR' => [], 'JAPTLANS' => [], 'ICON' => [], 'VALUE' => [], 'CHECK' => [], 'INDEX' => []];
+	$result = ['OID' => [], 'DESCR' => [], 'JAPTLANS' => [], 'ICON' => [], 'VALUE' => [], 'CHECK' => [], 'INDEX' => [], 'CSV' => ''];
 	foreach (self::$set as $snmp) {
 	    $data = $snmp->getValue();
 	    if ($data) {
@@ -225,9 +230,47 @@ class SNMPData {
 		$result['INDEX'][$oid] = $data['INDEX'];
 	    }
 	}
-	return $result;
+	$csv = self::convertToCSV($result);
+	return ['csv' => $csv, 'res' => $result];
     }
-    
+
+    private static function convertToCSV($data) {
+	$res = '';
+
+	//1: OIDの取得
+	$oid_data = $data['OID'];
+
+	//2: OID別の処理が全て終わるまでループ
+	foreach ($oid_data as $oid) {
+	    //2-1: OIDごとの DESCR, JAPTLANS を取得し、これで項目を作成
+	    $descr = $data['DESCR'][$oid];
+	    $japtlans = $data['JAPTLANS'][$oid];
+	    $column_name = "$oid,$descr,$japtlans";
+	    
+	    //2-2: OIDで参照される CHECK を確認
+	    $check = $data['CHECK'][$oid];
+
+	    $sw_data = '';
+	    
+	    switch($check) {
+		case 0: //2-3-1: [0の場合] -> そのままデータ側の変数に格納
+		    $sw_data = str_replace(',', ' ', $data['VALUE'][$oid][0]);
+		    break;
+		case 1: //2-3-2: [1の場合] -> INDEXを読み込み、出てきた配列データをそのままデータに落とし込む（implodeでタブ区切りにする）
+		    $sw_data = str_replace('|', ',', str_replace(',', ' ', implode('|', $data['INDEX'][$oid])));
+		    break;
+		case 2: //2-3-3: [2または3の場合] -> VALUEのデータを配列として読み込み、そのままデータに落とし込む（implodeでタブ区切り）
+		case 3:
+		    $sw_data = str_replace('|', ',', str_replace(',', ' ', implode('|', $data['VALUE'][$oid])));
+		    break;
+	    }
+	    //2-4: 項目とデータをつなぎ合わせる（タブ区切り）
+	    //2-5: 改行文字を加える
+	    $res .= $column_name . ',' . $sw_data . '\n';
+	}
+	
+	return $res;
+    }
 
     /**
      * OIDデータから指定されたOIDがあるかどうかを探索します。
@@ -260,4 +303,5 @@ class SNMPData {
 	self::$index_option = [];
 	self::$general_topoid = '';
     }
+
 }

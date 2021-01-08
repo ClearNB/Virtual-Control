@@ -52,7 +52,7 @@ class SNMPTable extends Table {
 		}
 		$value = "<データなし>";
 		if (isset($this->table_data['VALUE'][$oid][0])) {
-		    $value = $this->table_data['VALUE'][$oid][0];
+		    $value = self::data_numberformat($this->table_data['VALUE'][$oid][0]);
 		}
 		$result .= $this->add_table_data($this->get_column($oid), $value);
 	    }
@@ -116,7 +116,7 @@ class SNMPTable extends Table {
 	    $start_oid = $this->table_data['OID'][$start_id - 1];
 	    $index = $i + 1;
 	    if (isset($this->table_data['INDEX'][$start_oid])) {
-		//echo $start_oid . '<br />';
+		//echo $this->table_data['OID'][$start_id] . "<br />";
 		$index = $this->table_data['INDEX'][$start_oid][$i];
 	    }
 	    $result .= '<details class="sub"><summary class="summary-sub">【' . $index . '】</summary><div class="details-content-sub">';
@@ -125,7 +125,7 @@ class SNMPTable extends Table {
 		$oid = $this->table_data['OID'][$j];
 		$value = '<データなし>';
 		if (isset($table_data[$i][$oid])) {
-		    $value = $table_data[$i][$oid];
+		    $value = self::data_numberformat($table_data[$i][$oid]);
 		}
 		$result .= $this->add_table_data($this->get_column($oid), $value);
 	    }
@@ -134,6 +134,13 @@ class SNMPTable extends Table {
 	    $result .= '</div></details>';
 	}
 	return $result;
+    }
+
+    private static function data_numberformat($data) {
+	if (preg_match('/^[0-9]{1,}$/', $data) && !strpos($data, '.')) {
+	    $data = number_format(intval($data));
+	}
+	return $data;
     }
 
 }

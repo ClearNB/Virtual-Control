@@ -20,6 +20,10 @@ $fm_in_ld = fm_ld('fm_in_ld', 'データベースの初期化中', '全てが完
 
 $fm_in_sc = new form_generator('fm_in_sc');
 $fm_in_sc->SubTitle('初期化が完了しました！', '早速、新しくなったデータで試しましょう！', 'thumbs-up');
+$fm_in_sc->openList();
+$fm_in_sc->addList('ユーザ名: [USERID]');
+$fm_in_sc->addList('パスワード: [PASS]');
+$fm_in_sc->closeList();
 $fm_in_sc->Button('bt_sc_ln', 'ホームに戻る', 'button', 'home');
 
 $fm_in_fl = new form_generator('fm_in_fl');
@@ -89,12 +93,13 @@ $fm_in_fl->Button('bt_fl_ln', 'ホームに戻る', 'button', 'home');
 
 	    function data_post() {
 		ajax_dynamic_post_toget('./scripts/init/init.php').then(function (data) {
-		    switch (data['code']) {
+		    switch (data['CODE']) {
 			case 0:
-			    animation('data_output', 400, fm_in_sc);
+			    var fm_w = fm_in_sc.replace('[USERID]', data['USERID']).replace('[PASS]', data['PASS']);
+			    animation('data_output', 400, fm_w);
 			    break;
 			case 1:
-			    var fm_w = fm_in_fl.replace('cap_log', data['s_text']);
+			    var fm_w = fm_in_fl.replace('cap_log', data['ERROR']);
 			    animation('data_output', 400, fm_w);
 			    break;
 		    }

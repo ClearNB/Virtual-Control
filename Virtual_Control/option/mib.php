@@ -9,62 +9,74 @@ $getdata = session_get_userdata();
 
 $loader = new loader();
 
-//読み込み画面
-$fm_ld = fm_ld('fm_ld', 'データを反映中です', 'しばらくお待ちください...');
+//OID・それぞれの名前の注意事項記述
+$oid_group_text = '<strong>【条件】半角数字と記号（.）を用いて255文字まで（OIDである必要があります）</strong>';
+$oid_sub_text = '<strong>【条件】サブツリーでは、グループのOIDに続く半角数字を入力します<br>【入力例】（1.3.6.1.2.1.）【1】</strong>';
+$oid_node_text = '<strong>【条件】ノードでは、サブツリーOIDに続く半角数字を入力します</strong>';
 
-//失敗画面（入力エラー・データベースエラー）
-$fm_fl_at = fm_fl('fm_fl_at', 'bt_bk_at', '認証に失敗しました。', 'パスワードをもう一度ご確認ください。');
-$fm_fl_in = fm_fl('fm_fl_in', 'bt_bk_in', '入力に誤りがあります。', '以下をご覧ください。<br>[ERROR_TEXT]');
-$fm_fl_dt = fm_fl('fm_fl_dt', '', 'データベースの接続に失敗しました。', 'データベース操作ができないため、これ以上の操作ができません。');
+//共通ページ（読み込み）
+$fm_ld = fm_ld('fm_ld');
 
-//認証画面
-$fm_at = fm_at('fm_at', $getdata['USERNAME']);
+//共通ページ（エラー）
+$fm_fl = fm_fl('fm_fl', '', 'エラーが発生しました。', '以下をご確認ください。');
+$fm_fl->openList();
+$fm_fl->addList('データベースとの接続をご確認ください。');
+$fm_fl->addList('要求しているデータと実際のデータを比べ、記述や内容が正しいかどうかをご確認ください。');
+$fm_fl->addList('アカウント認証であるセッションが切れていると思われます。もう一度ログインし直してから再試行してください。');
+$fm_fl->addList('【アクセスログ】<br>[DATA]');
+$fm_fl->closeList();
+$fm_fl->Button('bt_fl_rt', 'ページを再読込する', 'button', 'sync-alt');
 
-//1: サブツリー選択画面（FP）
-$fm_sl_sb = new form_generator('fm_sl_sb', '');
-$fm_sl_sb->Button('bt_sb_bk', 'オプション一覧画面へ戻る', 'button', 'caret-square-left');
-$fm_sl_sb->openListGroup();
-$fm_sl_sb->addListGroup('group', '[グループ名]', 'object-group', '[OID]', 'クリックしてグループ選択へ');
-$fm_sl_sb->closeList();
-$fm_sl_sb->SubTitle('MIBサブツリー選択', 'サブツリーを選択してください。', 'project-diagram');
-$fm_sl_sb->Caption('[Data]');
-$fm_sl_sb->Button('bt_sb_cr', 'MIBサブツリー作成', 'button', 'plus-square');
-$fm_sl_sb->Button('bt_sb_ed', 'MIBサブツリー編集', 'button', 'edit', 'dark', 'disabled');
-$fm_sl_sb->Button('bt_sb_dl', 'MIBサブツリー削除', 'button', 'trash', 'dark', 'disabled');
+//共通ページ（チェックエラー）
+$fm_fl_in = fm_fl('fm_fl_in', '', 'チェックエラーが発生しました。', '以下をご確認ください。');
+$fm_fl_in->Caption('[DATA]');
+$fm_fl_in->Button('bt_fl_in_bk', '入力に戻る', 'button', 'chevron-circle-left');
 
-//1-2: サブツリー作成（入力）
-$fm_sb_cr = new form_generator('fm_sb_cr');
-$fm_sb_cr->Button('bt_cr_bk', 'サブツリー選択へ戻る', 'button', 'project-diagram');
-$fm_sb_cr->SubTitle('MIBサブツリー作成', 'MIBグループ内のサブツリーを作成します。', 'plus-square', false, '1: 入力');
-$fm_sb_cr->openList();
-$fm_sb_cr->addList('MIBグループOID: [グループOID]');
-$fm_sb_cr->addList('MIBグループ名: [グループ名]');
-$fm_sb_cr->closeList();
-$fm_sb_cr->Input('in_mb_id', 'サブツリーID', '（半角英数字・1-255文字以内）<br>例: (グループOID) 1.3.6.1.2.1.1, (サブツリーOID) 1.3.6.1.2.1.1.1<br>→ 1', 'id-card-alt', true);
-$fm_sb_cr->Caption('現在の指定: [サブツリーOID]');
-$fm_sb_cr->Input('in_mb_nm', 'サブツリー名', '（半角英数字・1-50文字以内）<br>サブツリーOIDに対する説明を加えます。', 'address-card', true);
-$fm_sb_cr->Button('bt_cr_sb', '次へ進む', 'button', 'caret-square-right');
+//共通ページ（認証エラー）
+$fm_fl_at = fm_fl('fm_fl_at', '', '認証が発生しました。', '認証のために入力したパスワードが正しいかどうかご確認ください。');
+$fm_fl_at->Button('bt_fl_at_bk', '認証に戻る', 'button', 'chevron-circle-left');
 
-//1-3: サブツリー編集（選択）
-$fm_sb_ed_sl = new form_generator('fm_sb_ed_sl');
-$fm_sb_cr->Button('bt_cr_bk', 'サブツリー選択へ戻る', 'button', 'project-diagram');
-$fm_sb_cr->SubTitle('MIBサブツリー作成', 'MIBグループ内のサブツリーを作成します。', 'plus-square', false, '1: 入力');
-$fm_sb_cr->openList();
-$fm_sb_cr->addList('MIBサブツリーOID: [グループOID]');
-$fm_sb_cr->addList('MIBサブツリー名: [グループ名]');
-$fm_sb_cr->closeList();
+//1. 選択（サブツリー）
+$fm_sl_sb = new form_generator('fm_sl_sb');
 
-//2: グループ選択画面
-$fm_sl_gp = new form_generator('fm_sl_gp');
-$fm_sl_gp->Button('bt_gp_bk', 'サブツリー選択へ戻る', 'button', 'project-diagram');
-$fm_sl_gp->SubTitle('MIBグループの選択', 'グループを選択してください。', 'object-group');
-$fm_sl_gp->Caption('[Data]');
-$fm_sl_gp->Button('bt_gp_sl', 'MIBグループ選択', 'button', 'check-square');
-$fm_sl_gp->Button('bt_gp_cr', 'MIBグループ作成', 'button', 'plus-square');
-$fm_sl_gp->Button('bt_gp_ed', 'MIBグループ編集', 'button', 'edit', 'dark', 'disabled');
-$fm_sl_gp->Button('bt_gp_dl', 'MIBグループ削除', 'button', 'trash', 'dark', 'disabled');
+//1-1. 作成（サブツリー）
+$fm_cr_sb = new form_generator('fm_cr_sb');
 
-//2-1: グループ選択画面
+//1-2-1. 編集（サブツリー・選択）
+$fm_ed_sb = new form_generator('fm_ed_sb');
+
+//1-2-2. 編集（サブツリー・ノード一覧）
+$fm_ed_nd_ls = new form_generator('fm_ed_nd_ls');
+
+//1-2-2. 編集（サブツリー・ノード要素編集）
+
+//1-2-2-1. 編集（サブツリー・サブツリーOID）
+
+//1-2-2-2. 編集（サブツリー・アイコン選択）
+$_24 = new form_generator('fm_ed_sb_ic');
+$_24->Button('bt_nd_bk', 'ノード編集に戻る', 'button', '');
+$_24->SubTitle('アイコン選択', '以下から適切なアイコンを選択してください', 'icons');
+$_24->Caption('[ICON_SELECT]');
+
+//1-2-3. 編集（サブツリー・サブツリー名）
+$_23 = new form_generator('fm_ed_sb_nm');
+$_23->Button('bt_sb_bk', 'ノード一覧に戻る', 'button', 'chevron-circle-left');
+
+//1-3. 削除（サブツリー）
+
+//2. 選択（グループ）【TP】
+
+
+//2-1. 作成（グループ）
+
+//2-2. 編集（グループ）
+
+//2-2-1. 編集（グループ・グループOID）
+
+//2-2-2. 編集（グループ・グループ名）
+
+//2-3. 削除（グループ）
+
 ?>
 
 <html>
@@ -84,37 +96,30 @@ $fm_sl_gp->Button('bt_gp_dl', 'MIBグループ削除', 'button', 'trash', 'dark'
 	
 	<?php echo $loader->footer() ?>
 	<?php echo $loader->footerS(true) ?>
-	
+	    
 	<script type="text/javascript">
+	    function table_generate(duration) {
+		f_id.resetID();
+		w_page = '';
+		animation('data_output', duration, fm_ld);
+		ajax_dynamic_post_toget('../scripts/mib/mib_get.php').then(function (data) {
+		    switch (data['code']) {
+			case 0:
+			    a_data = data;
+			    var fm_w = fm_pg.replace('[DATA]', data['data']);
+			    animation('data_output', 400, fm_w);
+			    break;
+			case 1:
+			    var fm_w = fm_fl.replace('[DATA]', data['ERR_TEXT']);
+			    animation('data_output', 400, fm_w);
+			    break;
+		    }
+		});
+	    }
+	    
 	    $(document).ready(function() {
-		animation('data_output', 0, fm_sl_sb);
+		animation('data_output', 0, fm_ed_sb_ic);
 	    });
-	    
-	    //1: サブツリー選択
-	    $(document).on('click', '#bt_sb_bk, #group, #bt_sb_cr, #bt_sb_ed, #bt_sb_dl', function() {
-		switch($(this).attr('id')) {
-		    case 'bt_sb_bk':
-			animation_to_sites('data_output', 400, './');
-			break;
-		    case 'group':
-			animation('data_output', 400, fm_sl_gp);
-			break;
-		    case 'bt_sb_cr':
-			animation('data_output', 400, fm_sb_cr);
-			break;
-		}
-	    });
-	    
-	    //2: グループ選択
-	    $(document).on('click', '#bt_gp_bk, #bt_gp_sl, #bt_gp_cr, #bt_gp_ed, #bt_gp_dl', function () {
-		switch($(this).attr('id')) {
-		    case 'bt_gp_bk':
-			animation('data_output', 400, fm_sl_sb);
-			break;
-		}
-	    });
-	    
-	    //3: 
 	</script>
     </body>
 </html>

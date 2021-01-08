@@ -16,8 +16,12 @@ class AccountTable {
 	$res = $table->start_table('tb_ac', 'user-friends', 'ユーザテーブル');
 	$res .= $table->add_table_columns($column_out, true);
 	$i = 1;
-	foreach($value as $v) {
-	    $res .= $table->add_table_data_hor($column_key, $v, true, $i, 'USERID', 'pre_userid');
+	foreach($value as $k => $v) {
+	    if($i == 1) {
+		$res .= $table->add_table_data_hor($column_key, $v, true, $i, $k, 'pre_userid', true);
+	    } else {
+		$res .= $table->add_table_data_hor($column_key, $v, true, $i, $k, 'pre_userid', false);
+	    }
 	    $i += 1;
 	}
 	$res .= $table->table_close();

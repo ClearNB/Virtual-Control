@@ -17,17 +17,16 @@ if ($request !== 'xmlhttprequest') {
     exit;
 }
 
-include_once ('../sqldata.php');
-include_once ('../common.php');
-include_once ('../dbconfig.php');
-include_once ('./account_set.php');
+include_once __DIR__ . '/../general/sqldata.php';
+include_once __DIR__ . '/accountfunction.php';
+include_once __DIR__ . '/../session/session_chk.php';
 
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 if ($method === 'POST') {
     $functionid = filter_input(INPUT_POST, 'functionid', FILTER_SANITIZE_STRING);
     $pre_userid = filter_input(INPUT_POST, 'pre_userid', FILTER_SANITIZE_STRING);
-    $userid = filter_input(INPUT_POST, 'in_ac_ui', FILTER_SANITIZE_STRING);
-    $username = filter_input(INPUT_POST, 'in_ac_un', FILTER_SANITIZE_STRING);
+    $userid = filter_input(INPUT_POST, 'in_ac_id', FILTER_SANITIZE_STRING);
+    $username = filter_input(INPUT_POST, 'in_ac_nm', FILTER_SANITIZE_STRING);
     $permission = filter_input(INPUT_POST, 'in_ac_pr', FILTER_SANITIZE_STRING);
     $a_pass = filter_input(INPUT_POST, 'in_at_ps', FILTER_SANITIZE_STRING);
     $pass = filter_input(INPUT_POST, 'in_ac_ps', FILTER_SANITIZE_STRING);
@@ -35,8 +34,10 @@ if ($method === 'POST') {
     
     $set = new AccountSet($functionid, $pre_userid, $userid, $username, $a_pass, $pass, $r_pass, $permission);
     
+    $set->check_functionid();
+    
     $data = $set->run();
     
-    ob_get_clean();
-    echo json_encode($r);
+    //ob_get_clean();
+    echo json_encode($data);
 }
