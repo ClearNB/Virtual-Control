@@ -1,5 +1,7 @@
 <?php
 
+include_once __DIR__ . '/../general/sqldata.php';
+
 /**
  * [FUNCTIONS] セッション系処理ファンクション群
  * 
@@ -48,9 +50,27 @@ function session_per_chk(): bool {
  */
 function session_action_vcserver(): void {
     if (!session_per_chk()) {
-	http_response_code(301);
-	header('location: ../403.php');
+	http_response_code(403);
 	exit();
+    }
+}
+
+/**
+ * [FUNCTION] VCServerページセッションアクション
+ * 
+ * ディレクトリ内における挙動について調べ、ユーザによるアクセスの場合は拒否します
+ * 
+ * @return void リクエスト内容において、サーバ自身のアクセスでない場合、403.phpへセッションされます
+ */
+function session_action_scripts(): void {
+    $requestmg = filter_input(INPUT_SERVER, 'HTTP_X_REQUESTED_WITH');
+
+    $request = isset($requestmg) ? strtolower($requestmg) : '';
+    $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+    if ($request !== 'xmlhttprequest' && $method !== 'POST') {
+	http_response_code(403);
+	header('location: /error.php');
+	exit;
     }
 }
 
@@ -64,14 +84,14 @@ function session_action_vcserver(): void {
 function session_action_user(): void {
     switch (session_chk()) {
 	case 1:
-	    http_response_code(301);
-	    header('location: ./403.php');
-	    exit();
+	    http_response_code(403);
+	    header('location: /error.php');
+	    exit;
 	    break;
 	case 2:
 	    http_response_code(301);
-	    header('location: ./logout.php');
-	    exit();
+	    header('location: ../logout');
+	    exit;
 	    break;
     }
 }
@@ -86,12 +106,12 @@ function session_action_guest(): void {
     switch (session_chk()) {
 	case 0:
 	    http_response_code(301);
-	    header('location: ./dash.php');
+	    header('location: ../dash');
 	    exit();
 	    break;
 	case 2:
 	    http_response_code(301);
-	    header('location: ./logout.php');
+	    header('location: ../logout');
 	    exit();
 	    break;
     }
@@ -139,14 +159,16 @@ function session_auth(): bool {
  */
 function session_auth_check($userid, $pass, $isauthid = false): int {
     $res = 0;
-    
+
     $q01 = select(true, "GSC_USERS", "SALT", "WHERE USERID = '$userid'");
+    $salt = '';
     if (!$q01) {
 	$res = 1;
+    } else {
+	$salt = $q01['SALT'];
     }
-    $salt = $q01['SALT'];
 
-    if ($salt === "") {
+    if (!$salt) {
 	$res = 2;
     } else {
 	$hash = hash('sha256', $pass . $salt);
@@ -155,7 +177,7 @@ function session_auth_check($userid, $pass, $isauthid = false): int {
 	$password_matches = $result['PASSWORD_MATCHES'];
 
 	if ($password_matches) {
-	    if($isauthid) {
+	    if ($isauthid) {
 		$_SESSION['gsc_authid'] = $userid;
 	    }
 	} else {
@@ -196,14 +218,14 @@ function unset_authid(): void {
  * @return void
  */
 function session_set_data(&$sql): void {
-    switch($sql['PERMISSION']) {
+    switch ($sql['PERMISSION']) {
 	case 0:
 	    $sql['PERMISSION_TEXT'] = 'VCServer';
 	    break;
 	case 1:
 	    $sql['PERMISSION_TEXT'] = 'VCHost';
     }
-    switch($sql['PERMISSION']) {
+    switch ($sql['PERMISSION']) {
 	case 0:
 	    $sql['LOGINSTATE_TEXT'] = 'ログインしていません';
 	    break;

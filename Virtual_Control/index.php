@@ -12,7 +12,7 @@ $fm_dt01->SubTitle("アクセス監視は、新たな挑戦へ", "Virtual Contro
 
 $fm_dt02 = new form_generator('fm_dt02');
 $fm_dt02->SubTitle('使いやすく、そしてわかりやすく', 'Virtual Control は、できるだけ利用しやすい環境として HTML5 (+ CSS, JavaScript), PHP の2言語を使用しております。', 'users');
-$fm_dt02->Button('bt_02_gh', 'GitHubを開く', 'button', 'fab fa-github-square');
+$fm_dt02->Button('bt_go_gh', 'GitHubを開く', 'button', 'fab fa-github-square');
 
 $fm_dt03 = new form_generator('fm_dt03', '', 2);
 $fm_dt03->SubTitle('もっと気軽に', '', 'laptop-code', true);
@@ -20,8 +20,8 @@ $fm_dt03->Card('標準MIBに準拠した監視を', 'server', 'OID識別を日�
 
 $fm_dt04 = new form_generator('fm_dt04');
 $fm_dt04->CardDark('WARNING!', 'fas fa-user', 'ログインが必要です', '本サーバはユーザ登録制です。<br>管理者権限により作成されたアカウントでログインしてください。');
-$fm_dt04->Button('bt_04_lg', 'ログインする', 'button', 'sign-in-alt');
-$fm_dt04->Button('bt_04_rf', 'データベースを初期化', 'button', 'sync');
+$fm_dt04->Button('bt_go_lg', 'ログインする', 'button', 'sign-in-alt');
+$fm_dt04->Button('bt_go_rf', 'データベースを初期化', 'button', 'sync');
 
 form_generator::resetData();
 $fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $fm_dt03->Export() . $fm_dt04->Export());
@@ -30,39 +30,30 @@ $fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $
 
 <html>
     <head>
-        <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
+        <?php echo $loader->loadHeader('Virtual Control', 'INDEX', true) ?>
 	<?php echo form_generator::ExportClass() ?>
     </head>
 
     <body class="text-monospace">
-        <!-- Navbar -->
         <?php echo $loader->navigation(2) ?>
 	<?php echo $loader->load_Logo() ?>
 	
         <div id="data_output"></div>
 
-        <!-- Footer -->
         <?php echo $loader->footer() ?>
 
-        <!-- JavaScript dependencies -->
-        <?php echo $loader->footerS() ?>
+        <?php echo $loader->footerS(true) ?>
 	
 	<script type="text/javascript">
 	    $(document).ready(function() {
 		animation('data_output', 0, fm_dt);
 	    });
 	    
-	    $(document).on('click', '#bt_02_gh, #bt_04_lg, #bt_04_rf', function() {
+	    $(document).on('click', '#bt_go_gh, #bt_go_lg, #bt_go_rf', function() {
 		switch($(this).attr('id')) {
-		    case "bt_02_gh":
-			animation_to_sites('data_output', 400, 'https://github.com/ClearNB/Virtual-Control');
-			break;
-		    case "bt_04_lg":
-			animation_to_sites('data_output', 400, './login.php');
-			break;
-		    case "bt_04_rf":
-			animation_to_sites('data_output', 400, './init.php');
-			break;
+		    case "bt_go_gh": animation_to_sites('data_output', 400, 'https://github.com/ClearNB/Virtual-Control'); break;
+		    case "bt_go_lg": animation_to_sites('data_output', 400, './login'); break;
+		    case "bt_go_rf": animation_to_sites('data_output', 400, './init'); break;
 		}
 	    });
 	</script>

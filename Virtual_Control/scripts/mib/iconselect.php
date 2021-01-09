@@ -3,7 +3,6 @@
 include_once __DIR__ . '/../general/loader.php';
 
 class IconSelect {
-
     private $data;
 
     public function __construct($data) {

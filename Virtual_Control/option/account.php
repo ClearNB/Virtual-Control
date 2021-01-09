@@ -145,7 +145,7 @@ $fm_cs->Button('bt_cs_bk', 'アカウント選択画面に戻る', 'button', 'ch
 	    var w_page = '';
 	</script>
     </head>
-    <body>
+     <body class="text-monospace">
 	<?php echo $loader->navigation($getdata['PERMISSION']) ?>
 	<?php echo $loader->load_Logo() ?>
 

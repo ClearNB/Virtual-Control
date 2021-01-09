@@ -41,6 +41,8 @@ class WarnData {
 	    } else {
 		$this->agent_info = '〈判別不可〉';
 	    }
+	} else {
+	    $this->agent_info = '〈判別不可〉';
 	}
     }
 
@@ -63,7 +65,7 @@ class WarnData {
 		if ($select) {
 		    $this->message = '【' . $select['DESCR'] . '】「' . $select['JAPTLANS'] . '」が発生しました。';
 		} else {
-		    $this->message = '【Undefined】トラップ状態の判別ができません';
+		    $this->message = '【Undefined】認識不可能なトラップ内容';
 		}
 		break;
 	}
@@ -106,7 +108,7 @@ class WarnData {
 	$res = [];
 	$finder = [
 	    ['TIME', '(^TIME: )', 0],
-	    ['ADDRESS', '(^UDP: \[|\][:][0-9]{1,5}[-]\[|\][:][0-9]{1,5})', 0],
+	    ['ADDRESS', '(^UDP: \[|\][:][0-9]{1,5}[-]\[(.+)\][:][0-9]{1,5})', 0],
 	    ['SYSTIME', '(^SNMP_SYS_TIME: )', 0],
 	    ['ALERT_OID', '(^ALERT_OID: )', 0],
 	    ['ADDRESS', '(^HOST: )', 0],
@@ -124,9 +126,13 @@ class WarnData {
 			$preg_target = $f[1];
 		    }
 		    $value = preg_replace("/$preg_target/", '', $v);
-		    $res[$f[0]] = $value;
+		    if ($f[2] == 1 && isset($res[$f[0]]) && $res[$f[0]]) {
+			$res[$f[0]] .= '<br>' . $value;
+		    } else {
+			$res[$f[0]] = $value;
+		    }
 		} else {
-		    if(!isset($res[$f[0]])) {
+		    if (!isset($res[$f[0]])) {
 			$res[$f[0]] = '';
 		    }
 		}
@@ -156,7 +162,9 @@ class WarnData {
 
     public static function getArray() {
 	$res = [
-	    'VALUE' => []
+	    'VALUE' => [],
+	    'CSV' => [],
+	    'DATE' => date("Y-m-d H:i:s")
 	];
 	foreach (self::$set as $warn) {
 	    $group = $warn->getGroup();
@@ -164,6 +172,27 @@ class WarnData {
 		$res['VALUE'][$group] = [];
 	    }
 	    array_push($res['VALUE'][$group], $warn->getData());
+	}
+	$res['CSV'] = self::convertToCSV($res['VALUE']);
+	return $res;
+    }
+
+    private static function convertToCSV($data) {
+	$res = 'Virtual Control Trap Data Convertion v 1.0.0\n取得時間,' . $data['DATE'] . '\n+----- 取得データ一覧 -----+\n';
+	$res .= '日別番号,システム稼働時間,発生時刻,ホストアドレス,コミュニティ,対象OID,エージェント情報,情報出力先OID,インタフェースID,その他情報,メッセージ\n';
+
+	foreach ($data as $g => $v) {
+	    $res .= '【' . $g . '】（' . sizeof($v) . '）\n';
+	    $i = 1;
+	    foreach($v as $c) {
+		$res .= $i;
+		foreach($c as $vl) {
+		    $c_data = preg_replace('/(,|\n)/', ' ', $vl);
+		    $res .= ',' . $c_data;
+		}
+		$res .= '\n';
+		$i += 1;
+	    }
 	}
 	return $res;
     }
@@ -176,7 +205,11 @@ class WarnData {
 	if ($res) {
 	    foreach ($res as $r) {
 		$date = preg_replace('/(^.*\/|.log$|trap_)/', '', $r);
-		$res_data[$date] = explode("\n", file_get_contents($r));
+		$ex_data = preg_replace('/([+][=][=][+]){1,}$/', '', file_get_contents($r));
+		if (preg_match('/^([0-9]{4}[0-9]{2}[0-9]{2})$/', $date)) {
+		    $key = substr($date, 0, 4) . '-' . substr($date, 4, 2) . '-' . substr($date, 6, 2);
+		    $res_data[$key] = explode("\n", $ex_data);
+		}
 	    }
 	} else {
 	    $res_data = '';

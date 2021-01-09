@@ -4,9 +4,8 @@
 $fp = fopen('php://stdin', 'r');
 
 if (!$fp) {
-    http_response_code(301);
-    header('Location: ../../403.php');
-    exit;
+    http_response_code(403);
+    exit();
 }
 
 include_once __DIR__ . '/../general/output.php';
