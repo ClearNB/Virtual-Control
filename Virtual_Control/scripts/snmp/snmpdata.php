@@ -268,7 +268,6 @@ class SNMPData {
 	    //2-5: 改行文字を加える
 	    $res .= $column_name . ',' . $sw_data . '\n';
 	}
-	
 	return $res;
     }
 

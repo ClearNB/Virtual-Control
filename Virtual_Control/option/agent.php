@@ -141,7 +141,7 @@ $fm_cs->Button('bt_cs_bk', 'エージェント選択画面に戻る', 'button', 
 	    let focustag;
 	</script>
     </head>
-    <body>
+     <body class="text-monospace">
 	<?php echo $loader->navigation($getdata['PERMISSION']) ?>
 	<?php echo $loader->load_Logo() ?>
 
