@@ -1,24 +1,14 @@
 <?php
 
-include_once ('../general/sqldata.php');
-include_once ('../session/session_chk.php');
-include_once ('../general/loader.php');
-include_once ('../general/former.php');
-include_once ('./init_c.php');
+include_once __DIR__ . '/../general/sqldata.php';
+include_once __DIR__ . '/../general/loader.php';
+include_once __DIR__ . '/../general/former.php';
+include_once __DIR__ . './init_c.php';
+require_once __DIR__ . '/../session/session_chk.php';
 
-$requestmg = filter_input(INPUT_SERVER, 'HTTP_X_REQUESTED_WITH');
+session_action_scripts();
 
-$request = isset($requestmg) ? strtolower($requestmg) : '';
-if ($request !== 'xmlhttprequest') {
-    http_response_code(403);
-    header("Location: ../../403.php");
-    exit;
-}
-
-$method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
-if ($method === 'POST') {
-    $d = new initDatabase();
-    $v = $d->init();
-    ob_get_clean();
-    echo json_encode($v);
-}
+$d = new initDatabase();
+$v = $d->init();
+ob_get_clean();
+echo json_encode($v);

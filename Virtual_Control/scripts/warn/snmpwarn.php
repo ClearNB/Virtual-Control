@@ -1,15 +1,17 @@
 <?php
 
-include_once ('../general/sqldata.php');
-include_once ('./snmptable.php');
-include_once ('./snmpdata.php');
-include_once ('./ipdata.php');
+include_once __DIR__ . '/warndata.php';
+include_once __DIR__ . '/warntable.php';
+include_once __DIR__ . '/../general/loader.php';
+include_once __DIR__ . '/../session/session_chk.php';
 
-$requestmg = filter_input(INPUT_SERVER, 'HTTP_X_REQUESTED_WITH');
+session_action_scripts();
 
-$request = isset($requestmg) ? strtolower($requestmg) : '';
-if ($request !== 'xmlhttprequest') {
-    http_response_code(403);
-    header("Location: ../../403.php");
-    exit;
-}
+WarnData::load_data();
+$data = WarnData::getArray();
+$table = new WarnTable($data['VALUE']);
+$res_data = $table->getHTML();
+$date = date("Y-m-d H:i:s");
+$res = ['CODE' => 0, 'SUB' => $res_data['SUB'], 'DATE' => $data['DATE'], 'SELECT' => $res_data['SELECT'], 'CSV' => $data['CSV']];
+ob_get_clean();
+echo json_encode($res);

@@ -87,11 +87,11 @@ $_23->Button('bt_sb_bk', 'ノード一覧に戻る', 'button', 'chevron-circle-l
 	    var mib_data = [];
 	</script>
     </head>
-    <body>
+     <body class="text-monospace">
 	<?php echo $loader->navigation($getdata['PERMISSION']) ?>
 	<?php echo $loader->load_Logo() ?>
 	
-	<?php echo $loader->Title('OPTION - MIB', 'server') ?>
+	<?php echo $loader->Title('OPTION - MIB', 'object-group') ?>
 	<div id="data_output"></div>
 	
 	<?php echo $loader->footer() ?>

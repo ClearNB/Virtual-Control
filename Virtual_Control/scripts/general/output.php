@@ -161,10 +161,30 @@ class File {
      * @return string Download Contents
      */
     private function download() {
+	$res = 0;
+	$fp = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'r+');
+
 	$c_data = str_replace("\\n", "\n", str_replace("\\t", "\t", $this->file_data));
-	header("Content-type: application/octet-stream");
-	header("Content-Disposition: attachment; filename={$this->file_name}");
-	return $c_data;
+	$arr = explode('\n', $c_data);
+
+	if ($fp) {
+	    foreach ($arr as $row) {
+		fputs($fp, $row);
+	    }
+
+	    header('Content-Type: application/octet-stream');
+	    header('Content-Disposition: attachment; filename="' . $this->file_name . '"');
+	    header('Content-Transfer-Encoding: binary');
+
+	    rewind($fp);
+	    $csv = mb_convert_encoding(stream_get_contents($fp), 'SJIS-win', 'UTF-8');
+	    fclose($fp);
+	} else {
+	    $res = 1;
+	}
+
+	print $csv;
+	return $res;
     }
 
     /**

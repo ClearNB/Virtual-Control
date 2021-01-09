@@ -13,76 +13,68 @@ include_once __DIR__ . '/../general/loader.php';
 include_once __DIR__ . '/snmptable.php';
 include_once __DIR__ . '/snmpdata.php';
 include_once __DIR__ . '/ipdata.php';
+include_once __DIR__ . '/../session/session_chk.php';
 
-$requestmg = filter_input(INPUT_SERVER, 'HTTP_X_REQUESTED_WITH');
-
-$request = isset($requestmg) ? strtolower($requestmg) : '';
-if ($request !== 'xmlhttprequest') {
-    http_response_code(403);
-    header("Location: ../../403.php");
-    exit;
-}
+session_action_scripts();
 
 $loader = new loader();
 
-$method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
-if ($method === 'POST') {
-    //返却データ
-    $res = ['CODE' => 0, 'DATE' => '', 'HOST' => '', 'COMMUNITY' => '', 'SUB' => [''], 'LIST' => '', 'LOG' => '', 'CSV' => ''];
-    $res['DATE'] = date("Y-m-d H:i:s");
-    //Variables
-    $data = filter_input(INPUT_POST, 'sl_ag', FILTER_SANITIZE_STRING);
+//返却データ
+$res = ['CODE' => 0, 'DATE' => '', 'HOST' => '', 'COMMUNITY' => '', 'SUB' => [''], 'LIST' => '', 'LOG' => '', 'CSV' => ''];
+$res['DATE'] = date("Y-m-d H:i:s");
+//Variables
+$data = filter_input(INPUT_POST, 'sl_ag', FILTER_SANITIZE_STRING);
 
-    if ($data) {
-	//Serialize
-	$agentid = $data;
-	$q01 = select(true, "GSC_AGENT", "AGENTHOST, COMMUNITY", "WHERE AGENTID = $agentid");
-	$q02 = select(false, "GSC_AGENT_MIB", "SUBID", "WHERE AGENTID = $agentid");
+if ($data) {
+    //Serialize
+    $agentid = $data;
+    $q01 = select(true, "GSC_AGENT", "AGENTHOST, COMMUNITY", "WHERE AGENTID = $agentid");
+    $q02 = select(false, "GSC_AGENT_MIB", "SUBID", "WHERE AGENTID = $agentid");
 
-	if ($q01 && $q02) {
-	    $subids = getArray($q02);
-	    $host = $q01['AGENTHOST'];
-	    $com = $q01['COMMUNITY'];
-	    $res['HOST'] = $host;
-	    $res['COMMUNITY'] = $com;
-	    $res['CSV'] = 'Virtual Control Data Convertion v 1.0.0\n取得時間,' . $res['DATE'] . '\nエージェントホスト,' . $host . '\nコミュニティ名,' . $com . '\n+----- 取得データ一覧 -----+\n';
-	    $res['CSV'] .= 'OID,データ項目名（英名）,データ項目名（日本語名）,データ (インデックス)\n';
-	    $flag = true;
-	    $i = 1;
-	    $res['LIST'] .= $loader->openListGroup();
-	    foreach ($subids as $subid) {
-		$s_data = $subid['SUBID'];
-		$sub = walk($host, $com, $s_data);
-		$flag &= ($sub['CODE'] == 0);
-		if ($flag) {
-		    $res['CSV'] .= '【' . $sub['SUB_OID'] . '】' . $sub['SUB_NAME'] . '\n' . $sub['SUB_CSV'];
-		    $id_f = 'sub_i' . $i;
-		    $res['SUB'][$id_f] = $sub['SUB'];
-		    $res['LIST'] .= $loader->addListGroup($id_f, $sub['SUB_OID'], 'poll-h', $sub['SUB_NAME'], '詳しくはクリック！');
-		    $i += 1;
-		} else {
-		    break;
-		}
+    if ($q01 && $q02) {
+	$subids = getArray($q02);
+	$host = $q01['AGENTHOST'];
+	$com = $q01['COMMUNITY'];
+	$res['HOST'] = $host;
+	$res['COMMUNITY'] = $com;
+	$res['CSV'] = 'Virtual Control Data Convertion v 1.0.0\n取得時間,' . $res['DATE'] . '\nエージェントホスト,' . $host . '\nコミュニティ名,' . $com . '\n+----- 取得データ一覧 -----+\n';
+	$res['CSV'] .= 'OID,データ項目名（英名）,データ項目名（日本語名）,データ (インデックス)\n';
+	$flag = true;
+	$i = 1;
+	$res['LIST'] .= $loader->openListGroup();
+	foreach ($subids as $subid) {
+	    $s_data = $subid['SUBID'];
+	    $sub = walk($host, $com, $s_data);
+	    $flag &= ($sub['CODE'] == 0);
+	    if ($flag) {
+		$res['CSV'] .= '【' . $sub['SUB_OID'] . '】' . $sub['SUB_NAME'] . '\n' . $sub['SUB_CSV'];
+		$id_f = 'sub_i' . $i;
+		$res['SUB'][$id_f] = $sub['SUB'];
+
+		$res['LIST'] .= $loader->addListGroup($id_f, $sub['SUB_OID'], 'poll-h', $sub['SUB_NAME'], '詳しくはクリック！');
+		$i += 1;
+	    } else {
+		break;
 	    }
-	    $res['LIST'] .= $loader->closeListGroup();
-	    if (!$flag) {
-		$res['CODE'] = 1;
-		$log = ob_get_contents();
-		if (strpos($log, 'No response from') !== false) {
-		    $log = $host . " へのアドレス到達に失敗しました。";
-		}
-		$res['LOG'] = $log;
-	    }
-	} else {
+	}
+	$res['LIST'] .= $loader->closeListGroup();
+	if (!$flag) {
+	    $res['CODE'] = 1;
 	    $log = ob_get_contents();
-	    $res = ['CODE' => 1, 'LOG' => $log];
+	    if (strpos($log, 'No response from') !== false) {
+		$log = $host . " へのアドレス到達に失敗しました。";
+	    }
+	    $res['LOG'] = $log;
 	}
     } else {
-	$res = ['CODE' => 2];
+	$log = ob_get_contents();
+	$res = ['CODE' => 1, 'LOG' => $log];
     }
-    ob_get_clean();
-    echo json_encode($res);
+} else {
+    $res = ['CODE' => 2];
 }
+//ob_get_clean();
+echo json_encode($res);
 
 function walk($host, $com, $id) {
     $result = '';
