@@ -8,7 +8,7 @@ include_once __DIR__ . '/../session/session_chk.php';
 
 session_action_scripts();
 
-unset_authid();
+session_unset_byid('gsc_authid');
 $data = ACCOUNTData::get_all_users();
 $res = [];
 if ($data) {

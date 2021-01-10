@@ -9,7 +9,7 @@ include_once __DIR__ . '/../session/session_chk.php';
 
 session_action_scripts();
 
-unset_authid();
+session_unset_byid('gsc_authid');
 $data = AGENTData::get_agent_info();
 $mibdata = MIBData::getMIB(2, 2);
 $res = [];

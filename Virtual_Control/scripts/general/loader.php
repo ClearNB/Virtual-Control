@@ -124,20 +124,20 @@ class loader {
 	    case 0: //VCServer
 		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../analy"><i class="fas fa-fw fa-2x fa-chart-bar nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn"><i class="fas fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-fw fa-2x fa-github-square nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control" target="_blank"><i class="fab fa-fw fa-2x fa-github-square nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../option"><i class="fas fa-fw fa-2x fa-wrench nav-icon"></i><span class="navbar-text">OPTION</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout"><i class="fas fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
 		break;
 	    case 1: //VCHost
 		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="../analy"><i class="fas fa-fw fa-2x fa-chart-bar nav-icon"></i><span class="navbar-text">ANALY</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../warn"><i class="fas fa-fw fa-2x fa-exclamation-triangle nav-icon"></i><span class="navbar-text">WARN</span></a> </li>
-            <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-fw fa-2x fa-github-square nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
+            <li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control" target="_blank"><i class="fab fa-fw fa-2x fa-github-square nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../logout"><i class="fas fa-fw fa-2x fa-power-off nav-icon text-danger"></i><span class="navbar-text">LOGOUT</span></a> </li>';
 		break;
 	    case 999:
 		break;
 	    default: //OTHER (GUEST)
-		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control"><i class="fab fa-fw fa-2x fa-github-square nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
+		$data .= '<li class="nav-item mx-auto"> <a class="nav-link active" href="https://github.com/ClearNB/Virtual-Control" target="_blank"><i class="fab fa-fw fa-2x fa-github-square nav-icon"></i><span class="navbar-text">GITHUB</span></a> </li>
             <li class="nav-item mx-auto"> <a class="nav-link active" href="../login"><i class="fas fa-fw fa-sign-in-alt fa-2x nav-icon"></i><span class="navbar-text">LOGIN</span></a> </li>';
 		break;
 	}

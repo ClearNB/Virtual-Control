@@ -173,7 +173,7 @@ class WarnData {
 	    }
 	    array_push($res['VALUE'][$group], $warn->getData());
 	}
-	$res['CSV'] = self::convertToCSV($res['VALUE']);
+	$res['CSV'] = self::convertToCSV($res);
 	return $res;
     }
 
@@ -181,7 +181,7 @@ class WarnData {
 	$res = 'Virtual Control Trap Data Convertion v 1.0.0\n取得時間,' . $data['DATE'] . '\n+----- 取得データ一覧 -----+\n';
 	$res .= '日別番号,システム稼働時間,発生時刻,ホストアドレス,コミュニティ,対象OID,エージェント情報,情報出力先OID,インタフェースID,その他情報,メッセージ\n';
 
-	foreach ($data as $g => $v) {
+	foreach ($data['VALUE'] as $g => $v) {
 	    $res .= '【' . $g . '】（' . sizeof($v) . '）\n';
 	    $i = 1;
 	    foreach($v as $c) {

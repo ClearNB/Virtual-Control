@@ -65,15 +65,117 @@ let AGENT_EDIT_MIB = 14;
  */
 let AGENT_DELETE = 15;
 
-let MIB_SUB_CREATE = 21;
-let MIB_SUB_EDIT_OIDS = 22;
-let MIB_SUB_EDIT_NODE = 23;
-let MIB_SUB_DELETE = 24;
-let MIB_GROUP_CREATE = 25;
-let MIB_GROUP_EDIT = 26;
-let MIB_GROUP_DELETE = 27;
-let USER_AUTH = 999;
+/**
+ * [MIB GROUP] 選択ファンクション
+ * 
+ * @type Number
+ */
+let MIB_GROUP_SELECT = 20;
 
+/**
+ * [MIB GROUP] 作成ファンクション
+ * 
+ * @type Number
+ */
+let MIB_GROUP_CREATE = 21;
+
+/**
+ * [MIB GROUP] 編集選択ファンクション
+ * 
+ * @type Number
+ */
+let MIB_GROUP_EDIT = 22;
+
+/**
+ * [MIB GROUP] 編集（OID）ファンクション
+ * 
+ * @type Number
+ */
+let MIB_GROUP_EDIT_OID = 23;
+
+/**
+ * [MIB GROUP] 編集（グループ名）ファンクション
+ * 
+ * @type Number
+ */
+let MIB_GROUP_EDIT_NAME = 24;
+
+/**
+ * [MIB GROUP] 削除ファンクション
+ * 
+ * @type Number
+ */
+let MIB_GROUP_DELETE = 25;
+
+/**
+ * [MIB SUB] 選択ファンクション
+ * 
+ * @type Number
+ */
+let MIB_SUB_SELECT = 30;
+
+/**
+ * [MIB SUB] 作成ファンクション
+ * 
+ * @type Number
+ */
+let MIB_SUB_CREATE = 31;
+
+/**
+ * [MIB SUB] 編集選択ファンクション
+ * 
+ * @type Number
+ */
+let MIB_SUB_EDIT = 32;
+
+/**
+ * [MIB SUB] 編集（OID）ファンクション
+ * 
+ * @type Number
+ */
+let MIB_SUB_EDIT_OID = 33;
+
+/**
+ * [MIB SUB] 編集（サブツリー名）ファンクション
+ * 
+ * @type Number
+ */
+let MIB_SUB_EDIT_NAME = 34;
+
+/**
+ * [MIB NODE] 編集（一覧表示）ファンクション
+ * 
+ * @type Number
+ */
+let MIB_NODE_EDIT = 40;
+
+/**
+ * [MIB NODE] 編集（フォーム）ファンクション
+ * 
+ * @type Number
+ */
+let MIB_NODE_EDIT_FORM = 41;
+
+/**
+ * [MIB NODE] 編集（アイコン選択）ファンクション
+ * 
+ * @type Number
+ */
+let MIB_NODE_EDIT_ICON = 42;
+
+/**
+ * [MIB SUB] 削除ファンクション
+ * 
+ * @type Number
+ */
+let MIB_SUB_DELETE = 35;
+
+/**
+ * [USER] 認証ファンクション
+ * 
+ * @type Number
+ */
+let USER_AUTH = 999;
 
 /**
  * [CLASS] 各設定ページファンクションID設定
@@ -200,11 +302,140 @@ class functionID {
     }
     
     /**
+     * [SET] -> MIB_GROUP_SELECT
+     * @returns {undefined}
+     */
+    change_mib_group_select() {
+	this.functionid = MIB_GROUP_SELECT;
+    }
+    
+    /**
+     * [SET] -> MIB_GROUP_CREATE
+     * @returns {undefined}
+     */
+    change_mib_group_create() {
+	this.functionid = MIB_GROUP_CREATE;
+    }
+    
+    /**
+     * [SET] -> MIB_GROUP_EDIT
+     * @returns {undefined}
+     */
+    change_mib_group_edit() {
+	this.functionid = MIB_GROUP_EDIT;
+    }
+    
+    /**
+     * [SET] -> MIB_GROUP_EDIT_OID
+     * @returns {undefined}
+     */
+    change_mib_group_edit_oid() {
+	this.functionid = MIB_GROUP_EDIT_OID;
+    }
+    
+    /**
+     * [SET] -> MIB_GROUP_EDIT_NAME
+     * @returns {undefined}
+     */
+    change_mib_group_edit_name() {
+	this.functionid = MIB_GROUP_EDIT_NAME;
+    }
+    
+    /**
+     * [SET] -> MIB_GROUP_DELETE
+     * @returns {undefined}
+     */
+    change_mib_group_delete() {
+	this.functionid = MIB_GROUP_DELETE;
+    }
+    
+    /**
+     * [SET] -> MIB_SUB_SELECT 
+     * @returns {undefined}
+     */
+    change_mib_sub_select() {
+	this.functionid = MIB_SUB_SELECT;
+    }
+    
+    /**
+     * [SET] -> MIB_SUB_CREATE
+     * @returns {undefined}
+     */
+    change_mib_sub_create() {
+	this.functionid = MIB_SUB_CREATE;
+    }
+    
+    /**
+     * [SET] -> MIB_SUB_EDIT
+     * @returns {undefined}
+     */
+    change_mib_sub_edit() {
+	this.functionid = MIB_SUB_EDIT;
+    }
+    
+    /**
+     * [SET] -> MIB_SUB_EDIT_OID
+     * @returns {undefined}
+     */
+    change_mib_sub_edit_oid() {
+	this.functionid = MIB_SUB_EDIT_OID;
+    }
+    
+    /**
+     * [SET] -> MIB_SUB_EDIT_NAME
+     * @returns {undefined}
+     */
+    change_mib_sub_edit_name() {
+	this.functionid = MIB_SUB_EDIT_NAME;
+    }
+    
+    /**
+     * [SET] -> MIB_NODE_EDIT
+     * @returns {undefined}
+     */
+    change_mib_node_edit() {
+	this.functionid = MIB_NODE_EDIT;
+    }
+    
+    /**
+     * [SET] -> MIB_NODE_EDIT_FORM
+     * @returns {undefined}
+     */
+    change_mib_node_edit_form() {
+	this.functionid = MIB_NODE_EDIT_FORM;
+    }
+    
+    /**
+     * [SET] -> MIB_NODE_EDIT_ICON
+     * @returns {undefined}
+     */
+    change_mib_node_edit_icon() {
+	this.functionid = MIB_NODE_EDIT_ICON;
+    }
+    
+    /**
+     * [SET] -> MIB_SUB_DELETE
+     * @returns {undefined}
+     */
+    change_mib_sub_delete() {
+	this.functionid = MIB_SUB_DELETE;
+    }
+    
+    /**
      * [GET] FUNCTIONID
      * 
      * @type Number
      */
     get getFunctionID() {
 	return this.functionid % 10;
+    }
+    
+    /**
+     * [GET] FUNCTIONID ROW
+     * 
+     * @type Number
+     */
+    get getFunctionIDRow() {
+	return this.functionid;
     }
 }

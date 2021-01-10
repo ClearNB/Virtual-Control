@@ -16,8 +16,8 @@ include_once __DIR__ . '/session_chk.php';
 session_action_scripts();
 
 //値の取得
-$userid = filter_input(INPUT_POST, 'userid', FILTER_SANITIZE_STRING);
-$pass = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+$userid = post_get_data('userid');
+$pass = post_get_data('password');
 
 $code = session_auth_check($userid, $pass);
 if ($code == 0) {
