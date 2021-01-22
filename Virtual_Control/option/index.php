@@ -21,7 +21,7 @@ $fm_pg->closeListGroup();
 
 <html>
     <head>
-	<?php echo $loader->loadHeader('Virtual Control', 'OPTION', true); ?>
+	<?php echo $loader->loadHeader('Virtual Control', 'OPTION'); ?>
 	<?php echo form_generator::ExportClass() ?>
     </head>
 
@@ -38,7 +38,7 @@ $fm_pg->closeListGroup();
         <!-- Footer -->
 	<?php echo $loader->footer() ?>
 
-	<?php echo $loader->footerS(true) ?>
+	<?php echo $loader->footer_load() ?>
 	
 	<script type="text/javascript">
 	    $(document).ready(function() {
@@ -51,13 +51,13 @@ $fm_pg->closeListGroup();
 			animation_to_sites('data_output', 400, '../');
 			break;
 		    case 'account':
-			animation_to_sites('data_output', 400, './account.php');
+			animation_to_sites('data_output', 400, './account');
 			break;
 		    case 'mib':
-			animation_to_sites('data_output', 400, './mib.php');
+			animation_to_sites('data_output', 400, './mib');
 			break;
 		    case 'agent':
-			animation_to_sites('data_output', 400, './agent.php');
+			animation_to_sites('data_output', 400, './agent');
 			break;
 		}
 	    });

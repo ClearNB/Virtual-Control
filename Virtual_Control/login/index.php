@@ -35,7 +35,7 @@ $fm_dt_fl->Button('bt_lg_bk', '入力に戻る', 'button', 'chevron-circle-left'
 
 <html>
     <head>
-        <?php echo $loader->loadHeader('Virtual Control', 'LOGIN', true) ?>
+        <?php echo $loader->loadHeader('Virtual Control', 'LOGIN') ?>
         <?php echo form_generator::ExportClass() ?>
     </head>
 
@@ -50,7 +50,8 @@ $fm_dt_fl->Button('bt_lg_bk', '入力に戻る', 'button', 'chevron-circle-left'
 
         <?php echo $loader->footer() ?>
 
-        <?php echo $loader->footerS(true) ?>
+        <?php echo $loader->footer_load() ?>
+	
         <script type="text/javascript">
             $(document).ready(function () {
                 animation('data_output', 0, fm_lg);

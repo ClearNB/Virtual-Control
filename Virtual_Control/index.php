@@ -30,7 +30,7 @@ $fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $
 
 <html>
     <head>
-        <?php echo $loader->loadHeader('Virtual Control', 'INDEX', true) ?>
+        <?php echo $loader->loadHeader('Virtual Control', 'INDEX') ?>
 	<?php echo form_generator::ExportClass() ?>
     </head>
 
@@ -42,7 +42,7 @@ $fm_dt = new form_generator('fm_dt', $fm_dt01->Export() . $fm_dt02->Export() . $
 
         <?php echo $loader->footer() ?>
 
-        <?php echo $loader->footerS(true) ?>
+        <?php echo $loader->footer_load() ?>
 	
 	<script type="text/javascript">
 	    $(document).ready(function() {

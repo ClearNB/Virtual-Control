@@ -1,6 +1,7 @@
 <?php
 
 include_once __DIR__ . '/../general/sqldata.php';
+include_once __DIR__ . '/../mib/mibdata.php';
 
 class WarnData {
 
@@ -47,6 +48,8 @@ class WarnData {
     }
 
     private function setMessage() {
+	$mib = new MIBData();
+	$all = $mib->getMIB(2, 2);
 	switch ($this->alert_oid) {
 	    case '1.3.6.1.6.3.1.1.5.1': $this->message = '【coldStart】前回より変更がないまま再起動が行われました';
 		break;
@@ -61,12 +64,14 @@ class WarnData {
 	    case '1.3.6.1.6.3.1.1.5.6': $this->message = '【egpNeighborLoss】EGP接続のスパニングツリー状態が失われました';
 		break;
 	    default:
-		$select = select(true, "GSC_MIB_NODE", "DESCR, JAPTLANS", "WHERE NODEOBJECTID = '$this->alert_oid' AND NODETYPE = 1");
-		if ($select) {
-		    $this->message = '【' . $select['DESCR'] . '】「' . $select['JAPTLANS'] . '」が発生しました。';
-		} else {
-		    $this->message = '【Undefined】認識不可能なトラップ内容';
+		$data = '';
+		if(isset($all['NODE'])) {
+		    foreach($all['NODE'] as $s) {
+			$data = ($this->alert_oid == $s['OID']) ? ['JAPTLANS' => $s['JAPTLANS'], 'DESCR' => $s['DESCR']] : '';
+			if($data) { break; }
+		    }
 		}
+		$this->message = ($data) ? '【' . $data['DESCR'] . '】「' . $data['JAPTLANS'] . '」が発生しました。' : '【Undefined】認識不可能なトラップ内容';
 		break;
 	}
     }
@@ -173,7 +178,7 @@ class WarnData {
 	    }
 	    array_push($res['VALUE'][$group], $warn->getData());
 	}
-	$res['CSV'] = self::convertToCSV($res['VALUE']);
+	$res['CSV'] = self::convertToCSV($res);
 	return $res;
     }
 
@@ -181,7 +186,7 @@ class WarnData {
 	$res = 'Virtual Control Trap Data Convertion v 1.0.0\n取得時間,' . $data['DATE'] . '\n+----- 取得データ一覧 -----+\n';
 	$res .= '日別番号,システム稼働時間,発生時刻,ホストアドレス,コミュニティ,対象OID,エージェント情報,情報出力先OID,インタフェースID,その他情報,メッセージ\n';
 
-	foreach ($data as $g => $v) {
+	foreach ($data['VALUE'] as $g => $v) {
 	    $res .= '【' . $g . '】（' . sizeof($v) . '）\n';
 	    $i = 1;
 	    foreach($v as $c) {

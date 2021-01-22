@@ -1,5 +1,7 @@
 <?php
 
+include_once __DIR__ . '/indexdata.php';
+
 /**
  * [CLASS] SNMPData
  * 
@@ -13,294 +15,246 @@
  */
 class SNMPData {
 
-    /** @var int $checksum データを配列として格納する際に、これは格納するのに適した値かどうかを判定します。 */
-    static private $checksum = 0;
-
-    /** @var int $pre_check OIDのデータに取り込む際に、テーブルデータの項目、かつ1件でもインデックスから値を取る必要のある項目があるかどうかを判定する値です。<br>必要な項目があった際は3を、必要でない場合は2を格納します。 */
-    static private $pre_check = 0;
-
-    /** @var array $oids OID情報をここに格納します。 */
-    static private $oids = [];
-
-    /** @var array $set SNMPDataでオブジェクトを作成すると、ここにプッシュされます。 */
-    static private $set = [];
-
-    /** @var array $inedx_option OIDに記載されたインデックスオプション情報をここに記録します。 */
-    static private $index_option = [];
-
-    /** @var string $general_topoid 生成中のオブジェクトの現在の親OIDを記録します。 */
-    static private $general_topoid = '';
-
-    /** @var string $oid OIDを格納します。 */
+    private static $mibdata = [];
+    private static $otherdata = [];
+    private $top_oid;
+    private $mib;
     private $oid;
 
-    /** @var string $descr OIDに対する英語の説明を格納します。 */
-    private $descr;
-
-    /** @var string $japtlans OIDに対する日本語の説明を格納します。 */
-    private $japtlans;
-
-    /** @var string $icon OIDの説明に合ったアイコン情報を格納します。 */
-    private $icon;
-
-    /** @var array|int $value OID別に値を格納します。テーブルデータの場合を考え、格納配列型になります。 */
-    private $value;
-
-    /** @var string $index テーブルのインデックスデータを格納します（テーブルのみ有効）。 */
-    private $index;
-
-    /** @var int $check (0..通常データ, 1..テーブル, 2..テーブルデータ, 3..テーブルデータ【インデックスがデータ】) */
-    private $check;
-
     /**
-     * オブジェクトを生成するコンストラクタです。
-     * @param string $oid OIDを格納します。
-     * @param string $descr OIDに対する英語の説明を格納します。
-     * @param string $japtlans OIDに対する日本語の説明を格納します。
-     * @param string $icon アイコン情報を格納します。
-     */
-    public function __construct($oid, $descr, $japtlans, $icon) {
-	$this->oid = $oid;
-	$this->descr = $descr;
-	$this->japtlans = $japtlans;
-	$this->icon = $icon;
-	$this->check = 0;
-	$this->index = 0;
-	$this->value = [];
-	$this->setOID();
-    }
-
-    /**
-     * [SET] OIDについて処理します（コンストラクタ内実行）。
+     * [SET] CONSTRUCTOR
      * 
-     * 生成されるたびに、現在のOID情報を解析し、OIDを値を入れやすい形にコンパイルします。<br>
-     * 同時に、テーブル・インデックス情報があれば、それについても処理されます。
-     * @return void セッターメソッドです。
+     * オブジェクトコンストラクタです
+     * 
+     * @param int $type オブジェクトの追加方法を指定します（0..OIDと値を追加してMIBデータに保存, 1..setValueに遷移して追加）
+     * @param string $oid SNMPで取得したOID（もしくはデータ加工されたOID）
+     * @param string $value OIDに対する値
      */
-    public function setOID(): void {
-	//OID部分を取り除く -> $r_oid
-	$r_oid = preg_replace('/^.*[.]/', '', $this->oid);
-
-	/*
-	 * 【インデックス構成について】
-	 * ^* ... グループを切断し、新たにテーブルを作成する
-	 * * ... 取り出されるものはINDEXなので、それを表示する
-	 * *~[設定値,桁] ... テーブル内のインデックスで、使われるものには桁数または設定値を入力する
-	 */
-	if (preg_match('/(\*|\^\*|\*\~\[.*\]){1,2}$/', $r_oid)) {
-	    //^, *, ~[.*] 部分を取り除く
-	    $this->oid = preg_replace('/[.](\*|\^\*|\*\~\[.*\]){1,}$/', '', $this->oid);
-	    if ($r_oid == '^*') {
-		$this->index = [];
-		//値はないものとして扱われるため、0を入れる
-		$this->value = 0;
-		//チェック値を1とする
-		$this->check = 1;
-		//現在の親OIDとして一時格納する
-		self::$general_topoid = $this->oid;
-		if (!isset(self::$index_option[self::$general_topoid])) {
-		    self::$index_option[self::$general_topoid] = [];
-		}
-	    } else if (preg_match('/(\*\~\[.*\])$/', $r_oid)) {
-		$this->check = 3;
-		$type = str_replace(']', '', str_replace('*~[', '', $r_oid));
-		array_push(self::$index_option[self::$general_topoid], [$this->oid, $type]);
-	    } else if ($r_oid == '*') {
-		if (self::$pre_check == 3) {
-		    $this->check = 3;
-		} else {
-		    $this->check = 2;
-		}
-	    }
+    public function __construct($type, $oid, $value) {
+	switch ($type) {
+	    case 0:
+		$this->setValueCon($oid, $value);
+		break;
+	    case 1:
+		$this->setValue($oid, $value);
+		break;
 	}
-	self::$pre_check = $this->check;
-	self::$set[$this->oid] = $this;
-	array_push(self::$oids, $this->oid);
     }
 
-    public static function setValue($oid, $data): bool {
-	$res = self::data_search($oid);
+    /**
+     * [SET] MIBデータ（static）の変更
+     * 
+     * MIBデータはサブツリー以下のノードデータを参照しているため、サブツリーが変更されるごとに、このファンクションをご利用ください
+     * 
+     * @param array $mibdata MIBDataで取得したMIBデータのうち、NODE -> (サブツリーID) を指定します
+     */
+    public static function setMIBData($mibdata) {
+	self::$mibdata = $mibdata;
+    }
+
+    /**
+     * [SET] SNMPデータ設定
+     * 
+     * SNMPのデータについて加工します
+     * 
+     * @param string $oid OIDを指定します
+     * @param string $data OIDに対する値を指定します
+     */
+    private function setValue($oid, $data): void {
+	$res = self::dataSearch($oid);
 	if ($res) {
-	    $data = str_replace('iso', '1', preg_replace('/(["]|[\r\n|\n|\r]|^.*[:]\s)/', '', $data));
-	    array_push(self::$set[$res]->value, $data);
-	    $chk = self::$set[$res]->check;
-	    if ($chk != 0) {
-		$sub_v = preg_replace("/(" . $res . ")[.]/", '', $oid);
-		$top_oid = preg_replace('/([.][0-9]{1,}){2}$/', '', $res);
-		if (!in_array($sub_v, self::$set[$top_oid]->index)) {
-		    if ($chk == 3) {
-			//echo $top_oid . " : " . $sub_v . '<br>';
-			self::setValueFromIndex($top_oid, $sub_v);
+	    $this->setValueCon($res, $data);
+
+	    //テーブルデータ確認
+	    $type = $this->mib['NODE_TYPE'];
+	    if ($type == 2) {
+		//テーブルデータ（MIBデータ）は追加処理を行う
+		$this->top_oid = preg_replace('/([.][0-9]{1,}){2}$/', '', $res);
+
+		//MIBデータの親部（テーブル）に、インデックスデータを追加する
+		if (!isset(self::$mibdata[$this->top_oid]['INDEX'])) {
+		    self::$mibdata[$this->top_oid]['INDEX'] = [];
+		}
+		//インデックスは一意である必要があるため、ない場合のみ追加を許可する
+		$index = str_replace($res . '.', '', $oid);
+		if (!in_array($index, self::$mibdata[$this->top_oid]['INDEX'])) {
+		    array_push(self::$mibdata[$this->top_oid]['INDEX'], $index);
+		    //このテーブルにはインデックスがあり、かつオプションがあるとき
+		    if (isset(self::$mibdata[$this->top_oid]['NODE_INDEX_OID'])) {
+			$top_d = self::$mibdata[$this->top_oid]['NODE_INDEX_OID'];
+			$this->setValueFromIndex($this->top_oid, $top_d);
 		    }
-		    array_push(self::$set[$top_oid]->index, $sub_v);
 		}
 	    }
-	    return true;
 	} else {
-	    return false;
+	    //その他データに格納（配列出力用に使用）
+	    array_push(self::$otherdata, '「' . $oid . ' : ' . $data . '」が有効なMIBデータがありませんでした。');
 	}
     }
 
-    public static function setValueFromIndex($top_oid, $sub_v) {
-	//echo "$top_oid : $sub_v <br />";
-	$sub_cat = explode('.', $sub_v);
-	$arr = self::$index_option[$top_oid];
-	$val_host = [];
+    /**
+     * [SET] SNMPデータ挿入
+     * 
+     * @param string $oid OIDを指定します（MIBデータ準拠）
+     * @param string $value 値を指定します
+     * @return void 
+     */
+    private function setValueCon($oid, $value): void {
+	//データの挿入
+	$this->oid = $oid;
+	$v = str_replace('iso', '1', preg_replace('/(["]|[\r\n|\n|\r]|^.*[:]\s)/', '', $value));
+	$this->mib = self::$mibdata[$this->oid];
+
+	//MIBデータにこのオブジェクトを置いておく（出力時にMIBデータを確認用として置くため）
+	if (!isset(self::$mibdata[$this->oid]['DATA'])) {
+	    self::$mibdata[$this->oid]['DATA'] = [];
+	}
+	array_push(self::$mibdata[$this->oid]['DATA'], $v);
+    }
+
+    /**
+     * [SET] インデックスからOIDインデックス設定に基づき値を設定
+     * 
+     * テーブルデータでインデックスからデータを参照させる必要がある場合、そのインデックスオプションに基づき、テーブルデータとして格納します。
+     * 
+     * @param string $top_oid そのテーブルデータの親テーブルOIDを指定します
+     * @param array $top_d
+     */
+    private function setValueFromIndex($top_oid, $top_d) {
+	//追加部分のインデックスを取得
+	$index = self::$mibdata[$top_oid]['INDEX'][sizeof(self::$mibdata[$top_oid]['INDEX']) - 1];
+	//インデックスを . によって分割
+	$sub_cat = explode('.', $index);
 	$sub_i = 0;
-	for ($i = 0; $i < sizeof($arr); $i++) {
-	    $var_i = $arr[$i][0];
-	    $var_v = $arr[$i][1];
-	    $dem = 1;
-	    $data = '';
-	    if (preg_match('/^[0-9]{1,}/', $var_v)) {
-		$data = implode(' ', array_slice($sub_cat, $sub_i, intval($var_v)));
-		$dem = intval($var_v);
-	    } else if ($var_v == 'ipnt' || $var_v == 'ip') {
-		$add_i = 0;
-		$isport = false;
-		if ($var_v == 'ipnt') {
-		    $add_i = 1;
-		    $isport = true;
-		}
-		switch ($sub_cat[$sub_i]) {
-		    case 0:
-			$data = 'IPアドレス特定不可';
-			$dem = 1 + $add_i;
-			break;
-		    case 4:
-			$data = getIPv4(array_slice($sub_cat, $sub_i + 1, 4 + $add_i), $isport);
-			$dem = 5 + $add_i;
-			break;
-		}
-		if ($sub_cat[$sub_i] >= 16) {
-		    $size = $sub_cat[$sub_i] + $add_i;
-		    $data = getIPv6(array_slice($sub_cat, $sub_i + 1, $size), $size, $isport);
-		    $dem = $size + 1;
-		}
-	    } else if ($var_v == 'iptype') {
-		$data = getIPType($sub_cat[$sub_i]);
-		if ($sub_cat[$sub_i] != 0) {
-		    $dem = 1;
-		} else {
-		    $dem = 0;
-		}
-	    } else if ($var_v == 'rtpolicy') {
-		$dem = intval($val_host['1.3.6.1.2.1.4.24.7.1.3']);
-		$data = implode(' ', array_slice($sub_cat, $sub_i, $dem));
+
+	foreach ($top_d as $i_oid) {
+	    $option = self::$mibdata[$i_oid]['NODE_OPTION'];
+	    $index_data = getDataFromIndex($option, $sub_cat, $sub_i);
+	    if ($index_data['CODE'] == 0) {
+		new SNMPData(0, $i_oid, $index_data['DATA']);
+		$sub_i += $index_data['DEM'];
+	    } else if($index_data['CODE'] == 1) {
+		array_push(self::$otherdata, '【' . $i_oid . '（' . $index . '）】' . $index_data['DATA']);
+		break;
 	    }
-	    array_push(self::$set[$var_i]->value, $data);
-	    $val_host[$var_i] = $data;
-	    $sub_i += $dem;
 	}
     }
 
-    public function getValue() {
-	if ($this->check != 0) {
-	    if ($this->check == 1 && !$this->index) {
-		self::$checksum = 1;
-		return false;
-	    } else if ($this->check == 1) {
-		self::$checksum = 0;
+    /**
+     * [GET] データ配列取得
+     * 
+     * データ取得をオブジェクト単位で出します
+     * 
+     * @param string $mibdata 
+     * @return type
+     */
+    private static function getData($mibdata) {
+	$value_data = [];
+	if (empty($mibdata['DATA'])) {
+	    if ($mibdata['NODE_TYPE'] == 0) {
+		$value_data = ['<データなし>'];
+	    } else if ($mibdata['NODE_TYPE'] == 2) {
+		$oid = $mibdata['NODE_OID'];
+		$top_oid = preg_replace('/([.][0-9]{1,}){2}$/', '', $oid);
+		$index_size = sizeof(self::$mibdata[$top_oid]['INDEX']);
+		$value_data = array_fill(0, $index_size, '<データなし>');
 	    }
-	    if (self::$checksum == 1) {
-		return false;
-	    }
+	} else {
+	    $value_data = $mibdata['DATA'];
 	}
-	return ['OID' => $this->oid, 'DESCR' => $this->descr, 'JAPTLANS' => $this->japtlans, 'ICON' => $this->icon, 'CHECK' => $this->check, 'VALUE' => $this->value, 'INDEX' => $this->index];
+	$res = ['OID' => $mibdata['NODE_OID'],
+	    'DESCR' => $mibdata['NODE_DESCR'],
+	    'JAPTLANS' => $mibdata['NODE_JAPTLANS'],
+	    'ICON' => $mibdata['NODE_ICON_INFO'],
+	    'TYPE' => $mibdata['NODE_TYPE'],
+	    'DATA' => $value_data
+	];
+	if (isset($mibdata['INDEX'])) {
+	    $res['INDEX'] = $mibdata['INDEX'];
+	}
+	return $res;
     }
 
     public static function getDataArray(): array {
-	//var_dump(self::$set);
-	//var_dump(self::$index_option);
-	$result = ['OID' => [], 'DESCR' => [], 'JAPTLANS' => [], 'ICON' => [], 'VALUE' => [], 'CHECK' => [], 'INDEX' => [], 'CSV' => ''];
-	foreach (self::$set as $snmp) {
-	    $data = $snmp->getValue();
-	    if ($data) {
-		array_push($result['OID'], $data['OID']);
+	$result = ['DATA' => [], 'CSV' => '', 'ERROR' => []];
+	foreach (self::$mibdata as $mib) {
+	    $top_oid = preg_replace('/([.][0-9]{1,}){2}$/', '', $mib['NODE_OID']);
+	    if (($mib['NODE_TYPE'] == 0) || ($mib['NODE_TYPE'] == 1 && isset($mib['INDEX'])) || ($mib['NODE_TYPE'] == 2 && isset(self::$mibdata[$top_oid]['INDEX']))) {
+		$data = self::getData($mib);
 		$oid = $data['OID'];
-		$result['DESCR'][$oid] = $data['DESCR'];
-		$result['JAPTLANS'][$oid] = $data['JAPTLANS'];
-		$result['ICON'][$oid] = $data['ICON'];
-		if (empty($data['VALUE'])) {
-		    $result['VALUE'][$oid] = ['<データなし>'];
-		} else {
-		    $result['VALUE'][$oid] = $data['VALUE'];
-		}
-		$result['CHECK'][$oid] = $data['CHECK'];
-		$result['INDEX'][$oid] = $data['INDEX'];
+		$result['DATA'][$oid] = $data;
 	    }
 	}
-	$csv = self::convertToCSV($result);
-	return ['csv' => $csv, 'res' => $result];
+	$result['CSV'] = self::convertToCSV($result['DATA']);
+	$result['ERROR'] = (empty(self::$otherdata) ? ['〈該当データなし〉'] : self::$otherdata);
+	return $result;
     }
 
     private static function convertToCSV($data) {
 	$res = '';
 
-	//1: OIDの取得
-	$oid_data = $data['OID'];
-
 	//2: OID別の処理が全て終わるまでループ
-	foreach ($oid_data as $oid) {
+	foreach ($data as $d) {
 	    //2-1: OIDごとの DESCR, JAPTLANS を取得し、これで項目を作成
-	    $descr = $data['DESCR'][$oid];
-	    $japtlans = $data['JAPTLANS'][$oid];
+	    $oid = $d['OID'];
+	    $descr = $d['DESCR'];
+	    $japtlans = $d['JAPTLANS'];
 	    $column_name = "$oid,$descr,$japtlans";
-	    
-	    //2-2: OIDで参照される CHECK を確認
-	    $check = $data['CHECK'][$oid];
+
+	    //2-2: OIDで参照される TYPE を確認
+	    $type = $d['TYPE'];
 
 	    $sw_data = '';
-	    
-	    switch($check) {
+
+	    switch ($type) {
 		case 0: //2-3-1: [0の場合] -> そのままデータ側の変数に格納
-		    $sw_data = str_replace(',', ' ', $data['VALUE'][$oid][0]);
+		    $sw_data = str_replace(',', ' ', $d['DATA'][0]);
 		    break;
-		case 1: //2-3-2: [1の場合] -> INDEXを読み込み、出てきた配列データをそのままデータに落とし込む（implodeでタブ区切りにする）
-		    $sw_data = str_replace('|', ',', str_replace(',', ' ', implode('|', $data['INDEX'][$oid])));
+		case 1: //2-3-2: [1の場合] -> INDEXを読み込み、出てきた配列データをそのままデータに落とし込む（implodeでタブ区切りにする） [!INDEXがない場合は、無視されます!]
+		    if (isset($d['INDEX'])) {
+			$sw_data = str_replace('|', ',', str_replace(',', ' ', implode('|', $d['INDEX'])));
+		    }
 		    break;
-		case 2: //2-3-3: [2または3の場合] -> VALUEのデータを配列として読み込み、そのままデータに落とし込む（implodeでタブ区切り）
-		case 3:
-		    $sw_data = str_replace('|', ',', str_replace(',', ' ', implode('|', $data['VALUE'][$oid])));
+		case 2: //2-3-3: [2の場合] -> VALUEのデータを配列として読み込み、そのままデータに落とし込む（implodeでタブ区切り）
+		    $sw_data = str_replace('|', ',', str_replace(',', ' ', implode('|', $d['DATA'])));
 		    break;
 	    }
-	    //2-4: 項目とデータをつなぎ合わせる（タブ区切り）
+	    //2-4: 項目とデータをつなぎ合わせる（コンマ区切り）
 	    //2-5: 改行文字を加える
 	    $res .= $column_name . ',' . $sw_data . '\n';
 	}
+	$res .= '【エラーログ】\n' . ((self::$otherdata) ? implode('\n', self::$otherdata) : '〈ログはありません〉') . '\n';
 	return $res;
     }
 
+    public static function resetStatic(): void {
+	self::$mibdata = [];
+	self::$otherdata = [];
+    }
+
     /**
-     * OIDデータから指定されたOIDがあるかどうかを探索します。
-     * @param type $data
-     * @return string|bool 
+     * [GET] OIDデータ検索
+     * 
+     * 出力されたデータがデータベース内にあるかどうかを検索します。
+     * 
+     * @param string $oid 出力先のOIDを指定します
+     * @return string ある場合はそのOIDが、ない場合はnullが返されます
      */
-    public function data_search($data): string {
-	$r = false;
-	$oids_r = array_reverse(self::$oids);
-	foreach ($oids_r as $o) {
-	    $s_o = preg_replace('/[.]$/', '', $o) . '.';
-	    if (strpos($data, $s_o) !== false) {
-		$r = $o;
+    private static function dataSearch($oid): string {
+	$res = '';
+	$r_flag = false;
+	$r_mibdata = array_reverse(self::$mibdata);
+	foreach ($r_mibdata as $mib) {
+	    if (strpos($oid, $mib['NODE_OID'] . '.') === 0 && $mib['NODE_TYPE'] != 1) {
+		$res = $mib['NODE_OID'];
+		$r_flag = true;
+	    } else if ($r_flag) {
+		if (self::$mibdata[$res]['NODE_TYPE'] == 1) {
+		    $res = '';
+		}
 		break;
 	    }
 	}
-	if ($r) {
-	    if (self::$set[$r]->value == 0) {
-		$r = false;
-	    }
-	}
-	return $r;
+	return $res;
     }
-
-    public static function resetStatic(): void {
-	self::$checksum = 0;
-	self::$pre_check = 0;
-	self::$oids = [];
-	self::$set = [];
-	self::$index_option = [];
-	self::$general_topoid = '';
-    }
-
 }

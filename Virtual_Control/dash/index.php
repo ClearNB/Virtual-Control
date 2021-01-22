@@ -23,7 +23,7 @@ $fm_pg->closeListGroup();
 
 <html>
     <head>
-	<?php echo $loader->loadHeader('Virtual Control', 'DASH', true) ?>
+	<?php echo $loader->loadHeader('Virtual Control', 'DASH') ?>
 	<?php echo form_generator::ExportClass() ?>
     </head>
 
@@ -37,7 +37,7 @@ $fm_pg->closeListGroup();
 	<div id="data_output"></div>
 
 	<?php echo $loader->footer(); ?>
-	<?php echo $loader->footerS(true); ?>
+	<?php echo $loader->footer_load(); ?>
 
 	<script type="text/javascript">
 	    $(document).ready(function () {

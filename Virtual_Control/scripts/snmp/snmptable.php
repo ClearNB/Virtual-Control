@@ -1,6 +1,6 @@
 <?php
 
-include_once '../general/table.php';
+include_once __DIR__ . '/../general/table.php';
 
 /**
  * [CLASS] SNMPTable
@@ -16,12 +16,13 @@ include_once '../general/table.php';
  */
 class SNMPTable extends Table {
 
+    private $result;
     private $table_data;
     private $table_title;
     private $table_title_icon;
     private $table_id;
     private $t_id;
-    private $i;
+    private $stack;
 
     public function __construct($id, $data, $title) {
 	$this->table_data = $data;
@@ -29,114 +30,102 @@ class SNMPTable extends Table {
 	$this->table_title_icon = 'table';
 	$this->table_id = $id;
 	$this->t_id = 1;
-	$this->i = 0;
+	$this->d_id = 1;
+	$this->d_sid = 1;
+	$this->stack = [];
+
+	$this->result = $this->start_table($this->table_id . '-' . $this->t_id, $this->table_title_icon, $this->table_title, 3);
     }
 
     public function generate_table(): string {
-	$result = $this->start_table($this->table_id . '-' . $this->t_id, $this->table_title_icon, $this->table_title, 3);
 	$flag = true;
-	for ($this->i = 0; $this->i < sizeof($this->table_data['OID']); $this->i++) {
-	    $oid = $this->table_data['OID'][$this->i];
-	    $check = $this->table_data['CHECK'][$oid];
-	    if ($check != 0) {
-		if ($flag) {
-		    $flag = false;
-		    $result .= $this->table_close();
-		}
-		$result .= $this->var_nums();
-	    } else {
-		if (!$flag) {
-		    $flag = true;
-		    $this->t_id += 1;
-		    $result .= $this->start_table_without_title($this->table_id, $this->t_id);
-		}
-		$value = "<データなし>";
-		if (isset($this->table_data['VALUE'][$oid][0])) {
-		    $value = self::data_numberformat($this->table_data['VALUE'][$oid][0]);
-		}
-		$result .= $this->add_table_data($this->get_column($oid), $value);
+	$sub_table_flag = false;
+	foreach ($this->table_data as $d) {
+	    $type = $d['TYPE'];
+	    switch ($type) {
+		case 0:
+		    if (!$flag) {
+			$flag = true;
+			$sub_table_flag = false;
+			$this->table_back();
+			$this->result .= $this->start_table_without_title($this->table_id . '-' . $this->t_id);
+		    }
+		    $this->table_add($type, $d);
+		    break;
+		case 1:
+		case 2:
+		    if ($flag) {
+			$flag = false;
+			$this->table_onclose();
+		    }
+		    if ($type == 1) {
+			if($sub_table_flag) {
+			    $this->table_back();
+			}
+			$this->sub_table_open($d);
+			$sub_table_flag = true;
+		    } else {
+			$this->table_add($type, $d);
+		    }
+		    break;
 	    }
 	}
 	if ($flag) {
-	    $result .= $this->table_close();
+	    $this->result .= $this->table_close();
+	} else {
+	    $this->result .= $this->table_back();
 	}
-	return $result;
+	return $this->result;
     }
 
-    function var_nums() {
-	//定義
-	$s_i = $this->i + 1;
-	$oid = $this->table_data['OID'][$s_i];
-	$m_size = count($this->table_data['OID']);
-	$cr_check = $this->table_data['CHECK'][$oid];
-	$sp_d = [];
+    private function get_column($d) {
+	return '<h5>' . $d['OID'] . '</h5><i class="' . $d['ICON'] . ' fa-fw"></i>' . $d['JAPTLANS'] . '<br><small>' . $d['DESCR'] . '</small>';
+    }
 
-	//1: detailの付加 [タイトルの作成]
-	$title_oid = $this->table_data['OID'][$s_i - 1];
-	$title_jap = $this->table_data['JAPTLANS'][$title_oid];
-	$title = '【' . $title_oid . '】' . $this->table_data['DESCR'][$title_oid] . ' : ' . $this->table_data['JAPTLANS'][$title_oid];
-	$res = '<details class="main"><summary class="summary">' . $title . '</summary><div class="details-content">';
-	//2: データの加工（個別データに振り分け）
-	while ($this->table_data['CHECK'][$oid] == $cr_check) {
-	    $d_id = 0;
-	    if (isset($this->table_data['VALUE'][$oid])) {
-		foreach ($this->table_data['VALUE'][$oid] as $v) {
-		    $sp_d[$d_id][$oid] = $v;
-		    $d_id += 1;
-		}
-	    }
-	    $this->i += 1;
-	    if ($this->i < $m_size) {
-		$oid = $this->table_data['OID'][$this->i];
-	    } else {
-		break;
-	    }
+    private function table_back() {
+	for ($i = 1; $i <= sizeof($this->stack); $i++) {
+	    array_push($this->stack[$i], $this->table_close() . $this->closeDetails());
+	    $this->result .= implode('', $this->stack[$i]);
 	}
-	//3: エンドポイントをもってくる
-	$e_i = $this->i;
-
-	//4: テーブル作成
-	$res .= $this->table_vertical_snmp($title_jap, $sp_d, $s_i, $e_i);
-	$res .= '</div></details>';
-
-	$this->i -= 1;
-	return $res;
+	$this->result .= $this->closeDetails();
+	$this->t_id += 1;
+	$this->stack = [];
     }
 
-    private function get_column($oid) {
-	return '<h5>' . $oid . '</h5>'
-		. '<i class="' . $this->table_data['ICON'][$oid] . ' fa-fw"></i>' . $this->table_data['JAPTLANS'][$oid] . '<br>'
-		. '<small>' . $this->table_data['DESCR'][$oid] . '</small>';
+    private function table_onclose() {
+	$this->t_id += 1;
+	$this->result .= $this->table_close();
     }
 
-    function table_vertical_snmp($table_title, $table_data, $start_id, $end_id) {
-	$result = '';
-
-	for ($i = 0; $i < sizeof($table_data); $i++) {
-	    $start_oid = $this->table_data['OID'][$start_id - 1];
-	    $index = $i + 1;
-	    if (isset($this->table_data['INDEX'][$start_oid])) {
-		//echo $this->table_data['OID'][$start_id] . "<br />";
-		$index = $this->table_data['INDEX'][$start_oid][$i];
-	    }
-	    $result .= '<details class="sub"><summary class="summary-sub">【' . $index . '】</summary><div class="details-content-sub">';
-	    $result .= $this->start_table($this->table_id . '-' . $this->t_id, $this->table_title_icon, $table_title . "($index)", 4);
-	    for ($j = $start_id; $j < $end_id; $j++) {
-		$oid = $this->table_data['OID'][$j];
-		$value = '<データなし>';
-		if (isset($table_data[$i][$oid])) {
-		    $value = self::data_numberformat($table_data[$i][$oid]);
-		}
-		$result .= $this->add_table_data($this->get_column($oid), $value);
-	    }
+    private function sub_table_open($d) {
+	$index_size = sizeof($d['INDEX']);
+	$this->result .= $this->openDetails('【' . $d['OID'] . '】' . $d['DESCR'] . ' : ' . $d['JAPTLANS'] . '（' . $index_size . '）');
+	$s_id = 1;
+	foreach ($d['INDEX'] as $e) {
+	    $sub_title = '【' . $e . '】';
+	    $this->stack[$s_id] = [];
+	    array_push($this->stack[$s_id], $this->openSubDetails($sub_title) . $this->start_table($this->table_id . '-' . $this->t_id, $this->table_title_icon, $d['JAPTLANS'] . '（' . $e . '）'));
+	    $s_id += 1;
 	    $this->t_id += 1;
-	    $result .= $this->table_close();
-	    $result .= '</div></details>';
 	}
-	return $result;
     }
 
-    private static function data_numberformat($data) {
+    private function table_add($t, $d) {
+	$s_id = 1;
+	foreach ($d['DATA'] as $e) {
+	    $de = $this->add_table_data($this->get_column($d), $this->data_numberformat($e));
+	    if ($t == 2) {
+		if (isset($this->stack[$s_id])) {
+		    array_push($this->stack[$s_id], $de);
+		    $s_id += 1;
+		}
+	    } else {
+		$this->result .= $de;
+	    }
+	}
+    }
+
+    private function data_numberformat($data) {
 	if (preg_match('/^[0-9]{1,}$/', $data) && !strpos($data, '.')) {
 	    $data = number_format(intval($data));
 	}

@@ -12,7 +12,7 @@ function query($query) {
     $result = $mysqli->query($query);
 
     if (!$result) {
-	print "クエリが失敗しました" . "Errormessage: <br>" . $mysqli->error . "<br>";
+	print "クエリが失敗しました<br>" . "Errormessage: <br>" . $mysqli->error . "<br>";
 	print "原因クエリ: " . $query . "<br>+------------------------+<br>";
 	$result = false;
     }

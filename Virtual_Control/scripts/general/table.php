@@ -23,7 +23,7 @@ class Table extends loader {
      * @param string	$table_id		テーブルに与える一意のIDを指定します
      * @param string	$table_title_icon	テーブルのタイトルに付けるタイトルを指定します
      * @param string	$table_title		テーブルのタイトルを指定します
-     * @param int	$title_type		タイトルの大きさのタイプを指定します（<h*>..</h*>の部分）
+     * @param int	$title_type		タイトルの大きさのタイプを指定します（\<h*\>..\</h*\>の部分）
      * @return string \<div ..\>\<table ..\>\<tbody\> までのHTMLコードを返します
      */
     public function start_table($table_id, $table_title_icon, $table_title, $title_type = 3) {
