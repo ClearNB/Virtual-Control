@@ -1,6 +1,8 @@
 <?php
 
-class AccountTable {
+include_once __DIR__ . '/../general/table.php';
+
+class AccountTable extends Table {
 
     private $data;
 
@@ -12,19 +14,14 @@ class AccountTable {
 	$column_out = $this->data['COLUMN'][0];
 	$column_key = $this->data['COLUMN'][1];
 	$value = $this->data['VALUE'];
-	$table = new Table();
-	$res = $table->start_table('tb_ac', 'user-friends', 'ユーザテーブル');
-	$res .= $table->add_table_columns($column_out, true);
+	$res = $this->start_table('tb_ac', 'user-friends', 'ユーザテーブル');
+	$res .= $this->add_table_columns($column_out, true);
 	$i = 1;
 	foreach($value as $k => $v) {
-	    if($i == 1) {
-		$res .= $table->add_table_data_hor($column_key, $v, true, $i, $k, 'pre_userid', true);
-	    } else {
-		$res .= $table->add_table_data_hor($column_key, $v, true, $i, $k, 'pre_userid', false);
-	    }
+	    $res .= $this->add_table_data_hor($column_key, $v, true, $i, $k, 'p_id', false);
 	    $i += 1;
 	}
-	$res .= $table->table_close();
+	$res .= $this->table_close();
 	return $res;
     }
 

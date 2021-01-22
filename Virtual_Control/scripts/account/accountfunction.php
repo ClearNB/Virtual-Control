@@ -5,28 +5,29 @@ class AccountSet {
     /**
      * [VAR] リザルトフォーム
      * 
-     * [0] = 成功<br>
-     * [1] = データベースエラー<br>
-     * [2] = 手続きエラー（ファンクションと内容が違う）<br>
-     * [3] = チェックエラー（入力チェック）<br>
-     * [4] = 認証エラー<br>
-     * [5] = ログインエラー（編集・削除）<br>
-     * [6] = 認証ハック<br>
-     * [7] = 認証エラー<br>
-     * [8] = 確認ハック
+     * [0] = (0) 成功<br>
+     * [1] = (1) データベースエラー<br>
+     * [2] = (2) 手続きエラー（ファンクションと内容が違う）<br>
+     * [3] = (2) チェックエラー（入力チェック）<br>
+     * [4] = (1) 認証エラー<br>
+     * [5] = (3) ログインエラー（編集・削除）<br>
+     * [6] = (4) 認証ハック<br>
+     * [7] = (5) 認証エラー<br>
+     * [8] = (6) 確認ハック<br>
+     * [9] = (7) ユーザエラー（ログイン）<br>
      * 
      * @var array
      */
     private $result_form = [
-	['CODE' => 0],
-	['CODE' => 1],
-	['CODE' => 2, 'ERR_TEXT' => "手続きに失敗しました。<br>手続き上で正しく入力してください。<br>システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。"],
-	['CODE' => 2, 'ERR_TEXT' => "入力チェックエラーです。<br>以下の入力したデータをご確認ください。"],
-	['CODE' => 1, 'ERR_TEXT' => "認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。"],
-	['CODE' => 3],
-	['CODE' => 4],
-	['CODE' => 5],
-	['CODE' => 6],
+	['CODE' => 0], //0
+	['CODE' => 1], //1
+	['CODE' => 2, 'ERR_TEXT' => "手続きに失敗しました。<br>手続き上で正しく入力してください。<br>システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。"], //2
+	['CODE' => 2, 'ERR_TEXT' => "入力チェックエラーです。<br>以下の入力したデータをご確認ください。"], //3
+	['CODE' => 1, 'ERR_TEXT' => "認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。"], //4
+	['CODE' => 3], //5
+	['CODE' => 4], //6
+	['CODE' => 5], //7
+	['CODE' => 6, 'CONFIRM_DATA' => ''], //8
     ];
     private $userid;
     private $pre_userid;
@@ -80,7 +81,7 @@ class AccountSet {
 	} else {
 	    $set_fun = $this->check_correct_functionid();
 	    if ($set_fun != $this->funid) {
-		$set_fun = 7;
+		$set_fun = 8;
 	    }
 	}
 	$this->funid = $set_fun;
@@ -89,17 +90,17 @@ class AccountSet {
     public function check_correct_functionid() {
 	$set_fun = 0;
 	$flag1 = $this->userid && $this->username && $this->pass && $this->r_pass;
-	$flag2 = isset($this->per); 
+	$flag2 = isset($this->per);
 	if ($flag1 && $flag2) {
-	    $set_fun = 1;
-	} else if ($this->pre_userid && $this->userid) {
 	    $set_fun = 2;
-	} else if ($this->pre_userid && $this->username) {
-	    $set_fun = 3;
-	} else if ($this->pre_userid && $this->pass && $this->r_pass) {
+	} else if ($this->pre_userid && $this->userid) {
 	    $set_fun = 4;
-	} else if ($this->pre_userid) {
+	} else if ($this->pre_userid && $this->username) {
 	    $set_fun = 5;
+	} else if ($this->pre_userid && $this->pass && $this->r_pass) {
+	    $set_fun = 6;
+	} else if ($this->pre_userid) {
+	    $set_fun = 7;
 	}
 	return $set_fun;
     }
@@ -118,18 +119,18 @@ class AccountSet {
     public function run() {
 	$result_code = 0;
 	switch ($this->funid) {
-	    case 1:
+	    case 2:
 		$result_code = $this->create();
 		break;
-	    case 2:
-	    case 3:
 	    case 4:
+	    case 5:
+	    case 6:
 		$result_code = $this->edit();
 		break;
-	    case 5:
+	    case 7:
 		$result_code = $this->delete();
 		break;
-	    case 7:
+	    case 8:
 		$result_code = 2;
 		break;
 	    case 999:
@@ -183,8 +184,8 @@ class AccountSet {
 	    if (session_auth()) {
 		$query = $this->editQuery();
 		if ($query) {
-		    if ($this->funid == 2 && !$me) {
-			$_SESSION['gsc_userid'] = $this->userid;
+		    if ($this->funid == 4 && !$me) {
+			session_create('gsc_userid', $this->userid);
 		    }
 		    $res_code = 0;
 		} else {
@@ -222,18 +223,18 @@ class AccountSet {
 	$chk_text = '<ul class="black-view">[ERROR_LOG]</ul>';
 	$chk = '';
 	switch ($this->funid) {
-	    case 1: //作成（ユーザID・ユーザ名・パスワード確認）
+	    case 2: //作成（ユーザID・ユーザ名・パスワード確認）
 		$chk .= check_userid($this->userid);
 		$chk .= check_username($this->username);
 		$chk .= check_password($this->pass, $this->r_pass);
 		break;
-	    case 2: //編集1（ユーザID確認）
+	    case 4: //編集1（ユーザID確認）
 		$chk .= check_userid($this->userid);
 		break;
-	    case 3: //編集2（ユーザ名確認）
+	    case 5: //編集2（ユーザ名確認）
 		$chk .= check_username($this->username);
 		break;
-	    case 4: //編集3（パスワード確認）
+	    case 6: //編集3（パスワード確認）
 		$chk .= check_password($this->pass, $this->r_pass);
 		break;
 	}
@@ -252,7 +253,7 @@ class AccountSet {
 	switch (session_auth_check($s_userid, $this->a_pass, true)) {
 	    case 0:
 		$res = 8;
-		$this->result_form[$res]['DATA'] = $this->generateList();
+		$this->result_form[$res]['CONFIRM_DATA'] = $this->generateList();
 		break;
 	    case 1:
 		$res = 1;
@@ -267,13 +268,13 @@ class AccountSet {
     private function editQuery() {
 	$res = [];
 	switch ($this->funid) {
-	    case 2:
+	    case 4:
 		$res = ['GSC_USERS', ['USERID'], [$this->userid]];
 		break;
-	    case 3:
+	    case 5:
 		$res = ['GSC_USERS', ['USERNAME'], [$this->username]];
 		break;
-	    case 4:
+	    case 6:
 		$salt = random(20);
 		$pass_hash = hash('sha256', $this->pass . $salt);
 		$res = ['GSC_USERS', ['PASSWORDHASH', 'SALT'], [$pass_hash, $salt]];
@@ -293,31 +294,35 @@ class AccountSet {
     private function generateList() {
 	$list_text = '<ul class="black-view">';
 	$func = "<li>ファンクション: [FUNCTION]</li>";
-	$column_list = ["<li>対象のユーザ: [USERID]</li>", "<li>ユーザID: [NEW_USERID]</li>", "<li>ユーザ名: [NEW_USERNAME]</li>", "<li>パスワード: [表示できません]</li>", "<li>権限: [NEW_PERMISSION]</li>", "<li>現在のユーザID: [USERID]</li>", "<li>現在のユーザ名: [USERNAME]</li>", "<li>現在の権限: [PERMISSION]</li>"];
+	$column_list = [
+	    "<li>対象のユーザ: $this->pre_userid</li>",
+	    "<li>新しいユーザID: [NEW_USERID]</li>",
+	    "<li>新しいユーザ名: [NEW_USERNAME]</li>",
+	    "<li>新しいパスワード: [表示できません]</li>",
+	    "<li>権限: [NEW_PERMISSION]</li>"
+	];
 	$columns = [];
 	switch ($this->check_correct_functionid()) {
-	    case 1: $func = str_replace('[FUNCTION]', 'ユーザ作成', $func);
+	    case 2: $func = str_replace('[FUNCTION]', 'ユーザ作成', $func);
 		$columns = [1, 2, 3, 4];
 		break;
-	    case 2: $func = str_replace('[FUNCTION]', 'ユーザ編集（ユーザID）', $func);
-		$columns = [0, 5, 1];
+	    case 4: $func = str_replace('[FUNCTION]', 'ユーザ編集（ユーザID）', $func);
+		$columns = [0, 1];
 		break;
-	    case 3: $func = str_replace('[FUNCTION]', 'ユーザ編集（ユーザ名）', $func);
-		$columns = [0, 6, 2];
+	    case 5: $func = str_replace('[FUNCTION]', 'ユーザ編集（ユーザ名）', $func);
+		$columns = [0, 2];
 		break;
-	    case 4: $func = str_replace('[FUNCTION]', 'ユーザ編集（パスワード）', $func);
+	    case 6: $func = str_replace('[FUNCTION]', 'ユーザ編集（パスワード）', $func);
 		$columns = [0, 3];
 		break;
-	    case 5: $func = str_replace('[FUNCTION]', 'ユーザ削除', $func);
-		$columns = [5, 6, 7];
+	    case 7: $func = str_replace('[FUNCTION]', 'ユーザ削除', $func);
+		$columns = [0];
 		break;
 	}
 	$list_text .= $func;
 	foreach ($columns as $col) {
 	    $text = $column_list[$col];
 	    switch ($col) {
-		case 0: $text = str_replace('[PER_USERID]', $this->pre_userid, $text);
-		    break;
 		case 1: $text = str_replace('[NEW_USERID]', $this->userid, $text);
 		    break;
 		case 2: $text = str_replace('[NEW_USERNAME]', $this->username, $text);
@@ -351,13 +356,13 @@ class AccountSet {
  * 
  * 削除しようとしている情報が自分のユーザであるか確認します。
  * ユーザが自分である場合はfalseを返し、それ以外はtrueを返します。
- * @param string $userid    手続き元のユーザIDを指定します
+ * @param string $userid 手続き元のユーザIDを指定します
  * @return bool
  */
 function check_users_me($userid): bool {
-    if (session_chk()) {
-	$session_userid = $_SESSION['gsc_userid'];
-	return ($userid == $session_userid);
+    if (session_chk() == 0) {
+	$session_userid = session_get_userid();
+	return !($userid == $session_userid);
     } else {
 	return false;
     }
@@ -372,10 +377,7 @@ function check_users_me($userid): bool {
  */
 function check_user_login($userid): bool {
     $sql = select(true, 'GSC_USERS', 'LOGINSTATE', "WHERE USERID = '$userid'");
-    $res = false;
-    if ($sql) {
-	$res = ($sql['LOGINSTATE'] == 1);
-    }
+    $res = ($sql && $sql['LOGINSTATE'] == 1);
     return $res;
 }
 
@@ -409,16 +411,15 @@ function check_username($data): string {
  * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
  */
 function check_userid($userid): string {
+    $res = '';
     $result = select(true, "GSC_USERS", "COUNT(*) AS USERCOUNT", "WHERE USERID = '$userid'");
-    if ($result['USERCOUNT'] == 1) {
-	return '<li>ユーザIDが重複しています。</li>';
+    if ($result && $result['USERCOUNT'] >= 1) {
+	$res = '<li>ユーザIDが重複しています。</li>';
     }
-
     if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{5,20}+\z/', $userid)) {
-	return '<li>ユーザID入力ルールに違反しています。</li>';
-    } else {
-	return '';
+	$res .= '<li>ユーザID入力ルールに違反しています。</li>';
     }
+    return $res;
 }
 
 /**

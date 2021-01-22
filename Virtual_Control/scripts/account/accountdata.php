@@ -72,7 +72,7 @@ class ACCOUNTData {
 		$text = '未ログイン';
 		break;
 	    case 1:
-		$text = 'ログイン済み';
+		$text = 'ログイン中';
 		break;
 	}
 	return $text;

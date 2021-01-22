@@ -36,7 +36,7 @@ $fm_in_fl->Button('bt_fl_ln', 'ホームに戻る', 'button', 'home');
 
 <html>
     <head>
-	<?php echo $loader->loadHeader('Virtual Control', 'INIT', true) ?>
+	<?php echo $loader->loadHeader('Virtual Control', 'INIT') ?>
 	<?php echo form_generator::ExportClass() ?>
     </head>
 
@@ -49,7 +49,7 @@ $fm_in_fl->Button('bt_fl_ln', 'ホームに戻る', 'button', 'home');
 
 	<?php echo $loader->footer() ?>
 
-	<?php echo $loader->footerS(true) ?>
+	<?php echo $loader->footer_load() ?>
 
 	<script type="text/javascript">
 	    $(document).ready(function () {

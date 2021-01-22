@@ -7,4 +7,4 @@ $userid = $_SESSION['gsc_userid'];
 update("GSC_USERS", "LOGINSTATE", 0, "WHERE USERID='$userid'");
 unset($_SESSION['gsc_userid']);
 http_response_code(301);
-header("Location: ../");
+header("Location: /");

@@ -11,7 +11,7 @@ $loader = new loader();
 
 $fm_ld = fm_ld('fm_ld');
 
-$fm_fl = fm_fl('fm_fl', '', '接続中にエラーが発生しました。', '以下をご確認ください。');
+$fm_fl = fm_fl('fm_fl', '接続中にエラーが発生しました。', '以下をご確認ください。');
 $fm_fl->openList();
 $fm_fl->addList('トラップファイルが規定の場所に置いてあるか、マニュアルの通りに確認してください。');
 $fm_fl->addList('トラップログの場所を開示する権限が失効している可能性があります。');
@@ -43,7 +43,7 @@ $fm_sb->Button('bt_sb_bk', '戻る', 'button', 'chevron-circle-left');
 
 <html>
     <head>
-	<?php echo $loader->loadHeader('Virtual Control', 'WARN', true) ?>
+	<?php echo $loader->loadHeader('Virtual Control', 'WARN') ?>
 	<?php echo form_generator::ExportClass() ?>
 	<script type="text/javascript">
 	    var r_data = [];
@@ -62,7 +62,7 @@ $fm_sb->Button('bt_sb_bk', '戻る', 'button', 'chevron-circle-left');
 
 	<?php echo $loader->footer() ?>
 
-	<?php echo $loader->footerS(true) ?>
+	<?php echo $loader->footer_load() ?>
 
 	<script type="text/javascript">
 	    function download_csv() {

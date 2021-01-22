@@ -1,5 +1,5 @@
 /**
- * [FUNCTION] Ajax POST処理（フォームデータ込）
+ * [Function] Ajax POST処理（クロスドメインリンク無し・データ込み）
  * 
  * @param {string} url 呼び出し先のページ名を指定します
  * @param {string} data フォームデータ（serializeされたもの）を指定します
@@ -16,7 +16,7 @@ function ajax_dynamic_post(url, data) {
 }
 
 /**
- * [FUNCTION] Ajax POST処理（GET専用）
+ * [FUNCTION] Ajax POST処理（クロスドメイン無し・GET専用）
  * 
  * @param {string} url 呼び出し先のページ名を指定します
  * @returns {jqXHR} Ajax遷移成功の場合、その内容に関わらず返されます。
@@ -31,15 +31,13 @@ function ajax_dynamic_post_toget(url) {
 }
 
 /**
- * sends a request to the specified url from a form. this will change the window location.
- * @param {string} path the path to send the post request to
- * @param {object} params the paramiters to add to the url
- * @param {string} [method=post] the method to use on the form
+ * [Function] Ajax POST処理（リンクポスト系）
+ * 
+ * @param {string} path URLを指定します
+ * @param {object} params データを指定します
+ * @param {string} method メソッドを指定します（Default: 'post'）
  */
 function post(path, params, method = 'post') {
-
-    // The rest of this code assumes you are not using a library.
-    // It can be made less wordy if you use one.
     const form = document.createElement('form');
     form.method = method;
     form.action = path;

@@ -48,7 +48,7 @@ interface form_in {
  * @author ClearNB <clear.navy.blue.star@gmail.com>
  */
 class form_generator implements form_in {
-    
+
     /**
      * オブジェクト作成時に自動的にプッシュされる順序配列です
      * 
@@ -90,17 +90,7 @@ class form_generator implements form_in {
      * @param integer $color_flag 【任意】背景のフラグを設定します（1..主背景, 2..黒背景）
      */
     function __construct($id, $data = '', $color_flag = 1) {
-	if ($data != '') {
-	    $this->data = [$data];
-	} else {
-	    if ($color_flag == 1) {
-		$this->data = ["<div class=\"bg-primary\"><div class=\"container py-2\"><form id=\"$id\" action=\"\" method=\"POST\">"];
-	    } else if ($color_flag == 2) {
-		$this->data = ["<div class=\"bg-dark\"><div class=\"container py-2\"><form id=\"$id\" action=\"\" method=\"POST\">"];
-	    }
-	}
-	$this->id = $id;
-	array_push(self::$gen_data, $this);
+	$this->reset($id, $data, $color_flag);
     }
 
     /**
@@ -127,7 +117,7 @@ class form_generator implements form_in {
      * @param string $title	    タイトル名を指定します
      * @param string $caption	    タイトルの下部につける説明を入力します
      * @param string $icon	    タイトルの左隣につけるアイコンの情報を入力します
-     * @param string $darkBack	    黒背景を変えるかどうかを指定します（Default: false）
+     * @param bool $darkBack	    黒背景を変えるかどうかを指定します（Default: false）
      * @param string $badgetext	    タイトル横にある背景付きのテキストを表示させます（Default: ''）
      * 
      * @return void サブタイトルがオブジェクト内のデータの1番後ろに追加されます。
@@ -161,18 +151,10 @@ class form_generator implements form_in {
      * @return void キャプションがオブジェクト内のデータの1番後ろに追加されます。
      */
     function Caption($caption, $ishr = true, $py = form_in::NONE): void {
-	$hr_text = '';
-	if ($ishr) {
-	    $hr_text = '<hr>';
-	}
-	$py_text = '';
-	if ($py > 0) {
-	    if ($py > 5) {
-		$py = 5;
-	    }
-	    $py_text = "py-$py";
-	}
-	array_push($this->data, "<div class=\"form-group\">$hr_text<div>$caption</div>$hr_text</div>");
+	$hr_text = ($ishr) ? '<hr>' : '';
+	$py_num = ($py > 5) ? 5 : $py;
+	$py_text = ($py_num > 0) ? 'py-' . $py_num : '';
+	array_push($this->data, '<div class="form-group-input pt-2">' . $hr_text . '<div class="' . $py_text . '">' . $caption . '</div>' . $hr_text . '</div>');
     }
 
     /**
@@ -199,17 +181,57 @@ class form_generator implements form_in {
 	    $r_text = "必須";
 	    $r_flag = "required=\"required\"";
 	}
+
 	if ($auto_completed) {
 	    $r_flag .= " autocomplete=\"on\"";
 	} else {
 	    $r_flag .= " autocomplete=\"off\"";
 	}
-	if($pattern) {
+	if ($pattern) {
 	    $p_text = " pattern=\"$pattern\"";
 	}
-	array_push($this->data, "<div class=\"form-group pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label><input type=\"text\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\" $p_text><small class=\"form-text text-body\" id=\"$id-label\">$small_desc</small></div>");
+	array_push($this->data, "<div class=\"form-group-input pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label><input type=\"text\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\" $p_text><small class=\"form-text text-body\" id=\"$id-label\">$small_desc</small></div>");
     }
-    
+
+    /**
+     * [SET] 数字入力フォーム作成
+     * 
+     * 入力フォーマットを作成します。<br>
+     * 必須かどうかを示すテキストに、タイトル（アイコン付き）があり、その下に入力フォーム、さらにその下にその項目に対するヘルプテキストがあります。
+     * 
+     * @param string $id 入力IDを指定します
+     * @param string $desc 説明を指定します
+     * @param string $small_text 下部に付ける説明を指定します
+     * @param string $icon アイコン情報を指定します
+     * @param int $min 最小値を指定します
+     * @param int $max 最大値を指定します
+     * @param bool $required 【任意】入力必要かを入力します（Default: false）
+     * @param bool $auto_completed 【任意】補完入力を可能にするか判定します（Default: false）
+     * 
+     * @return void 入力フォームがオブジェクト内のデータの1番後ろに追加されます。
+     */
+    function InputNumber($id, $desc, $small_text, $icon, $min, $max, $required = false, $auto_completed = false): void {
+	$r_text = "任意";
+	$r_flag = "";
+	$p_text = "";
+	if ($required) {
+	    $r_text = "必須";
+	    $r_flag = "required=\"required\"";
+	}
+	if ($auto_completed) {
+	    $r_flag .= " autocomplete=\"on\"";
+	} else {
+	    $r_flag .= " autocomplete=\"off\"";
+	}
+	array_push($this->data,
+		"<div class=\"form-group-input pt-2\">"
+		. "<label class=\"importantLabel col-md-3\">【" . $r_text . "】</label>"
+		. "<label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label>"
+		. "<input type=\"number\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace number-text\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\" $p_text min=\"$min\" max=\"$max\">"
+		. "<small class=\"form-text text-body\" id=\"$id-label\">$small_text</small>"
+		. "</div>");
+    }
+
     /**
      * [SET] フォームタイトル設置
      * 
@@ -221,10 +243,7 @@ class form_generator implements form_in {
      * @return void フォームタイトルがオブジェクト内のデータの1番後ろに追加されます。
      */
     function FormTitle($desc, $icon, $required = true): void {
-	$r_text = "任意";
-	if ($required) {
-	    $r_text = "必須";
-	}
+	$r_text = ($required) ? '必須' : '任意';
 	array_push($this->data, "<label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label>");
     }
 
@@ -245,22 +264,11 @@ class form_generator implements form_in {
      * @return void パスワードフォームがオブジェクト内のデータの1番後ろに追加されます。
      */
     function Password($id, $desc, $small_desc, $icon, $required = true, $auto_completed = false, $eye_modify = true): void {
-	$r_text = "任意";
-	$r_flag = "";
-	$m_text = "";
-	if ($required) {
-	    $r_text = "必須";
-	    $r_flag = "required=\"required\"";
-	}
-	if ($auto_completed) {
-	    $r_flag .= " autocomplete=\"on\"";
-	} else {
-	    $r_flag .= " autocomplete=\"off\"";
-	}
-	if ($eye_modify) {
-	    $m_text = '<span class="field-icon"><i toggle="#password-field" class="fas fa-eye toggle-password"></i></span>';
-	}
-	array_push($this->data, "<div class=\"form-group pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label><input type=\"password\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_flag id=\"$id\" name=\"$id\">$m_text<small class=\"form-text text-body\">$small_desc</small></div>");
+	$r_text = ($required) ? '必須' : '任意';
+	$r_set = ($required) ? 'required="required"' : '';
+	$m_text = ($eye_modify) ? '<span class="field-icon"><i toggle="#password-field" class="fas fa-fw fa-eye toggle-password fa-mod-eye"></i></span>' : '';
+	$c_text = ($auto_completed) ? 'autocomplete="on"' : 'autocomplete="off"';
+	array_push($this->data, "<div class=\"form-group-input pt-2\"><label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label><input type=\"password\" class=\"form-control bg-dark my-1 form-control-lg shadow-sm text-monospace\" placeholder=\"Input Here\" $r_set $c_text id=\"$id\" name=\"$id\">$m_text<small class=\"form-text text-body\">$small_desc</small></div>");
     }
 
     /**
@@ -279,16 +287,9 @@ class form_generator implements form_in {
      * @param string $required 【任意】入力必要かを入力します（Default: required）
      */
     function Check($type, $id, $name, $value, $outname, $selected, $required = 'required') {
-	$type_text = 'checkbox';
-	$class_text = 'checkbox02';
-	if ($type == 1) {
-	    $type_text = 'radio';
-	    $class_text = 'radio02';
-	}
-	$sel_text = '';
-	if ($selected) {
-	    $sel_text = 'checked';
-	}
+	$type_text = ($type == 1) ? 'radio' : 'checkbox';
+	$class_text = ($type == 1) ? 'radio02' : 'checkbox02';
+	$sel_text = ($selected) ? 'checked' : '';
 	array_push($this->data, '<input ' . $sel_text . ' required="' . $required . '" id="' . $id . '" type="' . $type_text . '" name="' . $name . '" value="' . $value . '"><label for="' . $id . '" class="' . $class_text . '">' . $outname . '</label><br>');
     }
 
@@ -300,20 +301,38 @@ class form_generator implements form_in {
      * 
      * @param string $id IDを指定します
      * @param string $desc 表示名を指定します
-     * @param string $type 【任意】ボタンタイプを指定します（Default: submit）<br>【submit】フォーム送信処理を行う場合のみに使用<br>【button】普段の「ボタン」としての役目を持つ際に使用
-     * @param string $icon 【任意】アイコン情報を指定します（Default: なし）
-     * @param string $color 【任意】色を指定します（Default: dark）<br>【dark】黒いボタンとしてデザインされます。<br>【primary】主背景色としてデザインされます。
-     * @param string $disabled 【任意】無効化状態にするか設定します（Default: なし）<br>【なし】ボタンが押せる状態になります。<br>【disabled】ボタンが押せない状態になります。
+     * @param string $type ボタンタイプを指定します（Default: submit）<br>【submit】フォーム送信処理を行う場合のみに使用<br>【button】普段の「ボタン」としての役目を持つ際に使用
+     * @param string $icon アイコン情報を指定します（Default: なし）
+     * @param string $isdisabled 【任意】無効化状態にするか設定します（Default: false）
      * 
      * @return void ボタンがオブジェクト内のデータの1番後ろに追加されます
      */
-    function Button($id, $desc, $type = 'submit', $icon = '', $color = 'dark', $disabled = ''): void {
-	$fmat = 'fas';
-	if(strpos($icon, 'fab') !== false) {
-	    $fmat = 'fab';
-	}
+    function Button($id, $desc, $type = 'submit', $icon = '', $isdisabled = false): void {
+	$fmat = (strpos($icon, 'fab') !== false) ? 'fab' : 'fas';
+	$d_text = ($isdisabled) ? 'disabled' : '';
 	$icon_r = str_replace('fab fa-', '', $icon);
-	array_push($this->data, "<div class=\"py-1\"><button type=\"$type\" id=\"$id\" class=\"btn btn-$color btn-block btn-lg shadow-lg mb-1\" $disabled><i class=\"$fmat fa-fw fa-lx fa-$icon_r\"></i>$desc</button></div>");
+	array_push($this->data, "<div class=\"py-1\"><button type=\"$type\" id=\"$id\" class=\"btn btn-dark btn-block btn-lg shadow-lg mb-1\" $d_text><i class=\"$fmat fa-fw fa-lx fa-$icon_r\"></i>$desc</button></div>");
+    }
+
+    /**
+     * [SET] 特大ボタン作成
+     * 
+     * 通常より大きいボタンを作成します。<br>
+     * 通常の場合、テキストとアイコンがあるボタンとして作成されます。
+     * 
+     * @param string $id IDを指定します
+     * @param string $desc 表示名を指定します
+     * @param string $type ボタンタイプを指定します（Default: submit）<br>【submit】フォーム送信処理を行う場合のみに使用<br>【button】普段の「ボタン」としての役目を持つ際に使用
+     * @param string $icon アイコン情報を指定します（Default: なし）
+     * @param string $isdisabled 【任意】無効化状態にするか設定します（Default: false）
+     * 
+     * @return void ボタンがオブジェクト内のデータの1番後ろに追加されます
+     */
+    function LargeButton($id, $desc, $type = 'submit', $icon = '', $isdisabled = false): void {
+	$fmat = (strpos($icon, 'fab') !== false) ? 'fab' : 'fas';
+	$d_text = ($isdisabled) ? 'disabled' : '';
+	$icon_r = str_replace('fab fa-', '', $icon);
+	array_push($this->data, "<div class=\"py-1\"><button type=\"$type\" id=\"$id\" class=\"btn btn-dark btn-block btn-llg shadow-lg mb-1\" $d_text><i class=\"$fmat fa-fw fa-lx fa-$icon_r\"></i>$desc</button></div>");
     }
 
     /**
@@ -423,7 +442,7 @@ class form_generator implements form_in {
      * @return void カード（主背景）がオブジェクト内のデータの1番後ろに追加されます。
      */
     function Card($caption_title, $icon, $title, $caption): void {
-	array_push($this->data, '<div class="card mt-1 rounded"><div class="card-header bg-secondary border-bottom border-dark">' . $caption_title . '</div><div class="card-body bg-primary"><h5 class="text-left text-monospace"><i class="' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
+	array_push($this->data, '<div class="card mb-1 rounded"><div class="card-header bg-secondary border-bottom border-dark">' . $caption_title . '</div><div class="card-body bg-primary"><h5 class="card-title"><i class="fas fa-fw fa-' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
     }
 
     /**
@@ -438,7 +457,7 @@ class form_generator implements form_in {
      * @return void カード（ダーク）がオブジェクト内のデータの1番後ろに追加されます。
      */
     function CardDark($caption_title, $icon, $title, $caption): void {
-	array_push($this->data, '<div class="card mt-1 rounded"><div class="card-header bg-dark border-bottom border-primary">' . $caption_title . '</div><div class="card-body bg-dark"><h5 class="text-left text-monospace"><i class="' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
+	array_push($this->data, '<div class="card mb-1 rounded"><div class="card-header bg-dark border-bottom border-primary">' . $caption_title . '</div><div class="card-body bg-dark"><h5 class="card-title-dark"><i class="fas fa-fw fa-' . $icon . '"></i>' . $title . '</h5><p class="text-left">' . $caption . '</p></div></div>');
     }
 
     /**
@@ -467,7 +486,7 @@ class form_generator implements form_in {
      * @return void リストグループのリストがオブジェクト内のデータの1番後ろに追加されます。
      */
     function addListGroup($id, $title, $icon, $text, $small_text): void {
-	array_push($this->data, '<div tabindex="0" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2" id="' . $id . '"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1"><i class="fas fa-fw fa-' . $icon . ' fa-lg"></i>' . $title . '</h5></div><p class="mb-1">' . $text . '</p> <small>' . $small_text . '</small></div>');
+	array_push($this->data, '<div tabindex="0" class="list-group-item list-group-item-action flex-column align-items-start active list-group-item-dark mb-2" id="' . $id . '"><div class="d-flex w-100 justify-content-between"><h5 class="list-group-title"><i class="fas fa-fw fa-' . $icon . ' fa-lg"></i>' . $title . '</h5></div><p class="mb-1">' . $text . '</p> <small>' . $small_text . '</small></div>');
     }
 
     /**
@@ -477,8 +496,37 @@ class form_generator implements form_in {
      * 
      * @return void \</div\>がオブジェクト内のデータの1番後ろに追加されます。
      */
-    function closeListGroup() {
+    function closeListGroup(): void {
 	array_push($this->data, "</div>");
+    }
+
+    /**
+     * [SET] HTML埋め込み
+     * 
+     * すでに作成されたHTMLデータをdivタグに閉じ込めた状態で埋め込みます
+     * 
+     * @param string $html HTMLデータであることがわかる文字列型データです
+     * @return void HTMLタグを埋め込めたdivデータがオブジェクト内のデータの1番後ろに追加されます
+     */
+    function setHTML($html): void {
+	array_push($this->data, $html);
+    }
+
+    function WarnForm($id): void {
+	array_push($this->data, '<div class="form-group-input pt-2"><div id="' . $id . '" ></div></div>');
+    }
+
+    /**
+     * [SET] 境界線
+     * 
+     * hrタグを用いて表示を区切ります
+     * 
+     * @param bool $is_primary 主背景色の境界線を使うかどうか（Default: false）
+     * @return void hrタグがオブジェクト内のデータの1番後ろに追加されます
+     */
+    function Horizonal($is_primary = false): void {
+	$class_text = ($is_primary) ? 'class="orange"' : '';
+	array_push($this->data, '<hr ' . $class_text . '>');
     }
 
     /**
@@ -489,23 +537,47 @@ class form_generator implements form_in {
      * 
      * @return string フォームクラス内で作成されたデータを文字列として返します。
      */
-    function Export(): string {
-	array_push($this->data, "</form></div></div>");
+    public function Export(): string {
+	array_push($this->data, '</form></div></div>');
 	$text = '';
 	foreach ($this->data as $var) {
-	    $text = $text . $var;
+	    $text .= $var;
 	}
 	return $text;
     }
 
     /**
-     * [SET] データのリセット
+     * [SET] オブジェクトデータリセット
+     * 
+     * オブジェクト内のデータを初期化します<br>
+     * コンストラクタも同様の処理を行います
+     * 
+     * @param string $id フォームグループの一意なIDを指定します（Default: fm_pg）
+     * @param string $data 埋め込み用HTML
+     * @param int $color_flag 背景色のフラグを設定します（Default: 1..主背景, 2..黒背景）
+     */
+    public function reset($id = 'fm_pg', $data = '', $color_flag = 1): void {
+	if ($data != '') {
+	    $this->data = [$data];
+	} else {
+	    if ($color_flag == 1) {
+		$this->data = ["<div class=\"bg-primary\"><div class=\"container py-2\"><form id=\"$id\" action=\"\" method=\"POST\">"];
+	    } else if ($color_flag == 2) {
+		$this->data = ["<div class=\"bg-dark\"><div class=\"container py-2\"><form id=\"$id\" action=\"\" method=\"POST\">"];
+	    }
+	}
+	$this->id = $id;
+	array_push(self::$gen_data, $this);
+    }
+
+    /**
+     * [SET] データのリセット（スタック履歴）
      * 
      * 今まで作成したオブジェクトデータの履歴を消去し、スタック内にオブジェクトがないものにします。
      * 
      * @return void スタック内のオブジェクトが消去されます。
      */
-    static function resetData(): void {
+    public static function resetData(): void {
 	self::$gen_data = [];
     }
 
@@ -531,12 +603,55 @@ class form_generator implements form_in {
      * @return string JavaScriptでエンコードされたものが文字列として返されます。
      */
     static function ExportClass(): string {
+	fm_ld('fm_ld');
 	$js = '<script type="text/javascript">';
 	foreach (self::$gen_data as $f) {
 	    $js .= 'var ' . $f->getID() . ' = \'' . $f->Export() . '\';';
 	}
 	$js .= '</script>';
 	return $js;
+    }
+
+    /**
+     * [FUNCTION] 認証画面作成
+     * 
+     * 認証が必要となる場合、その画面を作成します。<br>
+     * ユーザIDの入力フォームとして、「in_at_ps」を提供します。<br>
+     * また、ボタンにてキャンセルボタン「bt_at_bk」、送信ボタン「bt_at_sb」を提供します。
+     * 
+     * @return string 作成されたデータをそのままページHTMLとして返します
+     */
+    public function fm_at(): string {
+	$userdata = session_get_userdata();
+	if(!$userdata) {
+	    $userdata['USERNAME'] = '[USER]';
+	}
+	$this->SubTitle('この操作を行うには認証が必要です', $userdata['USERNAME'] . ' さんのパスワードを入力してください。', 'passport');
+	$this->Password('in_at_ps', 'パスワード', 'あなたのパスワードを入力します。', 'key');
+	$this->WarnForm('fm_warn');
+	$this->Button('bt_at_sb', '送信する', 'submit', 'upload');
+	$this->Button('bt_at_bk', 'キャンセル', 'button', 'caret-square-left');
+	return $this->Export();
+    }
+    
+    /**
+     * [SET] リスト作成
+     * 
+     * ulグループによるリストを順序配列もしくは連想配列を渡すことにより動的に作成します
+     * 
+     * @param array $a_data データ配列を指定します（string, integerなどの単独系変数は指定不可能）
+     * @return string ulグループタグがオブジェクト内のデータの1番後ろに追加されます
+     */
+    public function ListCreate($a_data) {
+	if(is_array($a_data)) {
+	    $this->openList();
+	    foreach($a_data as $d) {
+		$this->addList($d);
+	    }
+	    $this->closeList();
+	} else {
+	    $this->Caption('表示するログはありません');
+	}
     }
 
 }
@@ -563,17 +678,13 @@ function fm_ld($id, $title = '更新反映中です...', $text = '反映され�
  * 失敗画面を作成します。
  * 
  * @param string $id フォームに与えるIDを指定します
- * @param string $bt_id 戻る際のボタンIDを指定します（空の場合作成しない）
  * @param string $title 失敗画面でのタイトルを指定します
  * @param string $text その原因となるテキスト部分を指定します
  * @return \form_generator 作成したform_generatorオブジェクトとして返します
  */
-function fm_fl($id, $bt_id = '', $title = '失敗しました', $text = '[原因]') {
+function fm_fl($id, $title = '失敗しました', $text = '[原因]') {
     $fm = new form_generator($id, '');
     $fm->SubTitle($title, $text, 'exclamation-triangle');
-    if ($bt_id != '') {
-	$fm->Button($bt_id, '戻る', 'backward', '');
-    }
     return $fm;
 }
 
@@ -588,10 +699,11 @@ function fm_fl($id, $bt_id = '', $title = '失敗しました', $text = '[原因
  * @param string $username 【任意】表示するユーザネームを指定します（Default: [USER]）
  * @return \form_generator 作成したform_generatorオブジェクトとして返します
  */
-function fm_at($id = 'fm_at', $username = '[USER]'): form_generator {
+function fm_at($id = 'fm_at', $username = ''): form_generator {
     $fm_ag = new form_generator($id);
     $fm_ag->SubTitle('この操作を行うには認証が必要です', $username . ' さんのパスワードを入力してください。', 'passport');
     $fm_ag->Password('in_at_ps', 'パスワード', 'あなたのパスワードを入力します。', 'key');
+    $fm_ag->WarnForm('fm_warn');
     $fm_ag->Button('bt_at_sb', '送信する', 'submit', 'upload');
     $fm_ag->Button('bt_at_bk', 'キャンセル', 'button', 'caret-square-left');
     return $fm_ag;

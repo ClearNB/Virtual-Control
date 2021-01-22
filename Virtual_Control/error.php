@@ -28,7 +28,7 @@ $fm_pg->Button('bt_pg_bk', 'ホームへ戻る', 'button', 'home');
 
 <html>
     <head>
-	<?php echo $loader->loadHeader('Virtual Control', $response_caption[$response_code][0], false, true) ?>
+	<?php echo $loader->loadHeader('Virtual Control', $response_caption[$response_code][0]) ?>
 	<?php echo form_generator::ExportClass() ?>
     </head>
 
@@ -43,7 +43,7 @@ $fm_pg->Button('bt_pg_bk', 'ホームへ戻る', 'button', 'home');
 
 	<?php echo $loader->footer() ?>
 
-	<?php echo $loader->footerS(false, true) ?>
+	<?php echo $loader->footer_load() ?>
 
         <script type="text/javascript">
 	    $(document).ready(function () {
@@ -51,7 +51,7 @@ $fm_pg->Button('bt_pg_bk', 'ホームへ戻る', 'button', 'home');
 	    });
 
 	    $(document).on('click', '#bt_pg_bk', function () {
-		animation_to_sites('data_output', 400, '/index.php');
+		animation_to_sites('data_output', 400, '/');
 	    });
         </script>
     </body>

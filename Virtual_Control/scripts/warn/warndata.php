@@ -1,6 +1,7 @@
 <?php
 
 include_once __DIR__ . '/../general/sqldata.php';
+include_once __DIR__ . '/../mib/mibdata.php';
 
 class WarnData {
 
@@ -47,6 +48,8 @@ class WarnData {
     }
 
     private function setMessage() {
+	$mib = new MIBData();
+	$all = $mib->getMIB(2, 2);
 	switch ($this->alert_oid) {
 	    case '1.3.6.1.6.3.1.1.5.1': $this->message = '【coldStart】前回より変更がないまま再起動が行われました';
 		break;
@@ -61,12 +64,14 @@ class WarnData {
 	    case '1.3.6.1.6.3.1.1.5.6': $this->message = '【egpNeighborLoss】EGP接続のスパニングツリー状態が失われました';
 		break;
 	    default:
-		$select = select(true, "GSC_MIB_NODE", "DESCR, JAPTLANS", "WHERE NODEOBJECTID = '$this->alert_oid' AND NODETYPE = 1");
-		if ($select) {
-		    $this->message = '【' . $select['DESCR'] . '】「' . $select['JAPTLANS'] . '」が発生しました。';
-		} else {
-		    $this->message = '【Undefined】認識不可能なトラップ内容';
+		$data = '';
+		if(isset($all['NODE'])) {
+		    foreach($all['NODE'] as $s) {
+			$data = ($this->alert_oid == $s['OID']) ? ['JAPTLANS' => $s['JAPTLANS'], 'DESCR' => $s['DESCR']] : '';
+			if($data) { break; }
+		    }
 		}
+		$this->message = ($data) ? '【' . $data['DESCR'] . '】「' . $data['JAPTLANS'] . '」が発生しました。' : '【Undefined】認識不可能なトラップ内容';
 		break;
 	}
     }

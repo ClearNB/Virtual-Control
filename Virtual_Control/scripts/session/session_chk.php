@@ -33,9 +33,8 @@ function session_start_once(): void {
  */
 function session_per_chk(): bool {
     if (session_chk() == 0) {
-	$id = session_get_userid();
-	$sql = select(true, 'GSC_USERS', 'PERMISSION', 'WHERE USERID = "' . $id . '"');
-	return $sql && ($sql['PERMISSION'] == 0);
+	$user = session_get_userdata();
+	return $user && ($user['PERMISSION'] == 0);
     } else {
 	return false;
     }
@@ -75,6 +74,7 @@ function session_action_scripts(): void {
 	header('location: /error.php');
 	exit();
     }
+    ini_set('memory_limit', '200M');
 }
 
 /**
@@ -140,8 +140,8 @@ function session_action_guest(): void {
 function session_chk(): int {
     session_start_once();
     $chk = 1;
-    if (isset($_SESSION['gsc_userid'])) {
-	$userid = $_SESSION['gsc_userid'];
+    if (session_exists('gsc_userid')) {
+	$userid = session_get_userid();
 	$res = select(true, "GSC_USERS", "LOGINSTATE", "WHERE USERID = '$userid'");
 	if ($res && $res['LOGINSTATE'] == 1) {
 	    $chk = 0;
@@ -271,6 +271,7 @@ function session_set_data(&$sql): void {
 function session_create($sessionid, $value): bool {
     session_start_once();
     $_SESSION[$sessionid] = $value;
+    session_regenerate_id();
     return (isset($_SESSION[$sessionid]));
 }
 
@@ -298,4 +299,17 @@ function session_unset_byid($sessionid): bool {
 function session_get($sessionid) {
     session_start_once();
     return (isset($_SESSION[$sessionid]) ? $_SESSION[$sessionid] : '');
+}
+
+/**
+ * [FUNCTION] セッション情報確認
+ * 
+ * 指定したセッションIDが存在するかどうかを確認します
+ * 
+ * @param string $sessionid セッションID
+ * @return bool セッション情報がある場合はtrue、そうでない場合はfalseを返します
+ */
+function session_exists($sessionid): bool {
+    session_start_once();
+    return isset($_SESSION[$sessionid]);
 }
