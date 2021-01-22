@@ -11,6 +11,16 @@ class AGENTData {
     private $community;
     private $agentuptime;
 
+    /**
+     * [SET] CONSTRUCTOR
+     * 
+     * オブジェクトコンストラクタです
+     * 
+     * @param int $agentid エージェントIDを指定します
+     * @param string $agenthost エージェントホストアドレスを指定します
+     * @param string $community コミュニティ名を指定します
+     * @param string $agentuptime エージェント更新時間です
+     */
     public function __construct($agentid, $agenthost, $community, $agentuptime) {
 	$this->agentid = $agentid;
 	$this->agenthost = $agenthost;
@@ -19,15 +29,18 @@ class AGENTData {
 	array_push(self::$set, $this);
     }
 
+    /**
+     * [GET] エージェント情報取得
+     * 
+     * データベースに保存している全ての情報を取得します
+     * 
+     * @return array|null エージェントの全ての情報が取得できればその情報を配列で、それ以外はnullを返します
+     */
     public static function get_agent_info() {
 	$q01 = select(false, 'GSC_AGENT', 'AGENTID, AGENTHOST, COMMUNITY, AGENTUPTIME');
-	$q02 = select(false, 'GSC_AGENT_MIB', 'AGENTID, SUBID');
+	$q02 = select(false, 'GSC_AGENT_MIB', 'AGENTID, SID');
 	if ($q01 && $q02) {
 	    $result = [
-		"COLUMN" => [
-		    ["エージェントID", "ホストアドレス", "コミュニティ名", "最終更新日時"],
-		    ["AGENTID", "AGENTHOST", "COMMUNITY", "AGENTUPTIME"]
-		],
 		"VALUE" => [],
 		"SUBID" => []
 	    ];
@@ -38,7 +51,7 @@ class AGENTData {
 	    //MIBデータ取り込み
 	    while ($var = $q02->fetch_assoc()) {
 		$agentid = $var['AGENTID'];
-		$subid = $var['SUBID'];
+		$subid = $var['SID'];
 		if(!isset($result['SUBID'][$agentid])) {
 		    $result['SUBID'][$agentid] = [];
 		}
@@ -52,10 +65,17 @@ class AGENTData {
 	    }
 	    return $result;
 	} else {
-	    return false;
+	    return '';
 	}
     }
 
+    /**
+     * [GET] オブジェクトデータ配列取得
+     * 
+     * オブジェクトのデータを配列で取得します
+     * 
+     * @return array AGENTID, AGENTHOST, COMMUNITY, UPDATETIMEをそれぞれ返します
+     */
     private function get_agent_data(): array {
 	return ['AGENTID' => $this->agentid,
 	    'AGENTHOST' => $this->agenthost,

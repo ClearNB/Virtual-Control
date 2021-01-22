@@ -9,20 +9,20 @@ include_once __DIR__ . '/../session/session_chk.php';
 
 session_action_scripts();
 
-unset_authid();
+session_unset_byid('gsc_authid');
 $data = AGENTData::get_agent_info();
-$mibdata = MIBData::getMIB(2, 2);
+$mibdata = MIBData::getMIB(0, 0);
 $res = [];
 if ($data && $mibdata) {
     $select = new AgentSelect($data);
     $mibsub = new MIBSubSelect($mibdata);
     $res1 = $select->getSelect();
     $res2 = $mibsub->getSubSelect();
-    $res3 = $mibsub->getSubSelectOnAgent($data['SUBID']);
+    $res3 = $mibsub->getSubSelectOnAgent($data);
     $res = ["CODE" => 0, "SELECT" => $res1, "MIB" => $res2, "MIB_AGENT" => $res3, "DATA" => $data['VALUE']];
 } else {
     $log = ob_get_contents();
     $res = ["CODE" => 1, "LOG" => $log];
 }
-ob_get_clean();
+//ob_get_clean();
 echo json_encode($res);
