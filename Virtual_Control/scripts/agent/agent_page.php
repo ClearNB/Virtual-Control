@@ -15,6 +15,11 @@ class AgentPage extends form_generator {
 	'AGENTHOST' => '<strong>【条件】ドメイン名・IPv4アドレス・IPv6のいずれかを入力していること<br>（※）IPv6アドレスは「0省略」記述が可能です。</strong>',
 	'COMMUNITY' => '<strong>【条件】半角英数字（小文字・大文字）・記号（$ _ のみ）を用いて255文字まで',
     ];
+    private static $icons = [
+	'AGENTHOST' => 'server',
+	'COMMUNITY' => 'book',
+	'MIB' => 'object-group'
+    ];
 
     /**
      * [SET] CONSTRUCTOR
@@ -29,17 +34,17 @@ class AgentPage extends form_generator {
     }
 
     /**
-     * [GET] アカウント選択画面取得
+     * [GET] エージェント選択画面取得
      * 
-     * アカウントテーブルデータをもとに、アカウント選択画面を作成します
+     * エージェントテーブルデータをもとに、アカウント選択画面を作成します
      * 
-     * @param string $table AccountTableで取得したアカウントテーブルデータ
+     * @param string $select AgentSelectで取得したエージェントラジオボタングループデータ
      * @return string 引数をもとにページデータをHTMLの文字列で返します
      */
-    public function getSelect($table): string {
+    public function getSelect($select): string {
 	$this->Button('bt_ag_bk', '設定一覧へ', 'button', 'list');
 	$this->SubTitle('エージェント作成・編集・削除', '作成は「作成」ボタンを、編集・削除はエージェント一覧表からエージェントをラジオボタンで選択してからボタンを押します。', 'user');
-	$this->Caption($table);
+	$this->Caption($select);
 	$this->Button('bt_ag_cr', '作成', 'button', 'plus-square');
 	$this->Button('bt_ag_ed', '編集', 'button', 'edit', true);
 	$this->Button('bt_ag_dl', '削除', 'button', 'trash-alt', true);
@@ -47,23 +52,20 @@ class AgentPage extends form_generator {
     }
 
     /**
-     * [GET] アカウント作成画面取得
+     * [GET] エージェント作成画面取得
      * 
-     * アカウント作成画面を作成します
+     * エージェント作成画面を作成します
      * 
      * @param string $mib_select MIBセレクタの文字列（HTML）を指定します
      * @return string 引数をもとにページデータをHTMLの文字列で返します
      */
     public function getCreate($mib_select) {
+	$mib = $this->getSub();
 	$this->Button('bt_cr_bk', 'エージェント選択へ戻る', 'button', 'chevron-circle-left');
 	$this->SubTitle('エージェント作成', '以下の情報を入力してください', 'plus-circle', false, '1: 情報入力');
-	$this->Input('in_ag_id', 'エージェントホストアドレス', self::$rules['AGENTHOST'], 'user-check', true);
-	$this->Input('in_ag_cm', 'コミュニティ名', self::$rules['COMMUNITY'], 'file-invoice', true);
-	$this->FormTitle('MIBサブツリー選択', 'object-group');
-	$this->openList();
-	$this->addList('<h3>MIBサブツリー選択</h3>MIBサブツリーを、以下から<strong>1つ以上</strong>選択します。「全てを選択」にチェックがついていない状態で押すと、列挙されているすべてのサブツリーを選択できます。ついている状態で押すと、全て解除されます。<hr>');
-	$this->closeList();
-	$this->Caption($mib_select);
+	$this->Input('in_ag_hs', 'エージェントホストアドレス', self::$rules['AGENTHOST'], self::$icons['AGENTHOST'], true);
+	$this->Input('in_ag_cm', 'コミュニティ名', self::$rules['COMMUNITY'], self::$icons['COMMUNITY'], true);
+	$this->Caption($mib . $mib_select);
 	$this->WarnForm('fm_warn');
 	$this->Button('bt_cr_nx', '次へ', 'submit', 'sign-in-alt');
 	return $this->Export();
@@ -74,15 +76,15 @@ class AgentPage extends form_generator {
      * 
      * アカウントデータ（選択したデータ）をもとに、編集選択画面を取得します
      * 
-     * @param array $account_data アカウントデータ（AccountDataで取得したデータで、ユーザ情報を取得したもの）
+     * @param array $agentdata エージェントデータ（AgentDataで取得したデータで、ユーザ情報を取得したもの）
      * @return string 引数をもとにページデータをHTMLの文字列で返します
      */
-    public function getEditSelect($account_data) {
-	$this->Button('bt_ed_bk', 'アカウント選択画面に戻る', 'button', 'chevron-circle-left');
-	$this->SubTitle($account_data['USERNAME'] . ' (' . $account_data['USERID'] . ')', '以下から変更したい項目を選択してください。', 'edit', false, $account_data['PERMISSION']);
-	$this->Button('bt_ed_hs', 'エージェントホストアドレス', 'button', 'user-check');
-	$this->Button('bt_ed_cm', 'コミュニティ名', 'button', 'file-invoice');
-	$this->Button('bt_ed_oi', 'MIBサブツリー選択', 'button', 'object-group');
+    public function getEditSelect($agentdata) {
+	$this->Button('bt_ed_bk', 'エージェント選択画面に戻る', 'button', 'chevron-circle-left');
+	$this->SubTitle('【' . $agentdata['COMMUNITY'] . '】' . $agentdata['AGENTHOST'], '以下から変更したい項目を選択してください。', 'edit', false);
+	$this->Button('bt_ed_hs', 'エージェントホスト', 'button', self::$icons['AGENTHOST']);
+	$this->Button('bt_ed_cm', 'コミュニティ名', 'button', self::$icons['COMMUNITY']);
+	$this->Button('bt_ed_oi', 'MIBサブツリー選択', 'button', self::$icons['MIB']);
 	return $this->Export();
     }
 
@@ -96,40 +98,36 @@ class AgentPage extends form_generator {
      * @param string $mib_select MIBセレクタの文字列（HTML）を指定します
      * @return string 引数をもとにページデータをHTMLの文字列で返します
      */
-    public function getEdit($type, $agent_data, $mib_select) {
+    public function getEdit($type, $agent_data, $mib_select = '') {
 	switch ($type) {
-	    case 4: //AGENTHOST
-		$this->Button('bt_id_bk', '編集画面に戻る', 'button', 'chevron-circle-left');
-		$this->SubTitle('アカウント編集（エージェントホスト）', '以下の情報をもとに変更を行います。', 'edit');
+	    case 14: //AGENTHOST
+		$this->Button('bt_hs_bk', '編集選択画面に戻る', 'button', 'chevron-circle-left');
+		$this->SubTitle('エージェント編集（エージェントホスト）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
 		$this->addList('変更対象のエージェント: ' . $agent_data['AGENTHOST'] . ' (' . $agent_data['COMMUNITY'] . ')');
 		$this->closeList();
-		$this->Input('in_ag_id', 'エージェントホストアドレス', self::$rules['AGENTHOST'], 'user-check', true);
+		$this->Input('in_ag_hs', 'エージェントホスト', self::$rules['AGENTHOST'], 'user-check', true);
 		$this->WarnForm('fm_warn');
 		$this->Button('bt_id_nx', '次へ', 'submit', 'sign-in-alt');
 		break;
-	    case 5: //COMMUNITY
-		$this->Button('bt_nm_bk', '編集画面に戻る', 'button', 'chevron-circle-left');
-		$this->SubTitle('アカウント編集（ユーザ名）', '以下の情報をもとに変更を行います。', 'edit');
+	    case 15: //COMMUNITY
+		$this->Button('bt_cm_bk', '編集選択画面に戻る', 'button', 'chevron-circle-left');
+		$this->SubTitle('エージェント編集（コミュニティ名）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
 		$this->addList('変更対象のエージェント: ' . $agent_data['AGENTHOST'] . ' (' . $agent_data['COMMUNITY'] . ')');
-		$this->addList('現在: [USERNAME]');
 		$this->closeList();
-		$this->Input('in_ac_nm', 'ユーザ名', self::$rules['USERNAME'], 'user-circle', true);
+		$this->Input('in_ag_cm', 'コミュニティ名', self::$rules['COMMUNITY'], self::$icons['COMMUNITY'], true);
 		$this->WarnForm('fm_warn');
 		$this->Button('bt_nm_nx', '次へ', 'submit', 'sign-in-alt');
 		break;
-	    case 6: //PASSWORD
-		$this->Button('bt_nm_bk', '編集画面に戻る', 'button', 'chevron-circle-left');
-		$this->SubTitle('アカウント編集（パスワード）', '以下の情報をもとに変更を行います。', 'edit');
+	    case 16: //OID
+		$mib = $this->getSub();
+		$this->Button('bt_oi_bk', '編集選択画面に戻る', 'button', 'chevron-circle-left');
+		$this->SubTitle('エージェント編集（MIBサブツリー選択）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
-		$this->addList('変更対象のエージェント: ' . $agent_data['USERID'] . ' (' . $agent_data['USERNAME'] . ')');
+		$this->addList('変更対象のエージェント: ' . $agent_data['AGENTHOST'] . ' (' . $agent_data['COMMUNITY'] . ')');
 		$this->closeList();
-		$this->FormTitle('MIBサブツリー選択', 'object-group');
-		$this->openList();
-		$this->addList('<h3>MIBサブツリー選択</h3>MIBサブツリーを、以下から<strong>1つ以上</strong>選択します。「全てを選択」にチェックがついていない状態で押すと、列挙されているすべてのサブツリーを選択できます。ついている状態で押すと、全て解除されます。<hr>');
-		$this->closeList();
-		$this->Caption($mib_select);
+		$this->Caption($mib . $mib_select);
 		$this->WarnForm('fm_warn');
 		$this->Button('bt_nm_nx', '次へ', 'submit', 'sign-in-alt');
 		break;
@@ -142,16 +140,15 @@ class AgentPage extends form_generator {
      * 
      * 削除を行う前に、情報を確認する画面を作成します
      * 
-     * @param array $account_data アカウントデータ（AccountDataで取得したデータで、ユーザ情報を取得したもの）
+     * @param array $agentdata エージェントデータ（AgentDataで取得したデータで、ユーザ情報を取得したもの）
      * @return string 引数をもとにページデータをHTMLの文字列で返します
      */
-    public function getDelete($account_data) {
-	$this->Button('bt_dl_bk', 'アカウント選択画面に戻る', 'button', 'chevron-circle-left');
-	$this->SubTitle('アカウント削除', '以下のユーザを削除します。', 'trash-alt');
+    public function getDelete($agentdata) {
+	$this->Button('bt_dl_bk', 'エージェント選択画面に戻る', 'button', 'chevron-circle-left');
+	$this->SubTitle('エージェント削除', '以下のエージェントを削除します。', 'trash-alt');
 	$this->openList();
-	$this->addList('ユーザID: ' . $account_data['USERID']);
-	$this->addList('ユーザ名: ' . $account_data['USERNAME']);
-	$this->addList('権限: ' . $account_data['PERMISSION']);
+	$this->addList('エージェントホスト: ' . $agentdata['AGENTHOST']);
+	$this->addList('コミュニティ名: ' . $agentdata['COMMUNITY']);
 	$this->closeList();
 	$this->Button('bt_dl_sb', '削除する', 'button', 'sign-in-alt');
 	return $this->Export();
@@ -162,14 +159,14 @@ class AgentPage extends form_generator {
      * 
      * 入力〜認証までの段階をクリアした場合、入力された情報をもう一度確認する画面を作成します
      * 
-     * @param string $confirm_data AccountSetで認証まで確認されたデータを指定します
+     * @param string $confirm_data AgentSetで認証まで確認されたデータを指定します
      * @return string 引数をもとにページデータをHTMLの文字列で返します
      */
     public function getConfirm($confirm_data) {
 	$this->SubTitle('入力確認', '入力事項が正しければ「更新する」を押してください。<br>（※）「キャンセル」の場合、アカウント選択画面に遷移します。', 'user-check');
 	$this->Caption($confirm_data);
 	$this->Button('bt_cf_sb', '更新する', 'button', 'sign-in-alt');
-	$this->Button('bt_cf_bk', 'キャンセル', 'button', 'chevron-circle-left');
+	$this->SmallButton('bt_cf_bk', 'キャンセル', 'button', 'chevron-circle-left');
 	return $this->Export();
     }
 
@@ -187,8 +184,19 @@ class AgentPage extends form_generator {
 
     public function getCorrect() {
 	$this->SubTitle('更新に成功しました！', 'ボタンを押して変更が反映したか確認しましょう！', 'check-square');
-	$this->Button('bt_cs_bk', 'ユーザ選択画面に戻る', 'button', 'chevron-circle-left');
+	$this->Button('bt_cs_bk', 'エージェント選択画面に戻る', 'button', 'chevron-circle-left');
 	return $this->Export();
     }
-
+    
+    private function getSub() {
+	$this->FormTitle('MIBサブツリー選択', self::$icons['MIB']);
+	$this->openList();
+	$this->addList('MIBサブツリーを、以下から1つ以上選択します。');
+	$this->addList('「全てを選択」にチェックがついていない状態で押すと、列挙されているすべてのサブツリーを選択できます。');
+	$this->addList('ついている状態で押すと、全て解除されます。');
+	$this->closeList();
+	$res = $this->Export(false);
+	$this->reset('fm_pg');
+	return $res;
+    }
 }

@@ -71,8 +71,7 @@ function convert_data($agenthost, $community, $mib) {
 		$res['SIZE'] += $res_data['SIZE'];
 		$i += 1;
 	    } else {
-		$log = (strpos(ob_get_contents(), 'No response from') !== false) ? ' アドレス到達に失敗しました。宛先のエージェントとの接続状態、ファイアウォールをご確認ください' : 'アクセスログやデベロッパーツール（F12）などで原因を追求してください。';
-		$res = ['CODE' => 1, 'LOG' => $log];
+		$res = ['CODE' => 1, 'LOG' => $sub['DATA']];
 		break;
 	    }
 	}
@@ -87,9 +86,8 @@ function convert_data($agenthost, $community, $mib) {
 }
 
 function walk($host, $com, $subdata, $submib) {
-    $res = [];
+    $res = '';
     $code = 0;
-
     $snmpdata = snmp2_real_walk($host, $com, $subdata['SUB_OID']);
     if ($snmpdata) {
 	SNMPData::resetStatic();
@@ -101,23 +99,29 @@ function walk($host, $com, $subdata, $submib) {
 	$data = SNMPData::getDataArray();
 	$s_data = new SNMPTable('data', $data['DATA'], '結果一覧表');
 	$result = $s_data->generate_table();
-	
+
 	$err_size = sizeof($data['ERROR']);
-	if($err_size == 1 && in_array('〈該当データなし〉', $data['ERROR'])) {
+	if ($err_size == 1 && in_array('〈該当データなし〉', $data['ERROR'])) {
 	    $err_size = 0;
 	}
 
 	$res = [
-	    'SIZE'	=> sizeof($snmpdata),
-	    'DATE'	=> date("Y-m-d H:i:s"),
-	    'TABLE'	=> $result,
-	    'MIB'	=> $subdata['SUB_OID'] . " (" . $subdata['SUB_NAME'] . ")",
-	    'CSV'	=> $data['CSV'],
-	    'ERROR'	=> $data['ERROR'],
-	    'ERR_SIZE'	=> $err_size
+	    'SIZE' => sizeof($snmpdata),
+	    'DATE' => date("Y-m-d H:i:s"),
+	    'TABLE' => $result,
+	    'MIB' => $subdata['SUB_OID'] . " (" . $subdata['SUB_NAME'] . ")",
+	    'CSV' => $data['CSV'],
+	    'ERROR' => $data['ERROR'],
+	    'ERR_SIZE' => $err_size
 	];
     } else {
 	$code = 1;
+	if (strpos(ob_get_contents(), 'No response from') !== false) {
+	    $res = '【' . $com . '】' . $host . ' へのアドレス到達・コミュニティ認証に失敗しました。<br>エージェントの設定をご確認ください。';
+	} else {
+	    $res = ob_get_contents();
+	}
+	ob_get_clean();
     }
     return ['CODE' => $code, 'DATA' => $res];
 }

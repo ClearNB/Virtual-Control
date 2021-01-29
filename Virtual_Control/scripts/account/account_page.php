@@ -117,7 +117,6 @@ class AccountPage extends form_generator {
 		$this->SubTitle('アカウント編集（ユーザ名）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
 		$this->addList('変更対象のユーザ: ' . $account_data['USERID'] . ' (' . $account_data['USERNAME'] . ')');
-		$this->addList('現在: [USERNAME]');
 		$this->closeList();
 		$this->Input('in_ac_nm', 'ユーザ名', self::$rules['USERNAME'], 'user-circle', true);
 		$this->WarnForm('fm_warn');
@@ -128,7 +127,6 @@ class AccountPage extends form_generator {
 		$this->SubTitle('アカウント編集（パスワード）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
 		$this->addList('変更対象のユーザ: ' . $account_data['USERID'] . ' (' . $account_data['USERNAME'] . ')');
-		$this->addList('現在: (パスワードは表示されません)');
 		$this->closeList();
 		$this->Password('in_ac_ps', 'パスワード', self::$rules['PASSWORD'], 'key', true);
 		$this->Password('in_ac_ps_rp', 'パスワードの確認', self::$rules['PASSWORD_CONFIRM'], 'key', true);

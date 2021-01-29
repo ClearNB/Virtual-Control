@@ -52,6 +52,11 @@ if ($f_id && session_chk() == 0) {
 		if ($data) {
 		    $result_page = $page->getEditSelect($data['SELECT']);
 		}
+	    } else if ($d_tp == 0) {
+		$data = get_sdata();
+		if (isset($data['SELECT'])) {
+		    $result_page = $page->getEditSelect($data['SELECT']);
+		}
 	    }
 	    break;
 	case 4: //EDIT ID
@@ -79,7 +84,7 @@ if ($res['SELECTED'] != 1) {
     $res['PAGE'] = $result_page;
 }
 
-if(isset($res['SELECTED'])) {
+if (isset($res['SELECTED'])) {
     unset($res['SELECTED']);
 }
 
@@ -115,7 +120,7 @@ function set_selectdata($type, $id) {
     $type_text = get_datatype($type);
     $data = get_sdata();
     $data['SELECT'] = (isset($data['VALUE'][$id])) ? $data['VALUE'][$id] : '';
-    if(isset($data['SELECT']) && $type_text) {
+    if (isset($data['SELECT']) && $type_text) {
 	$data['SELECT'][$type_text]['P_ID'] = $id;
     }
     session_unset_byid('gsc_account');
@@ -128,8 +133,8 @@ function set_accountdata($type, $value) {
     $data = '';
     if ($type_text) {
 	$data = get_sdata();
-	foreach($value as $k => $v) {
-	    if(!isset($data['SELECT'][$type_text][$k]) || $v) {
+	foreach ($value as $k => $v) {
+	    if (!isset($data['SELECT'][$type_text][$k]) || $v) {
 		$data['SELECT'][$type_text][$k] = $v;
 	    }
 	}

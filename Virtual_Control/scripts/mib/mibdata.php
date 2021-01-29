@@ -231,12 +231,15 @@ class Sub {
      * @param string $updatetime サブツリー更新時間
      */
     public function __construct($parent_groupid, $subid, $oid, $subname, $updatetime) {
-	$this->parent_groupid = $parent_groupid;
-	$this->subid = $subid;
-	$this->setOID($oid);
-	$this->name = $subname;
-	$this->updatetime = $this->setUpdateTime($updatetime);
-	array_push(self::$set, $this);
+	if ($subid) {
+	    $this->parent_groupid = $parent_groupid;
+	    $this->subid = $subid;
+	    $this->setOID($oid);
+	    $this->name = $subname;
+	    $this->updatetime = $this->setUpdateTime($updatetime);
+	    array_push(self::$set, $this);
+	    usort(self::$set, ['Sub', 'cmp_id']);
+	}
     }
 
     /**
@@ -289,17 +292,19 @@ class Sub {
      * @return bool 一意の値「サブツリーID」をもとにオブジェクトがあるかどうかを探し、存在していればtrue、そうでない場合はfalseを返します
      */
     public static function search($subid) {
-	$res = false;
+	$res = '';
 	$size = sizeof(self::$set);
 	$min = 0;
 	$max = $size - 1;
+	$search = intval($subid);
 
 	while ($min <= $max && $min >= 0 && $max < $size) {
 	    $half = intval(($max + $min) / 2);
-	    if (self::$set[$half]->subid == $subid) {
-		$res = true;
+	    $target = intval(self::$set[$half]->subid);
+	    if ($target == $search) {
+		$res = self::$set[$half];
 		break;
-	    } else if (self::$set[$half]->subid > $subid) {
+	    } else if ($target > $search) {
 		$max = $half - 1;
 	    } else {
 		$min = $half + 1;
@@ -354,23 +359,12 @@ class Sub {
      * @return string|null 指定した値がスタック内に存在すればそのOIDを、なければnullが返されます
      */
     public static function getOID($subid): string {
-	$res = '';
-	$size = sizeof(self::$set);
-	$min = 0;
-	$max = $size - 1;
+	$res = self::search($subid);
+	return ($res) ? $res->oid : '';
+    }
 
-	while ($min <= $max && $min >= 0 && $max < $size) {
-	    $half = intval(($max + $min) / 2);
-	    if (self::$set[$half]->subid == $subid) {
-		$res = self::$set[$half]->oid;
-		break;
-	    } else if (self::$set[$half]->subid > $subid) {
-		$max = $half - 1;
-	    } else {
-		$min = $half + 1;
-	    }
-	}
-	return $res;
+    private static function cmp_id($a, $b) {
+	return strcmp($a->subid, $b->subid);
     }
 
 }
@@ -465,13 +459,22 @@ class Node {
     private $japtlans;
 
     /**
-     * [VAR] ICONID
+     * [VAR] ICON NAME
+     * 
+     * アイコン名
+     * 
+     * @var string $icon_name
+     */
+    private $icon_name;
+
+    /**
+     * [VAR] ICON ID
      * 
      * アイコンID
      * 
-     * @var int $icon_info
+     * @var int $icon_id
      */
-    private $icon_info;
+    private $icon_id;
 
     /**
      * [VAR] Sub
@@ -508,22 +511,26 @@ class Node {
      * @param int $option オプション情報
      * @param string $descr 項目名（英名）
      * @param string $japtlans 項目名（日本語）
-     * @param int $icon_info アイコンIDもしくはアイコン情報
+     * @param int $icon_id アイコンID
+     * @param string $icon_name アイコン名
      */
-    public function __construct($parent_subid, $nodeid, $node_type, $oid, $sub, $tableid, $option, $descr, $japtlans, $icon_info) {
-	$this->parent_subid = $parent_subid;
-	$this->nodeid = $nodeid;
-	$this->node_type = $node_type;
-	$this->sub = $sub;
-	$this->tableid = $tableid;
-	$this->setOID($oid);
-	$this->descr = $descr;
-	$this->japtlans = $japtlans;
-	$this->icon_info = $icon_info;
-	$this->index_option = $option;
-	array_push(self::$set, $this);
-	$this->setTable();
-	$this->setTableData();
+    public function __construct($parent_subid, $nodeid, $node_type, $oid, $sub, $tableid, $option, $descr, $japtlans, $icon_id, $icon_name = '') {
+	if ($nodeid) {
+	    $this->parent_subid = $parent_subid;
+	    $this->nodeid = $nodeid;
+	    $this->node_type = $node_type;
+	    $this->sub = $sub;
+	    $this->tableid = $tableid;
+	    $this->setOID($oid);
+	    $this->descr = $descr;
+	    $this->japtlans = $japtlans;
+	    $this->icon_id = $icon_id;
+	    $this->icon_name = $icon_name;
+	    $this->index_option = $option;
+	    array_push(self::$set, $this);
+	    $this->setTable();
+	    $this->setTableData();
+	}
     }
 
     /**
@@ -550,7 +557,8 @@ class Node {
 		'NODE_DESCR' => $s->descr,
 		'NODE_OPTION' => $s->index_option,
 		'NODE_JAPTLANS' => $s->japtlans,
-		'NODE_ICON_INFO' => $s->icon_info
+		'NODE_ICON_ID' => $s->icon_id,
+		'NODE_ICON_NAME' => $s->icon_name
 	    ];
 	    if (is_array($s->table_data_oid)) {
 		$res[$key1][$key2]['NODE_INDEX_OID'] = $s->table_data_oid;
@@ -595,6 +603,7 @@ class Node {
      */
     private function setOID($noid): void {
 	$res = Sub::getOID($this->parent_subid);
+
 	$res .= '.' . $noid;
 	if ($this->sub) {
 	    $res .= '.' . $this->sub;
@@ -653,7 +662,7 @@ class MIBData {
      */
     public function getMIB($query_num, $type = 0, $filter_subid = '') {
 	$res = '';
-	if ($query_num == 0 || $query_num == 1 || $query_num == 2) {
+	if ($query_num >= 0 && $query_num <= 3) {
 	    $data = self::getMIBParam($query_num, $type, $filter_subid);
 	    $select = select(false, $data[0], $data[1], $data[2]);
 	    if ($select) {
@@ -668,13 +677,13 @@ class MIBData {
 		    }
 		    if ($query_num == 1) {
 			new Node($d['SID'], $d['NID'], $d['TYPE'], $d['NOID'], $d['SUB'], $d['TABLEID'], $d['OPTIONID'], $d['DESCR'], $d['JAPTLANS'], $d['ICONID']);
-		    } else if($query_num == 2) {
-			new Node($d['SID'], $d['NID'], $d['TYPE'], $d['NOID'], $d['SUB'], $d['TABLEID'], $d['OPTIONID'], $d['DESCR'], $d['JAPTLANS'], $d['ICON']);
+		    } else if ($query_num == 2 || $query_num == 3) {
+			new Node($d['SID'], $d['NID'], $d['TYPE'], $d['NOID'], $d['SUB'], $d['TABLEID'], $d['OPTIONID'], $d['DESCR'], $d['JAPTLANS'], $d['ICONID'], $d['ICON']);
 		    }
 		}
 		$res['GROUP'] = Group::getDataArray();
 		$res['SUB'] = Sub::getDataArray();
-		if ($query_num == 1 || $query_num == 2) {
+		if ($query_num == 1 || $query_num == 2 || $query_num == 3) {
 		    $res['NODE'] = Node::getDataArray();
 		}
 		self::resetAllDataArray();
@@ -701,7 +710,7 @@ class MIBData {
      * 
      * クエリナンバーを受け取り、セレクタクエリに適切なクエリ内容を取得します
      * 
-     * @param int $query_num クエリナンバー（0..グループ-サブツリー, 1..グループ-ノード, 2..グループ-ノード【アイコン情報込】）
+     * @param int $query_num クエリナンバー（0..グループ-サブツリー, 1..グループ-ノード, 2..グループ-ノード【アイコン情報込】, 3..グループ-ノード【アイコン情報込・NULL込】）
      * @param int $type タイプナンバー（0..全て, 1..TYPEが0, 1, 2のみ, 2..TYPEが3, 4のみ）
      * @param array|null $filter_subid フィルタしたいサブツリーOIDを、配列として指定します（Default: null）
      * @return array|null クエリナンバーが0-1の間であれば、それに合ったデータを取得します
@@ -716,35 +725,52 @@ class MIBData {
 		    'GROUP BY a.GID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME'
 		];
 		break;
-	    case 1: //グループ - ノード
+	    case 1: //グループ - ノード（アイコンなし）
 		$query = [
 		    'GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GID = b.GID INNER JOIN GSC_MIB_NODE c ON b.SID = c.SID',
-		    'a.GID, a.GOID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME, c.NID, c.NOID, c.SUB, c.TABLEID, c.TYPE, c.OPTIONID, c.DESCR, c.JAPTLANS, c.ICONID',
-		    'ORDER BY b.SID, c.NID'
+		    'a.GID, a.GOID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME, c.NID, c.NOID, c.SUB, c.TABLEID, c.TYPE, c.OPTIONID, c.DESCR, c.JAPTLANS',
+		    'ORDER BY a.GID, b.SID, c.NID'
 		];
 		break;
 	    case 2: //グループ - ノード（アイコン有り）
 		$query = [
 		    'GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GID = b.GID INNER JOIN GSC_MIB_NODE c ON b.SID = c.SID LEFT OUTER JOIN GSC_ICONS d ON c.ICONID = d.ICONID',
-		    'a.GID, a.GOID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME, c.NID, c.NOID, c.SUB, c.TABLEID, c.TYPE, c.OPTIONID, c.DESCR, c.JAPTLANS, d.ICON',
+		    'a.GID, a.GOID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME, c.NID, c.NOID, c.SUB, c.TABLEID, c.TYPE, c.OPTIONID, c.DESCR, c.JAPTLANS, c.ICONID, d.ICON',
+		    'ORDER BY a.GID, b.SID, c.NID'
+		];
+		break;
+	    case 3: //グループ - ノード（NULL状態でも全てのデータを抽出）
+		$query = [
+		    'GSC_MIB_GROUP a LEFT OUTER JOIN GSC_MIB_SUB b ON a.GID = b.GID LEFT OUTER JOIN GSC_MIB_NODE c ON b.SID = c.SID LEFT OUTER JOIN GSC_ICONS d ON c.ICONID = d.ICONID',
+		    'a.GID, a.GOID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME, c.NID, c.NOID, c.SUB, c.TABLEID, c.TYPE, c.OPTIONID, c.DESCR, c.JAPTLANS, c.ICONID, d.ICON',
 		    'ORDER BY b.SID, c.NID'
 		];
 		break;
 	}
-	if ($query && $filter_subid && is_array($filter_subid)) {
+	if ($query && $type && $filter_subid && is_array($filter_subid)) {
 	    $other = array_pop($query);
 	    array_push($query, 'WHERE b.SID IN (' . implode(', ', $filter_subid) . ')');
 	    switch ($type) {
 		case 1:
-		    array_push($query, 'AND c.TYPE IN (0, 1, 2)');
+		    array_push($query, ' AND c.TYPE IN (0, 1, 2)');
 		    break;
 		case 2:
-		    array_push($query, 'AND c.TYPE IN (3, 4)');
+		    array_push($query, ' AND c.TYPE IN (3, 4)');
+		    break;
+	    }
+	    array_push($query, $other);
+	} else if ($query && $type) {
+	    $other = array_pop($query);
+	    switch ($type) {
+		case 1:
+		    array_push($query, 'WHERE c.TYPE IN (0, 1, 2)');
+		    break;
+		case 2:
+		    array_push($query, 'WHERE c.TYPE IN (3, 4)');
 		    break;
 	    }
 	    array_push($query, $other);
 	}
-
 	return $query;
     }
 

@@ -1170,7 +1170,7 @@ pre code {
 }
 
 .form-control:focus {
-    color: #495057;
+    color: #ff5a00;
     background-color: #fff;
     border-color: #ffad80;
     outline: 0;
@@ -1286,9 +1286,12 @@ textarea.form-control {
 }
 
 .form-group-input {
-    border: 0.25rem solid #000;
-    border-radius: 0.25rem;
+    border: 0.3rem solid #000;
+    border-right-width: 0.5rem;
+    border-bottom-width: 0.2rem;
+    border-radius: 0.5rem 0 0.7rem 0;
     padding: 0.5rem;
+    background-color: #ff5a00;
 }
 
 .form-text {
@@ -3306,7 +3309,9 @@ input[type="button"].btn-block {
 
 .badge-dark {
     color: #fff;
-    background-color: #000; }
+    background-color: #000;
+    font-size: 1.2rem;
+}
 .badge-dark[href]:hover, .badge-dark[href]:focus {
     color: #fff;
     text-decoration: none;
@@ -6349,11 +6354,17 @@ ul.black-view, ol.black-view {
 
 ul.black-view li, ol.black-view li {
     color: #fff;
-    border-left: solid 6px #000;
+    border-left: 0.5rem solid #000;
+    border-bottom: 0.2rem solid #000;
+    border-top: 0.2rem solid #000;
+    border-right: 0.4rem solid #000;
+    border-radius: 0 0.5rem 0 0;
     margin-bottom: 3px;
     line-height: 1.5;
     padding: 0.5em;
     list-style-type: none !important;
+    overflow-wrap: anywhere;
+    background-color: #ff4500;
 }
 
 ul.orange-view, ol.orange-view {
@@ -6367,6 +6378,7 @@ ul.orange-view li, ol.orange-view li {
     line-height: 1.5;
     padding: 0.5em;
     list-style-type: none !important;
+    overflow-wrap: anywhere;
 }
 
 hr {
@@ -6374,7 +6386,7 @@ hr {
     margin: 10px 0;
 }
 
-hr.orange {
+hr.primary {
     border: 2px solid #ff5a00;
     margin: 0 0;
 }
@@ -6486,4 +6498,25 @@ label.importantLabel {
 
 .fa-mod-eye:hover {
     color: #ff5a00;
+}
+
+.sub-caption {
+    padding: 0.2rem 0.5rem;
+    line-height: 2rem;
+    border: 0.3rem solid #000;
+    border-top: none;
+    border-right-width: 0.5rem;
+    border-radius:  0 0 0.7rem 0;
+    background-color: #ff5a00;
+}
+
+.sub-title {
+    width: 100%;
+    margin-bottom: 0;
+    padding: 0.6rem 0.4rem;
+    overflow-wrap: anywhere;
+    background-color: #ff4500;
+    border: 0.3rem solid #000;
+    border-right-width: 0.5rem;
+    border-radius: 0.5rem 0 0 0;
 }

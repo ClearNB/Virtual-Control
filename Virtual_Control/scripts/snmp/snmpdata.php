@@ -133,7 +133,7 @@ class SNMPData {
 	    if ($index_data['CODE'] == 0) {
 		new SNMPData(0, $i_oid, $index_data['DATA']);
 		$sub_i += $index_data['DEM'];
-	    } else if($index_data['CODE'] == 1) {
+	    } else if ($index_data['CODE'] == 1) {
 		array_push(self::$otherdata, '【' . $i_oid . '（' . $index . '）】' . $index_data['DATA']);
 		break;
 	    }
@@ -165,7 +165,7 @@ class SNMPData {
 	$res = ['OID' => $mibdata['NODE_OID'],
 	    'DESCR' => $mibdata['NODE_DESCR'],
 	    'JAPTLANS' => $mibdata['NODE_JAPTLANS'],
-	    'ICON' => $mibdata['NODE_ICON_INFO'],
+	    'ICON' => $mibdata['NODE_ICON_NAME'],
 	    'TYPE' => $mibdata['NODE_TYPE'],
 	    'DATA' => $value_data
 	];
@@ -244,17 +244,27 @@ class SNMPData {
 	$res = '';
 	$r_flag = false;
 	$r_mibdata = array_reverse(self::$mibdata);
-	foreach ($r_mibdata as $mib) {
-	    if (strpos($oid, $mib['NODE_OID'] . '.') === 0 && $mib['NODE_TYPE'] != 1) {
-		$res = $mib['NODE_OID'];
-		$r_flag = true;
-	    } else if ($r_flag) {
-		if (self::$mibdata[$res]['NODE_TYPE'] == 1) {
-		    $res = '';
+	$s_mib = '';
+	try {
+	    foreach ($r_mibdata as $mib) {
+		$s_mib = $mib;
+		if (isset($s_mib['NODE_OID']) && strpos($oid, $s_mib['NODE_OID'] . '.') === 0 && $s_mib['NODE_TYPE'] != 1) {
+		    $res = $s_mib['NODE_OID'];
+		    $r_flag = true;
+		} else if ($r_flag) {
+		    if (self::$mibdata[$res]['NODE_TYPE'] == 1) {
+			$res = '';
+		    }
+		    break;
 		}
-		break;
 	    }
+	    return $res;
+	} catch (Exception $e) {
+	    echo 'Error - 【OIDの検索に失敗しました】<br>検索対象OID: ' . $oid . '<br>エラーが発生したMIB: ';
+	    var_dump($s_mib);
+	    echo $e;
+	    return '';
 	}
-	return $res;
     }
+
 }

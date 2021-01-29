@@ -15,14 +15,14 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
     if (data === '') {
 	data = [];
     }
-    data.push({name: 'f_id', value: f_id.getFunctionID});
+    data.push({name: 'f_id', value: f_id.getFunctionIDRow});
     data.push({name: 'd_tp', value: type});
     if (iswait) {
 	animation('data_output', duration, fm_ld);
     } else {
 	$('button').attr('disabled', true);
     }
-    ajax_dynamic_post('/scripts/account/agent_get.php', data).then(function (data) {
+    ajax_dynamic_post('/scripts/agent/agent_get.php', data).then(function (data) {
 	if (data['CODE'] === 2) {
 	    animation(data['ID'], 400, data['PAGE']);
 	} else {
@@ -41,7 +41,7 @@ $(document).ready(function () {
 });
 
 //1: アカウント選択画面（戻る・作成・編集・削除ボタン押下）
-$(document).on('click', '#bt_ac_bk, #bt_ac_cr, #bt_ac_ed, #bt_ac_dl', function () {
+$(document).on('click', '#bt_ag_bk, #bt_ag_cr, #bt_ag_ed, #bt_ag_dl', function () {
     var data = [];
     switch ($(this).attr('id')) {
 	case "bt_ag_bk":
@@ -53,20 +53,20 @@ $(document).on('click', '#bt_ac_bk, #bt_ac_cr, #bt_ac_ed, #bt_ac_dl', function (
 	    break;
 	case "bt_ag_ed":
 	    f_id.change_agent_edit();
-	    data.push({name: 'p_id', value: $('input[name="p_id"]:checked').val()});
+	    data.push({name: 'p_id', value: $('input[name="sl_ag"]:checked').val()});
 	    get_page(data, 0);
 	    break;
 	case "bt_ag_dl":
 	    f_id.change_agent_delete();
-	    data.push({name: 'p_id', value: $('input[name="p_id"]:checked').val()});
+	    data.push({name: 'p_id', value: $('input[name="sl_ag"]:checked').val()});
 	    get_page(data, 0);
 	    break;
     }
 });
 
 //ユーザ選択画面に戻る
-$(document).on('click', '#bt_cs_bk, #bt_cr_bk, #bt_ed_bk, #bt_dl_bk, #bt_fl_us_bk, #bt_cf_bk, #bt_at_bk, #bt_fl_bk', function () {
-    f_id.change_account_select();
+$(document).on('click', '#bt_cs_bk, #bt_cr_bk, #bt_ed_bk, #bt_dl_bk, #bt_cf_bk, #bt_at_bk, #bt_fl_bk', function () {
+    f_id.change_agent_select();
     get_page('', 0);
 });
 
@@ -94,9 +94,9 @@ $(document).on('click', '#bt_cf_sb', function () {
 });
 
 //2: アカウント編集（各画面遷移）
-$(document).on('click', '#bt_ed_id, #bt_ed_nm, #bt_ed_ps, #bt_ed_bk', function () {
+$(document).on('click', '#bt_ed_hs, #bt_ed_cm, #bt_ed_oi, #bt_ed_bk', function () {
     switch ($(this).attr('id')) {
-	case "bt_ed_ip":
+	case "bt_ed_hs":
 	    f_id.change_agent_edit_host();
 	    get_page('');
 	    break;
@@ -116,8 +116,8 @@ $(document).on('click', '#bt_ed_id, #bt_ed_nm, #bt_ed_ps, #bt_ed_bk', function (
 });
 
 //編集・各画面からの戻るボタン
-$(document).on('click', '#bt_id_bk, #bt_nm_bk, #bt_ps_bk', function () {
-    f_id.change_account_edit();
+$(document).on('click', '#bt_hs_bk, #bt_cm_bk, #bt_oi_bk', function () {
+    f_id.change_agent_edit();
     get_page('');
 });
 
@@ -129,6 +129,14 @@ $(document).on('click', '#bt_fl_rt', function () {
     animation_to_sites('data_output', 400, '/option/agent');
 });
 
-$(document).on('change', 'input[name="p_id"]', function () {
-    $('#bt_ag_ed, #bt_ag_dl').attr('disabled', ($('input[name="p_id"]:checked').length !== 1));
+$(document).on('change', 'input[name="sl_ag"]', function () {
+    $('#bt_ag_ed, #bt_ag_dl').attr('disabled', ($('input[name="sl_ag"]:checked').length !== 1));
+});
+
+$(document).on('change', 'input[name="sl_mb[]"], input[name="sl_ab"]', function () {
+    if ($(this).attr('name') === 'sl_ab') {
+	$('input[name="sl_mb[]"]').prop('checked', ($(this).prop('checked') === true));
+    }
+    $('input[name="sl_ab"]').prop('checked', ($('input[name="sl_mb[]"]').not(':checked').length === 0));
+    $('input[name="sl_mb[]"]').prop('required', $('input[name="sl_mb[]"]:checked').length === 0);
 });

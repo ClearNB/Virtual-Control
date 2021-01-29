@@ -79,7 +79,13 @@ if ($f_id && session_chk() == 0) {
     }
 }
 $res['PAGE'] = $result_page;
-ob_get_clean();
+
+if (ob_get_contents()) {
+    $page->reset();
+    $res['PAGE'] = $page->getFailSNMPWALK(ob_get_contents());
+    ob_clean();
+}
+
 echo json_encode($res);
 
 function initialize() {

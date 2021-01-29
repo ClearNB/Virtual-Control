@@ -47,7 +47,7 @@ class MIBSubSelect extends loader {
 	return $this->getSubSelect();
     }
 
-    public function getSubSelectOnAgent($subids) {
+    public function getSubSelectOnAgents($subids) {
 	$res = [];
 	foreach ($subids as $k => $v) {
 	    $res[$k] = $this->getSubSelect($v);
@@ -55,4 +55,8 @@ class MIBSubSelect extends loader {
 	return $res;
     }
 
+    public function getSubSelectOnAgent($subids) {
+	$res = $this->getSubSelect($subids);
+	return $res;
+    }
 }

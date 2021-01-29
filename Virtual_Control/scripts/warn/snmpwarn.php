@@ -7,6 +7,7 @@ include_once __DIR__ . '/../session/session_chk.php';
 
 session_action_scripts();
 
+WarnData::setData();
 WarnData::load_data();
 $data = WarnData::getArray();
 $table = new WarnTable($data['VALUE']);
