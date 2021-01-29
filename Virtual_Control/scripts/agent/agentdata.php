@@ -41,27 +41,26 @@ class AGENTData {
 	$q02 = select(false, 'GSC_AGENT_MIB', 'AGENTID, SID');
 	if ($q01 && $q02) {
 	    $result = [
-		"VALUE" => [],
-		"SUBID" => []
+		'VALUE' => [],
 	    ];
 	    //エージェントデータ取り込み
 	    while ($var = $q01->fetch_assoc()) {
 		new AGENTData($var['AGENTID'], $var['AGENTHOST'], $var['COMMUNITY'], $var['AGENTUPTIME']);
 	    }
+	    //エージェントデータを配列に格納
+	    foreach (self::$set as $var) {
+		if (!empty($var)) {
+		    $result['VALUE'][$var->agentid] = $var->get_agent_data();
+		}
+	    }
 	    //MIBデータ取り込み
 	    while ($var = $q02->fetch_assoc()) {
 		$agentid = $var['AGENTID'];
 		$subid = $var['SID'];
-		if(!isset($result['SUBID'][$agentid])) {
-		    $result['SUBID'][$agentid] = [];
+		if (!isset($result['VALUE'][$agentid]['SUBID'])) {
+		    $result['VALUE'][$agentid]['SUBID'] = [];
 		}
-		array_push($result['SUBID'][$agentid], $subid);
-	    }
-	    //エージェントデータを配列に格納
-	    foreach (self::$set as $var) {
-		if(!empty($var) && isset($result['SUBID'][$var->agentid])) {
-		    $result['VALUE'][$var->agentid] = $var->get_agent_data();
-		}
+		array_push($result['VALUE'][$agentid]['SUBID'], $subid);
 	    }
 	    return $result;
 	} else {
@@ -90,4 +89,5 @@ class AGENTData {
 	    return '<新規>';
 	}
     }
+
 }

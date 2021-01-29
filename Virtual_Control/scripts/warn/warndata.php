@@ -1,11 +1,13 @@
 <?php
 
-include_once __DIR__ . '/../general/sqldata.php';
+include_once __DIR__ . '/../agent/agentdata.php';
 include_once __DIR__ . '/../mib/mibdata.php';
 
 class WarnData {
 
     private static $set = [];
+    private static $mibdata = [];
+    private static $agentdata = [];
     private $group;
     private $agent_info;
     private $time;
@@ -33,23 +35,31 @@ class WarnData {
 	array_push(self::$set, $this);
     }
 
+    public static function setData() {
+	self::$agentdata = AGENTData::get_agent_info();
+	$mib = new MIBData();
+	self::$mibdata = $mib->getMIB(1, 2);
+    }
+
     private function setAgent() {
+	$agent = $this->search_agent();
+	$this->agent_info = ($agent) ? '【' . $agent['COMMUNITY'] . '】' . $agent['AGENTHOST'] . '（' . $agent['AGENTID'] . '）' : '〈判別不可〉';
+    }
+
+    private function search_agent() {
+	$res = '';
 	if ($this->address && $this->community) {
-	    $host = gethostbyaddr($this->address);
-	    $sel = select(true, "GSC_AGENT", "AGENTID, AGENTHOST, COMMUNITY", "WHERE AGENTHOST IN ('$this->address', '$host') AND COMMUNITY = '$this->community'");
-	    if ($sel) {
-		$this->agent_info = '【' . $sel['AGENTID'] . '】' . $sel['AGENTHOST'] . '（' . $sel['COMMUNITY'] . '）';
-	    } else {
-		$this->agent_info = '〈判別不可〉';
+	    foreach (self::$agentdata['VALUE'] as $a) {
+		if ($a['AGENTHOST'] == $this->address && $a['AGENTHOST'] == $this->community) {
+		    $res = $a;
+		    break;
+		}
 	    }
-	} else {
-	    $this->agent_info = '〈判別不可〉';
 	}
+	return $res;
     }
 
     private function setMessage() {
-	$mib = new MIBData();
-	$all = $mib->getMIB(2, 2);
 	switch ($this->alert_oid) {
 	    case '1.3.6.1.6.3.1.1.5.1': $this->message = '【coldStart】前回より変更がないまま再起動が行われました';
 		break;
@@ -65,10 +75,14 @@ class WarnData {
 		break;
 	    default:
 		$data = '';
-		if(isset($all['NODE'])) {
-		    foreach($all['NODE'] as $s) {
-			$data = ($this->alert_oid == $s['OID']) ? ['JAPTLANS' => $s['JAPTLANS'], 'DESCR' => $s['DESCR']] : '';
-			if($data) { break; }
+		if (isset(self::$mibdata['NODE'])) {
+		    foreach (self::$mibdata['NODE'] as $g) {
+			foreach ($g as $s) {
+			    $data = ($this->alert_oid == $s['OID']) ? ['JAPTLANS' => $s['JAPTLANS'], 'DESCR' => $s['DESCR']] : '';
+			    if ($data) {
+				break;
+			    }
+			}
 		    }
 		}
 		$this->message = ($data) ? '【' . $data['DESCR'] . '】「' . $data['JAPTLANS'] . '」が発生しました。' : '【Undefined】認識不可能なトラップ内容';
@@ -189,9 +203,9 @@ class WarnData {
 	foreach ($data['VALUE'] as $g => $v) {
 	    $res .= '【' . $g . '】（' . sizeof($v) . '）\n';
 	    $i = 1;
-	    foreach($v as $c) {
+	    foreach ($v as $c) {
 		$res .= $i;
-		foreach($c as $vl) {
+		foreach ($c as $vl) {
 		    $c_data = preg_replace('/(,|\n)/', ' ', $vl);
 		    $res .= ',' . $c_data;
 		}

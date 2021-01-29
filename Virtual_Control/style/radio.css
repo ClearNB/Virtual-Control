@@ -86,6 +86,7 @@ input[type=radio]:checked + .radio01::after {
     transition: all 0.5s;
     -moz-transition: all 0.5s;
     -webkit-transition: all 0.5s;
+    border-bottom: 0.3rem solid transparent;
 }
 
 .radio02::before {
@@ -129,7 +130,7 @@ input[type=radio]:checked + .radio02::before {
 }
 
 input[type=radio]:checked + .radio02 {
-    border-bottom: 2px solid #000;
+    border-bottom: 0.3rem solid #000;
 }
 
 input[type=radio]:focus + .radio02::before {

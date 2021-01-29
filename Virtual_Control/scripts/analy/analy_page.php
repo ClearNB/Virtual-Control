@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . '/../general/former.php';
+include_once __DIR__ . '/../general/former.php';
 
 class AnalyPage extends form_generator {
 
@@ -81,25 +81,25 @@ class AnalyPage extends form_generator {
 	$this->Button('bt_sb_bk', '結果画面に戻る', 'button', 'chevron-circle-left');
 	return $this->Export();
     }
-
-    public function getFail($log = '〈形式ログはなし〉') {
-	$f = fm_fl('fm_fl', '手続きエラーが発生しました', '要求された処理は実行できません。以下をご確認ください。');
-	$f->openList();
-	$f->addList('不正な手続きとして認識し、これ以上の処理を中断した可能性があります。');
-	$f->addList('正しい操作にも関わらずこの画面が現れる場合、現在あなたはセッション情報を破棄された可能性があります。');
-	$f->addList($log);
-	$f->closeList();
-	$f->Button('bt_fl_rf', 'ページを再読込する', 'button', 'chevron-circle-left');
-	return $f->Export();
+    
+    public function getFail($log = '〈ログなし〉') {
+	$logs = [
+	    'データベースとの接続をご確認ください。',
+	    '要求しているデータと実際のデータを比べ、記述や内容が正しいかどうかをご確認ください。',
+	    'アカウントセッションが切れていると思われます。もう一度ログインし直してから再試行してください。',
+	    $log
+	];
+	$this->fm_fl($logs, ['bt_fl_rt', 'ページを再読込する', 'button', 'sync-alt'], 'エラーが発生しました');
+	return $this->Export();
     }
     
     public function getFailSNMPWALK($log = '〈形式ログはなし〉') {
-	$f = fm_fl('fm_fl', 'SNMPWALKの処理中にが発生しました', '要求された処理は実行できません。以下をご確認ください。');
-	$f->openList();
-	$f->addList('手続き先のデータベースサーバに接続・または操作ができないため、これ以上の動作ができなくなった可能性があります。');
-	$f->addList($log);
-	$f->closeList();
-	$f->Button('bt_fl_rf', 'ページを再読込する', 'button', 'chevron-circle-left');
-	return $f->Export();
+	$logs = [
+	    'SNMPWALKまたはデータの解析中にエラーが発生しました。',
+	    '実際のログは以下に記載されているので、これを報告してください。',
+	    $log
+	];
+	$this->fm_fl($logs, ['bt_fl_rt', 'ページを再読込する', 'button', 'sync-alt'], 'SNMPWALKエラーが発生しました');
+	return $this->Export();
     }
 }

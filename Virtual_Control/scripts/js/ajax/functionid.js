@@ -265,6 +265,37 @@ let ANALY_BACK_RESULT = 54;
 let ANALY_WALK_REFRESH = 55;
 
 /**
+ * [INDEX] GET
+ * @type Number
+ */
+let INDEX = 61;
+
+/**
+ * [LOGIN] GET
+ * @type Number
+ */
+let LOGIN = 62;
+
+/**
+ * [DASH] GET
+ * @type Number
+ */
+let DASH = 63;
+
+/**
+ * [INIT] GET
+ * @type Number
+ */
+let INIT = 64;
+
+/**
+ * [OPTION] GET
+ * @type Number
+ */
+let OPTION = 65;
+
+
+/**
  * [CLASS] 各設定ページファンクションID設定
  * 
  * ここでは、各関数のID設定について定義しております。
@@ -613,6 +644,52 @@ class functionID {
     change_analy_walk_refresh() {
 	this.functionid = ANALY_WALK_REFRESH;
     }
+    
+    /**
+     * [SET] -> INDEX
+     * 
+     * @returns {void}
+     */
+    change_index() {
+	this.functionid = INDEX;
+    }
+    
+    /**
+     * [SET] -> LOGIN
+     * 
+     * @returns {void}
+     */
+    change_login() {
+	this.functionid = LOGIN;
+    }
+    
+    /**
+     * [SET] -> DASH
+     * 
+     * @returns {void}
+     */
+    change_dash() {
+	this.functionid = DASH;
+    }
+    
+    /**
+     * [SET] -> INIT
+     * 
+     * @returns {void}
+     */
+    change_init() {
+	this.functionid = INIT;
+    }
+    
+    /**
+     * [SET] -> OPTION
+     * 
+     * @returns {void}
+     */
+    change_option() {
+	this.functionid = OPTION;
+    }
+    
 
     /**
      * [GET] FUNCTIONID

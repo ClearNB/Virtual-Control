@@ -67,7 +67,7 @@ $(document).on('click', '#bt_sb_bk', function () {
     snmp_page_get(400, '', '');
 });
 
-$(document).on('click', '#bt_fl_rf', function () {
+$(document).on('click', '#bt_fl_rt', function () {
     animation_to_sites('data_output', 400, '/analy');
 });
 

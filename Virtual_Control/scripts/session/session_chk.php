@@ -84,10 +84,40 @@ function session_action_scripts(): void {
  * 
  * @param string $post_id リクエスト通信で得られるIDを指定します
  * @param int $filter フィルタするメソッド定数を指定します（Default: FILTER_SANITIZE_STRING）
- * @return array|
+ * @return string データを文字列として返します
  */
 function post_get_data($post_id, $filter = FILTER_SANITIZE_STRING) {
     $data = filter_input(INPUT_POST, $post_id, $filter);
+    return $data;
+}
+
+/**
+ * [FUNCTION] POST通信データ取得（データ比較）
+ * 
+ * POST通信のリクエストデータをIDにより取得します<br>
+ * ここでは、POST通信のリクエストデータを取得できなかった場合に指定された変数のデータを返すことができます
+ * 
+ * @param string $post_id リクエスト通信で得られるIDを指定します
+ * @param string|int $s_data nullの場合の埋め合わせ変数を指定します
+ * @param int $filter フィルタするメソッド定数を指定します（Default: FILTER_SANITIZE_STRING）
+ * @return string データが取得できた場合はそのデータを、できなかった場合は$s_dataのデータを返します
+ */
+function post_get_data_convert($post_id, $s_data, $filter = FILTER_SANITIZE_STRING) {
+    $data = filter_input(INPUT_POST, $post_id, $filter);
+    return ($data) ? $data : $s_data;
+}
+
+/**
+ * [FUNCTION] POST通信データ取得
+ * 
+ * POST通信のリクエストデータ（配列）をIDにより取得します
+ * 
+ * @param string $post_id リクエスト通信で得られるIDを指定します
+ * @param int $filter フィルタするメソッド定数を指定します（Default: FILTER_SANITIZE_STRING）
+ * @return array フィルタされた値が配列として返されます
+ */
+function post_get_data_array($post_id) {
+    $data = filter_input(INPUT_POST, $post_id, FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
     return $data;
 }
 
