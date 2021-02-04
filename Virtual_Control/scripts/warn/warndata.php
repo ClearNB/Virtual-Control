@@ -50,7 +50,7 @@ class WarnData {
 	$res = '';
 	if ($this->address && $this->community) {
 	    foreach (self::$agentdata['VALUE'] as $a) {
-		if ($a['AGENTHOST'] == $this->address && $a['AGENTHOST'] == $this->community) {
+		if ($a['AGENTHOST'] == $this->address && $a['COMMUNITY'] == $this->community) {
 		    $res = $a;
 		    break;
 		}
@@ -140,16 +140,9 @@ class WarnData {
 	    foreach ($finder as $f) {
 		$check = preg_match_all("/$f[1]/", $v);
 		if ($check) {
-		    $preg_target = '';
-		    if ($f[2] == 0) {
-			$preg_target = $f[1];
-		    }
+		    $preg_target = ($f[2] == 0) ? $f[1] : '';
 		    $value = preg_replace("/$preg_target/", '', $v);
-		    if ($f[2] == 1 && isset($res[$f[0]]) && $res[$f[0]]) {
-			$res[$f[0]] .= '<br>' . $value;
-		    } else {
-			$res[$f[0]] = $value;
-		    }
+		    $res[$f[0]] = (($f[2] == 1 && isset($res[$f[0]]) && $res[$f[0]]) ? $res[$f[0]] . '<br>' : '') . $value;
 		} else {
 		    if (!isset($res[$f[0]])) {
 			$res[$f[0]] = '';
@@ -180,25 +173,23 @@ class WarnData {
     }
 
     public static function getArray() {
-	$res = [
-	    'VALUE' => [],
-	    'CSV' => [],
-	    'DATE' => date("Y-m-d H:i:s")
-	];
+	$res = ['VALUE' => [], 'UPDATED_LOG' => [], 'CSV' => '', 'DATE' => date("Y-m-d H:i:s")];
 	foreach (self::$set as $warn) {
 	    $group = $warn->getGroup();
+	    $data = $warn->getData();
 	    if (!isset($res['VALUE'][$group])) {
-		$res['VALUE'][$group] = [];
+		$res['VALUE'][$group] = [$data];
+	    } else {
+		array_push($res['VALUE'][$group], $data);
 	    }
-	    array_push($res['VALUE'][$group], $warn->getData());
+	    $res['UPDATED_LOG'][$group] = $data['MESSAGE'];
 	}
 	$res['CSV'] = self::convertToCSV($res);
 	return $res;
     }
 
     private static function convertToCSV($data) {
-	$res = 'Virtual Control Trap Data Convertion v 1.0.0\n取得時間,' . $data['DATE'] . '\n+----- 取得データ一覧 -----+\n';
-	$res .= '日別番号,システム稼働時間,発生時刻,ホストアドレス,コミュニティ,対象OID,エージェント情報,情報出力先OID,インタフェースID,その他情報,メッセージ\n';
+	$res = 'Virtual Control Trap Data Convertion v 1.0.0\n取得時間,' . $data['DATE'] . '\n+----- 取得データ一覧 -----+\n日別番号,システム稼働時間,発生時刻,ホストアドレス,コミュニティ,対象OID,エージェント情報,情報出力先OID,インタフェースID,その他情報,メッセージ\n';
 
 	foreach ($data['VALUE'] as $g => $v) {
 	    $res .= '【' . $g . '】（' . sizeof($v) . '）\n';
@@ -235,5 +226,4 @@ class WarnData {
 	}
 	return $res_data;
     }
-
 }

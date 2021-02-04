@@ -31,6 +31,7 @@ if ($request_id) {
 	    $class = new MIBSubGet($request_id, $request_data_id);
 	    break;
 	case 40: case 41: case 42: case 43: case 44: //NODE
+	    $class = new MIBNodeGet($request_id, $request_data_id);
 	    break;
     }
     if ($class) {

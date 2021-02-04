@@ -1,7 +1,5 @@
 /* global fm_ld, ajax_dynamic_post */
 
-var f_id = new functionID();
-
 /**
  * [Function] ページ遷移処理
  * 
@@ -15,7 +13,7 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
     if (data === '') {
 	data = [];
     }
-    data.push({name: 'f_id', value: f_id.getFunctionID});
+    data.push({name: 'f_id', value: getFunctionID()});
     data.push({name: 'd_tp', value: type});
     if (iswait) {
 	animation('data_output', duration, fm_ld);
@@ -24,7 +22,7 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
     }
     ajax_dynamic_post('/scripts/account/account_get.php', data).then(function (data) {
 	if (data['CODE'] === 2) {
-	    animation(data['ID'], 400, data['PAGE']);
+	    animation('fm_warn', 400, data['PAGE']);
 	} else {
 	    animation('data_output', 400, data['PAGE']);
 	}
@@ -36,7 +34,7 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
 
 //読み込み時
 $(document).ready(function () {
-    f_id.change_account_select();
+    change_account_select();
     get_page('', 0, 0);
 });
 
@@ -48,16 +46,16 @@ $(document).on('click', '#bt_ac_bk, #bt_ac_cr, #bt_ac_ed, #bt_ac_dl', function (
 	    animation_to_sites('data_output', 400, '/option');
 	    break;
 	case "bt_ac_cr":
-	    f_id.change_account_create();
+	    change_account_create();
 	    get_page('', 0);
 	    break;
 	case "bt_ac_ed":
-	    f_id.change_account_edit();
+	    change_account_edit();
 	    data.push({name: 'p_id', value: $('input[name="p_id"]:checked').val()});
 	    get_page(data, 0);
 	    break;
 	case "bt_ac_dl":
-	    f_id.change_account_delete();
+	    change_account_delete();
 	    data.push({name: 'p_id', value: $('input[name="p_id"]:checked').val()});
 	    get_page(data, 0);
 	    break;
@@ -66,7 +64,7 @@ $(document).on('click', '#bt_ac_bk, #bt_ac_cr, #bt_ac_ed, #bt_ac_dl', function (
 
 //ユーザ選択画面に戻る
 $(document).on('click', '#bt_cs_bk, #bt_cr_bk, #bt_ed_bk, #bt_dl_bk, #bt_fl_us_bk, #bt_cf_bk, #bt_at_bk, #bt_fl_bk', function () {
-    f_id.change_account_select();
+    change_account_select();
     get_page('', 0);
 });
 
@@ -97,19 +95,19 @@ $(document).on('click', '#bt_cf_sb', function () {
 $(document).on('click', '#bt_ed_id, #bt_ed_nm, #bt_ed_ps, #bt_ed_bk', function () {
     switch ($(this).attr('id')) {
 	case "bt_ed_id":
-	    f_id.change_account_edit_userid();
+	    change_account_edit_userid();
 	    get_page('');
 	    break;
 	case "bt_ed_nm":
-	    f_id.change_account_edit_username();
+	    change_account_edit_username();
 	    get_page('');
 	    break;
 	case "bt_ed_ps":
-	    f_id.change_account_edit_password();
+	    change_account_edit_password();
 	    get_page('');
 	    break;
 	case "bt_ed_bk":
-	    f_id.change_account_select();
+	    change_account_select();
 	    get_page('');
 	    break;
     }
@@ -117,7 +115,7 @@ $(document).on('click', '#bt_ed_id, #bt_ed_nm, #bt_ed_ps, #bt_ed_bk', function (
 
 //編集・各画面からの戻るボタン
 $(document).on('click', '#bt_id_bk, #bt_nm_bk, #bt_ps_bk', function () {
-    f_id.change_account_edit();
+    change_account_edit();
     get_page('');
 });
 

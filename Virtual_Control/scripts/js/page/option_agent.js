@@ -1,7 +1,5 @@
 /* global fm_ld, ajax_dynamic_post */
 
-var f_id = new functionID();
-
 /**
  * [Function] ページ遷移処理
  * 
@@ -15,7 +13,7 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
     if (data === '') {
 	data = [];
     }
-    data.push({name: 'f_id', value: f_id.getFunctionIDRow});
+    data.push({name: 'f_id', value: getFunctionID()});
     data.push({name: 'd_tp', value: type});
     if (iswait) {
 	animation('data_output', duration, fm_ld);
@@ -36,7 +34,7 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
 
 //読み込み時
 $(document).ready(function () {
-    f_id.change_agent_select();
+    change_agent_select();
     get_page('', 0, 0);
 });
 
@@ -48,16 +46,16 @@ $(document).on('click', '#bt_ag_bk, #bt_ag_cr, #bt_ag_ed, #bt_ag_dl', function (
 	    animation_to_sites('data_output', 400, '/option');
 	    break;
 	case "bt_ag_cr":
-	    f_id.change_agent_create();
+	    change_agent_create();
 	    get_page('', 0);
 	    break;
 	case "bt_ag_ed":
-	    f_id.change_agent_edit();
+	    change_agent_edit();
 	    data.push({name: 'p_id', value: $('input[name="sl_ag"]:checked').val()});
 	    get_page(data, 0);
 	    break;
 	case "bt_ag_dl":
-	    f_id.change_agent_delete();
+	    change_agent_delete();
 	    data.push({name: 'p_id', value: $('input[name="sl_ag"]:checked').val()});
 	    get_page(data, 0);
 	    break;
@@ -66,14 +64,14 @@ $(document).on('click', '#bt_ag_bk, #bt_ag_cr, #bt_ag_ed, #bt_ag_dl', function (
 
 //ユーザ選択画面に戻る
 $(document).on('click', '#bt_cs_bk, #bt_cr_bk, #bt_ed_bk, #bt_dl_bk, #bt_cf_bk, #bt_at_bk, #bt_fl_bk', function () {
-    f_id.change_agent_select();
+    change_agent_select();
     get_page('', 0);
 });
 
 //フォームデータ送信時
 $(document).on('submit', '#fm_pg', function (event) {
     event.preventDefault();
-    var data = $(this).serializeArray();
+    var data = $(this).not('input:checkbox:not(:checked)').serializeArray();
     get_page(data, 1, 400, false);
 });
 
@@ -97,19 +95,19 @@ $(document).on('click', '#bt_cf_sb', function () {
 $(document).on('click', '#bt_ed_hs, #bt_ed_cm, #bt_ed_oi, #bt_ed_bk', function () {
     switch ($(this).attr('id')) {
 	case "bt_ed_hs":
-	    f_id.change_agent_edit_host();
+	    change_agent_edit_host();
 	    get_page('');
 	    break;
 	case "bt_ed_cm":
-	    f_id.change_agent_edit_community();
+	    change_agent_edit_community();
 	    get_page('');
 	    break;
 	case "bt_ed_oi":
-	    f_id.change_agent_edit_mib();
+	    change_agent_edit_mib();
 	    get_page('');
 	    break;
 	case "bt_ed_bk":
-	    f_id.change_agent_select();
+	    change_agent_select();
 	    get_page('');
 	    break;
     }
@@ -117,7 +115,7 @@ $(document).on('click', '#bt_ed_hs, #bt_ed_cm, #bt_ed_oi, #bt_ed_bk', function (
 
 //編集・各画面からの戻るボタン
 $(document).on('click', '#bt_hs_bk, #bt_cm_bk, #bt_oi_bk', function () {
-    f_id.change_agent_edit();
+    change_agent_edit();
     get_page('');
 });
 

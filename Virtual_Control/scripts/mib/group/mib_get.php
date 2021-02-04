@@ -54,7 +54,7 @@ class MIBGroupGet extends MIBGetClass {
 		break;
 	    case 22: //CREATE
 		if ($this->request_data_code !== 999 && $this->group_oid && $this->group_name || $this->auth_pass) {
-		    if ($this->group_oid && $this->group_name && !$this->auth_pass && !$this->is_set(0, 0)) {
+		    if ($this->group_oid && $this->group_name) {
 			$this->set_data(0, 0, ['GROUP_OID' => $this->group_oid, 'GROUP_NAME' => $this->group_name]);
 		    }
 		    $res = $this->getSectionData();
@@ -68,16 +68,14 @@ class MIBGroupGet extends MIBGetClass {
 		if ($this->request_data_code && isset($this->session_data['GROUP'][$this->request_data_code])) {
 		    if (!$this->is_set(0, 1)) {
 			$this->set_data(0, 1, $this->session_data['GROUP'][$this->request_data_code]);
-			$this->set_data(0, 0, $this->session_data['GROUP']['STORE']['GROUP_ID']);
+			$this->set_data(0, 0, $this->get_typesdata(0, 1, 'GROUP_ID'));
 		    }
 		    $code = 12;
 		}
 		break;
 	    case 24: //EDIT-OID
 		if ($this->request_data_code !== 999 && $this->group_oid || $this->auth_pass) {
-		    if ($this->group_oid && !$this->is_set(0, 0)) {
-			$this->set_data(0, 0, ['GROUP_OID' => $this->group_oid]);
-		    }
+		    $this->set_data(0, 0, ['GROUP_ID' => $this->group_id, 'GROUP_OID' => $this->group_oid]);
 		    $res = $this->getSectionData();
 		    $code = $res['CODE'];
 		    $data = isset($res['DATA']) ? $res['DATA'] : '';
@@ -87,9 +85,7 @@ class MIBGroupGet extends MIBGetClass {
 		break;
 	    case 25: //EDIT-NAME
 		if ($this->request_data_code !== 999 && $this->group_name || $this->auth_pass) {
-		    if ($this->group_oid && !$this->is_set(0, 0)) {
-			$this->set_data(0, 0, ['GROUP_NAME' => $this->group_name]);
-		    }
+		    $this->set_data(0, 0, ['GROUP_ID' => $this->group_id, 'GROUP_OID' => $this->group_oid]);
 		    $res = $this->getSectionData();
 		    $code = $res['CODE'];
 		    $data = isset($res['DATA']) ? $res['DATA'] : '';
@@ -105,7 +101,7 @@ class MIBGroupGet extends MIBGetClass {
 		} else {
 		    if (!$this->is_set(0, 1)) {
 			$this->set_data(0, 1, $this->session_data['GROUP'][$this->request_data_code]);
-			$this->set_data(0, 0, $this->session_data['GROUP']['STORE']['GROUP_ID']);
+			$this->set_data(0, 0, $this->get_typesdata(0, 1, 'GROUP_ID'));
 		    }
 		    $code = 15;
 		}

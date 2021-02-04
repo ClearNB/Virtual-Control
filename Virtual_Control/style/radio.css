@@ -1,3 +1,8 @@
+input[type="radio"], input[type="checkbox"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+
 @keyframes large_circle {
     0% {
 	height: 0rem;
@@ -16,12 +21,13 @@
     cursor: pointer;
     display: inline-block;
     position: relative;
-    padding: 5px 5px;
-    text-align: center;
+    padding: 0.3rem 2.0rem;
+    text-align: left;
     width: 100%;
     transition: all 0.5s;
     -moz-transition: all 0.5s;
     -webkit-transition: all 0.5s;
+    border-bottom: 0.3rem solid transparent;
 }
 
 .radio01::before {
@@ -64,6 +70,10 @@ input[type=radio]:checked + .radio01::before {
     border-color: #000;
 }
 
+input[type=radio]:checked + .radio01 {
+    border-bottom: 0.3rem solid #000;
+}
+
 input[type=radio]:focus + .radio01::before {
     box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.4);
 }
@@ -86,7 +96,6 @@ input[type=radio]:checked + .radio01::after {
     transition: all 0.5s;
     -moz-transition: all 0.5s;
     -webkit-transition: all 0.5s;
-    border-bottom: 0.3rem solid transparent;
 }
 
 .radio02::before {
@@ -127,10 +136,6 @@ input[type=radio]:active + .radio02::before {
 
 input[type=radio]:checked + .radio02::before {
     border-color: #000;
-}
-
-input[type=radio]:checked + .radio02 {
-    border-bottom: 0.3rem solid #000;
 }
 
 input[type=radio]:focus + .radio02::before {

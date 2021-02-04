@@ -40,7 +40,7 @@ class ACCOUNTData {
 	    }
 	    return $result;
 	} else {
-	    return false;
+	    return '';
 	}
     }
 

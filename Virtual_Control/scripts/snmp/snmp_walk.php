@@ -59,7 +59,7 @@ function convert_data($agenthost, $community, $mib) {
     $i = 1;
 
     foreach ($mib['GROUP'] as $g) {
-	$res['LIST'] .= $loader->SubTitle('【' . $g['GROUP_OID'] . '】' . $g['GROUP_NAME'], 'グループ配下の' . $g['GROUP_SUB_COUNT'] . '個のデータを確認できます。', 'object-group', false);
+	$res['LIST'] .= $loader->SubTitle('【' . $g['GROUP_OID'] . '】' . $g['GROUP_NAME'], 'グループ配下の' . $g['GROUP_SUB_COUNT'] . '個のデータを確認できます。', 'object-group');
 	foreach ($mib['SUB'][$g['GROUP_ID']] as $s) {
 	    $sub = walk($agenthost, $community, $s, $mib['NODE'][$s['SUB_ID']]);
 	    if ($sub['CODE'] == 0) {
@@ -97,8 +97,8 @@ function walk($host, $com, $subdata, $submib) {
 	    new SNMPData(1, $k, $v);
 	}
 	$data = SNMPData::getDataArray();
-	$s_data = new SNMPTable('data', $data['DATA'], '結果一覧表');
-	$result = $s_data->generate_table();
+	$s_data = new SNMPTable('data', $data['DATA']);
+	$result = $s_data->generateTable();
 
 	$err_size = sizeof($data['ERROR']);
 	if ($err_size == 1 && in_array('〈該当データなし〉', $data['ERROR'])) {

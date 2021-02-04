@@ -132,9 +132,12 @@ class MIBGetClass {
     /**
      * [GET] 一時設定データタイプ取得
      * 
-     * INPUT, STOREの持つデータを取得します
+     * INPUT, STORE, PARENTの持つデータを取得します
+     * ・INPUT .. ユーザの入力データが格納されます
+     * ・STORE .. 現在選択されているデータが格納されます
+     * ・PARENT .. 親グループまたは親サブツリーにより選択されたデータが格納されます
      * 
-     * @param int $type (0..INPUT, 1..STORE)
+     * @param int $type (0..INPUT, 1..STORE, 2..PARENT)
      * @return string タイプコードに従い、テキストを返します
      */
     public function get_settype($type) {
@@ -143,6 +146,8 @@ class MIBGetClass {
 	    case 0: $type_text = 'INPUT';
 		break;
 	    case 1: $type_text = 'STORE';
+		break;
+	    case 2: $type_text = 'PARENT';
 		break;
 	}
 	return $type_text;
@@ -154,7 +159,7 @@ class MIBGetClass {
      * データく作成・編集・削除時に一時的にその手続きデータを格納します
      * 
      * @param int $type (0..GROUP, 1..SUB, 2..NODE） 
-     * @param int $stype (0..INPUT, 1..STORE）
+     * @param int $stype (0..INPUT, 1..STORE, 2..PARENT）
      * @param array $data キー配列つきの連想配列を渡します。keyとvalueをもとに格納されます。
      */
     public function set_data($type, $stype, $data) {
@@ -172,7 +177,7 @@ class MIBGetClass {
      * 一時データから取得したいkeyを指定しデータを取得します
      * 
      * @param int $type (0..GROUP, 1..SUB, 2..NODE） 
-     * @param int $stype (0..INPUT, 1..STORE）
+     * @param int $stype (0..INPUT, 1..STORE, 2..PARENT）
      * @param string $id データ内にあるIDを指定します
      * @return (array|string|int)|null 取得できる場合はそのデータを、できない場合はnullを指定します
      */

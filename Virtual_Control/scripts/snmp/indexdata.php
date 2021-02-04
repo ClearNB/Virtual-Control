@@ -38,6 +38,7 @@ function getDataFromIndex($option, $data_array, $data_array_index) {
 	$dem = intval($data_array[$data_array_index - 1]);
 	if (isset($data_array[$data_array_index + $data_array[$data_array_index - 1]])) {
 	    $res['CODE'] = 0;
+	    $res['DEM'] = $dem;
 	    $res['DATA'] = implode(' ', array_slice($data_array, $data_array_index, $dem));
 	} else {
 	    $res['DATA'] = '「インデックス位置: ' . ($data_array_index + 1) . 'から' . $dem . '文字分取り出す」が適用できませんでした。';

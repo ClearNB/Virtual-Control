@@ -35,11 +35,10 @@ function ajax_dynamic_post_toget(url) {
  * 
  * @param {string} path URLを指定します
  * @param {object} params データを指定します
- * @param {string} method メソッドを指定します（Default: 'post'）
  */
-function post(path, params, method = 'post') {
+function post(path, params) {
     const form = document.createElement('form');
-    form.method = method;
+    form.method = 'post';
     form.action = path;
 
     for (const key in params) {

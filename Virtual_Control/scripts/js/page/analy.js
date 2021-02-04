@@ -1,7 +1,6 @@
 /* global fm_ld, ajax_dynamic_post_toget, ajax_dynamic_post, ANALY_WALK */
 
 var r_data = '';
-var f_id = new functionID();
 
 function download_csv() {
     post('/download/', {'download-data': r_data, 'file-name': 'csvdata-[DATE].csv'});
@@ -11,15 +10,15 @@ function snmp_page_get(duration, type, d) {
     animation('data_output', duration, fm_ld);
     if (type !== '' && d !== '') {
 	if (type === 0) {
-	    var f = {'f_id': f_id.getFunctionIDRow, 'sl_agt': d};
+	    var f = {'f_id': getFunctionID(), 'sl_agt': d};
 	} else if (type === 1) {
-	    var f = {'f_id': f_id.getFunctionIDRow, 'sl_sub': d};
+	    var f = {'f_id': getFunctionID(), 'sl_sub': d};
 	}
     } else {
-	var f = {'f_id': f_id.getFunctionIDRow};
+	var f = {'f_id': getFunctionID()};
     }
     ajax_dynamic_post('/scripts/analy/analy_get.php', f).then(function (data) {
-	if (f_id.getFunctionIDRow === ANALY_WALK) {
+	if (getFunctionID() === 52) {
 	    r_data = data['CSV'];
 	}
 	animation('data_output', 400, data['PAGE']);
@@ -27,7 +26,7 @@ function snmp_page_get(duration, type, d) {
 }
 
 $(document).ready(function () {
-    f_id.change_analy_get_agent();
+    change_analy_get_agent();
     snmp_page_get(0, '', '');
 });
 
@@ -44,12 +43,12 @@ $(document).on('click', '#bt_sl_bk, #bt_sl_st', function () {
 
 $(document).on('submit', '#fm_pg', function (event) {
     event.preventDefault();
-    f_id.change_analy_walk();
+    change_analy_walk();
     snmp_page_get(400, 0, $('input[name="sl_ag"]:checked').val());
 });
 
 $(document).on('click', 'div[id^="sub_i"]', function () {
-    f_id.change_analy_get_sub();
+    change_analy_get_sub();
     snmp_page_get(400, 1, $(this).attr('id'));
 });
 
@@ -58,12 +57,12 @@ $(document).on('click', '#bt_rt_dl', function () {
 });
 
 $(document).on('click', '#bt_rt_bk', function () {
-    f_id.change_analy_get_agent();
+    change_analy_get_agent();
     snmp_page_get(400, '', '');
 });
 
 $(document).on('click', '#bt_sb_bk', function () {
-    f_id.change_analy_back_result();
+    change_analy_back_result();
     snmp_page_get(400, '', '');
 });
 
@@ -72,7 +71,7 @@ $(document).on('click', '#bt_fl_rt', function () {
 });
 
 $(document).on('click', '#bt_rt_rf', function () {
-    f_id.change_analy_walk_refresh();
+    change_analy_walk_refresh();
     snmp_page_get(400, '', '');
 });
 

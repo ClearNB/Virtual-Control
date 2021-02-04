@@ -61,6 +61,7 @@ class Group {
 	$this->oid = $oid;
 	$this->name = $groupname;
 	array_push(self::$set, $this);
+	usort(self::$set, ['Group', 'cmp_id']);
     }
 
     /**
@@ -152,6 +153,9 @@ class Group {
 	return $res;
     }
 
+    private static function cmp_id($a, $b) {
+	return strcmp($a->groupid, $b->groupid);
+    }
 }
 
 /**

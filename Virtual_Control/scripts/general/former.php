@@ -56,18 +56,6 @@ class form_generator implements form_in {
     private static $gen_data = [];
 
     /**
-     * <SELECT>使用時の取り込みデータです
-     * 
-     * @var string $select_data  */
-    private $select_data;
-
-    /**
-     * <SELECT>使用時の取り込みデータです
-     * 
-     * @var string $fdata */
-    private $fdata;
-
-    /**
      * フォームデータであり、配列で格納されています
      * 
      * @var array $data */
@@ -105,7 +93,7 @@ class form_generator implements form_in {
      * @return void タイトルがオブジェクト内のデータの1番後ろに追加されます。
      */
     function Title($title, $icon): void {
-	array_push($this->data, "<div class=\"form-group pt-2\"><div class=\"w-100\"><h2><i class=\"fas fa-$icon fa-fw\"></i>$title</h2></div></div>");
+	array_push($this->data, '<h2 class="vc-title"><i class="fas fa-' . $icon . ' fa-fw"></i>' . $title . '</h2>');
     }
 
     /**
@@ -123,7 +111,7 @@ class form_generator implements form_in {
      */
     function SubTitle($title, $caption, $icon, $badgetext = ''): void {
 	$b_text = ($badgetext) ? '<span class = "badge-dark badge-pill">' . $badgetext . '</span>' : '';
-	array_push($this->data, '<div class="form-group pt-2"><div class="w-100"><h3 class="sub-title"><i class="fas fa-' . $icon . ' fa-fw"></i>' . $title . ' ' . $b_text . '</h3><p class="sub-caption">' . $caption . '<p></div></div>');
+	array_push($this->data, '<h3 class="sub-title"><i class="fas fa-' . $icon . ' fa-fw"></i>' . $title . ' ' . $b_text . '</h3><p class="sub-caption">' . $caption . '</p>');
     }
 
     /**
@@ -134,7 +122,7 @@ class form_generator implements form_in {
      * \<div\>で囲まれるため、テーブルや他のセレクトデータをAjaxから入れ替える際は、これをご利用になると便利です。
      * 
      * @param string $caption 説明欄を追加します
-     * @param string $ishr <hr>タグを周囲につけるかどうかを設定します（デフォルト: false）
+     * @param string $ishr <hr>タグを周囲につけるかどうかを設定します（デフォルト: true）
      * @param int $py 空白の高さ幅を変更します（デフォルト: 0）
      * @return void キャプションがオブジェクト内のデータの1番後ろに追加されます。
      */
@@ -143,6 +131,34 @@ class form_generator implements form_in {
 	$py_num = ($py > 5) ? 5 : $py;
 	$py_text = ($py_num > 0) ? 'py-' . $py_num : '';
 	array_push($this->data, '<div class="form-group-input pt-2">' . $hr_text . '<div class="' . $py_text . '">' . $caption . '</div>' . $hr_text . '</div>');
+    }
+    
+    /**
+     * [SET] キャプション開始（閉じなし）
+     * 
+     * キャプションを追加します。ただし、Captionとは異なり、div要素を閉じません。<br>
+     * 閉じる場合はcloseCaptionを必ず使用してください。<br>
+     * タイトルはなく、簡易的なローデータを入れることができます。<br>
+     * 
+     * @param string $caption 説明欄を追加します（Default: ''）
+     * @param int $py 空白の高さ幅を変更します（Default: 0）
+     * @return void キャプション（閉じなし）がオブジェクト内のデータの1番後ろに追加されます。
+     */
+    function OpenCaption($caption = '', $py = form_in::NONE): void {
+	$py_num = ($py > 5) ? 5 : $py;
+	$py_text = ($py_num > 0) ? 'py-' . $py_num : '';
+	array_push($this->data, '<div class="form-group-input pt-2"><div class="' . $py_text . '">' . $caption);
+    }
+    
+    /**
+     * [SET] キャプション終了
+     * 
+     * OpenCaptionで開いた要素を閉じます。
+     * 
+     * @return void divを閉じるデータがオブジェクト内のデータの1番後ろに追加されます。
+     */
+    function CloseCaption(): void {
+	array_push($this->data, '</div></div>');
     }
 
     /**
@@ -189,7 +205,7 @@ class form_generator implements form_in {
 	$r_text = ($required) ? '必須' : '任意';
 	$r_flag = ($required) ? 'required="required"' : '';
 	$v_text = ($value) ? 'value="' . $value . '"' : '';
-	array_push($this->data, '<div class="form-group-input pt-2"><label class="importantLabel col-md-3">【' . $r_text . '】</label><label class="formtext col-md-8">' . $desc . '<i class="fas fa-' . $icon . ' fa-2x ml-2"></i></label><input type="text" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Input Here" ' . $r_flag . ' id="' . $id . '" name="' . $id . '" ' . $v_text . ' min="' . $min . '" max="' . $max . '" ><small class="form-text text-body" id="' . $id . '">' . $small_desc . '</small></div>');
+	array_push($this->data, '<div class="form-group-input pt-2"><label class="importantLabel col-md-3">【' . $r_text . '】</label><label class="formtext col-md-8">' . $desc . '<i class="fas fa-' . $icon . ' fa-2x ml-2"></i></label><input type="number" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Input Here" ' . $r_flag . ' id="' . $id . '" name="' . $id . '" ' . $v_text . ' min="' . $min . '" max="' . $max . '" ><small class="form-text text-body" id="' . $id . '">' . $small_desc . '</small></div>');
     }
 
     /**
@@ -248,30 +264,9 @@ class form_generator implements form_in {
      */
     function Check($type, $id, $name, $value, $outname, $selected, $required = 'required') {
 	$type_text = ($type == 1) ? 'radio' : 'checkbox';
-	$class_text = ($type == 1) ? 'radio02' : 'checkbox02';
+	$class_text = ($type == 1) ? 'radio01' : 'checkbox01';
 	$sel_text = ($selected) ? 'checked' : '';
 	array_push($this->data, '<input ' . $sel_text . ' required="' . $required . '" id="' . $id . '" type="' . $type_text . '" name="' . $name . '" value="' . $value . '"><label for="' . $id . '" class="' . $class_text . '">' . $outname . '</label><br>');
-    }
-
-    /**
-     * [SET] 小さなボタン作成
-     * 
-     * ボタンを作成します。<br>
-     * 通常の場合、テキストとアイコンがあるボタンとして作成されます。
-     * 
-     * @param string $id IDを指定します
-     * @param string $desc 表示名を指定します
-     * @param string $type ボタンタイプを指定します（Default: submit）<br>【submit】フォーム送信処理を行う場合のみに使用<br>【button】普段の「ボタン」としての役目を持つ際に使用
-     * @param string $icon アイコン情報を指定します（Default: なし）
-     * @param string $isdisabled 【任意】無効化状態にするか設定します（Default: false）
-     * 
-     * @return void ボタンがオブジェクト内のデータの1番後ろに追加されます
-     */
-    function SmallButton($id, $desc, $type = 'submit', $icon = '', $isdisabled = false): void {
-	$fmat = (strpos($icon, 'fab') !== false) ? 'fab' : 'fas';
-	$d_text = ($isdisabled) ? 'disabled' : '';
-	$icon_r = str_replace('fab fa-', '', $icon);
-	array_push($this->data, "<div class=\"py-1\"><button type=\"$type\" id=\"$id\" class=\"btn btn-dark btn-block btn-sm shadow-lg mb-1\" $d_text><i class=\"$fmat fa-fw fa-lx fa-$icon_r\"></i>$desc</button></div>");
     }
 
     /**
@@ -282,38 +277,19 @@ class form_generator implements form_in {
      * 
      * @param string $id IDを指定します
      * @param string $desc 表示名を指定します
-     * @param string $type ボタンタイプを指定します（Default: submit）<br>【submit】フォーム送信処理を行う場合のみに使用<br>【button】普段の「ボタン」としての役目を持つ際に使用
+     * @param string $type ボタンタイプを指定します（Default: submit, button）
      * @param string $icon アイコン情報を指定します（Default: なし）
-     * @param string $isdisabled 【任意】無効化状態にするか設定します（Default: false）
+     * @param string $isdisabled 無効化状態にするか設定します（Default: false）
+     * @param int size = 1 サイズを指定します（Default: 1..lg, 0..sm, 2..llg）
      * 
      * @return void ボタンがオブジェクト内のデータの1番後ろに追加されます
      */
-    function Button($id, $desc, $type = 'submit', $icon = '', $isdisabled = false): void {
+    function Button($id, $desc, $type = 'submit', $icon = '', $isdisabled = false, $size = 1): void {
 	$fmat = (strpos($icon, 'fab') !== false) ? 'fab' : 'fas';
-	$d_text = ($isdisabled) ? 'disabled' : '';
-	$icon_r = str_replace('fab fa-', '', $icon);
-	array_push($this->data, "<div class=\"py-1\"><button type=\"$type\" id=\"$id\" class=\"btn btn-dark btn-block btn-lg shadow-lg mb-1\" $d_text><i class=\"$fmat fa-fw fa-lx fa-$icon_r\"></i>$desc</button></div>");
-    }
-
-    /**
-     * [SET] 特大ボタン作成
-     * 
-     * 通常より大きいボタンを作成します。<br>
-     * 通常の場合、テキストとアイコンがあるボタンとして作成されます。
-     * 
-     * @param string $id IDを指定します
-     * @param string $desc 表示名を指定します
-     * @param string $type ボタンタイプを指定します（Default: submit）<br>【submit】フォーム送信処理を行う場合のみに使用<br>【button】普段の「ボタン」としての役目を持つ際に使用
-     * @param string $icon アイコン情報を指定します（Default: なし）
-     * @param string $isdisabled 【任意】無効化状態にするか設定します（Default: false）
-     * 
-     * @return void ボタンがオブジェクト内のデータの1番後ろに追加されます
-     */
-    function LargeButton($id, $desc, $type = 'submit', $icon = '', $isdisabled = false): void {
-	$fmat = (strpos($icon, 'fab') !== false) ? 'fab' : 'fas';
-	$d_text = ($isdisabled) ? 'disabled' : '';
-	$icon_r = str_replace('fab fa-', '', $icon);
-	array_push($this->data, "<div class=\"py-1\"><button type=\"$type\" id=\"$id\" class=\"btn btn-dark btn-block btn-llg shadow-lg mb-1\" $d_text><i class=\"$fmat fa-fw fa-lx fa-$icon_r\"></i>$desc</button></div>");
+	$disabled_text = ($isdisabled) ? 'disabled' : '';
+	$icon_text = str_replace('fab fa-', '', $icon);
+	$size_text = ($size == 1) ? 'lg' : (($size == 2) ? 'llg' : 'sm');
+	array_push($this->data, '<button type="' . $type . '" id="' . $id . '" class="btn-vc btn-vc-' . $size_text . '" ' . $disabled_text . '><i class="' . $fmat . ' fa-fw fa-lx fa-' . $icon_text . '"></i>' . $desc . '</button>');
     }
 
     /**
@@ -326,7 +302,7 @@ class form_generator implements form_in {
      * @return void \<div class="text-center"\>がオブジェクト内のデータの1番後ろに追加されます。
      */
     function openCenter(): void {
-	array_push($this->data, "<div class=\"text-center\">");
+	array_push($this->data, '<div class="text-center">');
     }
 
     /**
@@ -363,7 +339,7 @@ class form_generator implements form_in {
      * @return void リスト要素がオブジェクト内のデータの1番後ろに追加されます。
      */
     function openListElem($text): void {
-	array_push($this->data, '<li>' . $text);
+	array_push($this->data, '<li class="all-view"><h5>' . $text . '</h5><ul>');
     }
 
     /**
@@ -374,7 +350,7 @@ class form_generator implements form_in {
      * @return void
      */
     function closeListElem(): void {
-	array_push($this->data, '</li>');
+	array_push($this->data, '</ul></li>');
     }
 
     /**
@@ -386,53 +362,6 @@ class form_generator implements form_in {
      */
     function closeList(): void {
 	array_push($this->data, '</ul>');
-    }
-
-    /**
-     * [SET] 選択リスト開始
-     * 
-     * \<select\> 属性を開きます。<br>
-     * ドロップダウン方式となります。
-     * 
-     * @param string $name フォームグループ名を指定します
-     * @param string $place_name プレースホルダの表示名を設定します(Default: '選択する')
-     * @return void 選択リストがオブジェクト内のデータの1番後ろに追加されます。
-     */
-    function openSelect($name, $place_name = '選択する'): void {
-	$this->select_data = ["TEXT" => [], "VALUE" => []];
-	$this->fdata = '<div class="sel">'
-		. '<span class="sel__placeholder sel__placeholder--blackpanther" data-placeholder="' . $place_name . '">' . $place_name . '</span>'
-		. '<div class="sel__box sel__box--black-panther">[OUTNAME_DATA]</div>'
-		. '<select name="' . $name . '" id="' . $name . '">[VALUE_DATA]</select>'
-		. '</div>';
-    }
-
-    /**
-     * [SET] 選択リストデータ追加
-     * 
-     * openSelect() で作成したリストに対し要素を追加します。
-     * 
-     * @param mixed $value 実際に格納する値を指定します
-     * @param string $outname 実際に表示される文字を指定します
-     * @return void 選択リストデータがオブジェクト内のデータの1番後ろに追加されます。
-     */
-    function addOption($value, $outname): void {
-	array_push($this->select_data['VALUE'], '<option value="' . $value . '">' . $outname . '</option>');
-	array_push($this->select_data['TEXT'], '<span class="sel__box__options sel__box__options--black-panther">' . $outname . '</span>');
-    }
-
-    /**
-     * [SET] 選択リスト終了
-     * 
-     * openSelect() で作成したリストを閉じます。
-     * 
-     * @return void 閉じた後のリスト（完成）がオブジェクト内のデータの1番後ろに追加されます。
-     */
-    function closeSelect(): void {
-	$text_data = implode('', $this->select_data['TEXT']);
-	$value_data = implode('', $this->select_data['VALUE']);
-	$r_data = str_replace('[VALUE_DATA]', $value_data, str_replace('[OUTNAME_DATA]', $text_data, $this->fdata));
-	array_push($this->data, $r_data);
     }
 
     /**
@@ -506,6 +435,28 @@ class form_generator implements form_in {
     }
 
     /**
+     * [SET] フォームグループ（枠内）作成
+     * 
+     * form-group-inputでフォームグループとして全体を囲む要素を追加します
+     * 
+     * @return void div要素がオブジェクト内のデータの1番後ろに追加されます。
+     */
+    function openFormGroup(): void {
+	array_push($this->data, '<div class="form-group-input">');
+    }
+
+    /**
+     * [SET] フォームグループ（枠内）作成
+     * 
+     * form-group-inputでフォームグループとして全体を囲む要素を追加します
+     * 
+     * @return void div要素がオブジェクト内のデータの1番後ろに追加されます。
+     */
+    function closeFormGroup(): void {
+	array_push($this->data, '</div>');
+    }
+
+    /**
      * [SET] HTML埋め込み
      * 
      * すでに作成されたHTMLデータをdivタグに閉じ込めた状態で埋め込みます
@@ -518,7 +469,7 @@ class form_generator implements form_in {
     }
 
     function WarnForm($id): void {
-	array_push($this->data, '<div class="form-group-input pt-2"><div id="' . $id . '" ></div></div>');
+	array_push($this->data, '<div class="form-group-input pt-2"><div id="' . $id . '"></div></div>');
     }
 
     /**
@@ -530,7 +481,7 @@ class form_generator implements form_in {
      * @return void hrタグがオブジェクト内のデータの1番後ろに追加されます
      */
     function Horizonal($is_primary = false): void {
-	$class_text = ($is_primary) ? 'class="orange"' : '';
+	$class_text = ($is_primary) ? 'class="primary"' : '';
 	array_push($this->data, '<hr ' . $class_text . '>');
     }
 
@@ -574,7 +525,7 @@ class form_generator implements form_in {
 	$this->id = $id;
 	array_push(self::$gen_data, $this);
     }
-    
+
     /**
      * [SET] 背景色設定・変更
      * 
@@ -583,7 +534,7 @@ class form_generator implements form_in {
      */
     public function BackGround($color_code, $isclose = false) {
 	$color_text = '';
-	switch($color_code) {
+	switch ($color_code) {
 	    case 0:
 		$color_text = 'vc-back';
 		break;
@@ -591,12 +542,12 @@ class form_generator implements form_in {
 		$color_code = 'bg-dark';
 		break;
 	}
-	if($isclose) {
+	if ($isclose) {
 	    array_push($this->data, '</div></div>');
 	}
 	array_push($this->data, '<div class="' . $color_text . '"><div class="container py-2">');
     }
-    
+
     /**
      * [SET] 最後尾のデータを削除
      * 
@@ -719,6 +670,7 @@ class form_generator implements form_in {
 	$this->ListCreate($log);
 	$this->Button($button[0], $button[1], $button[2], $button[3]);
     }
+
 }
 
 /**
