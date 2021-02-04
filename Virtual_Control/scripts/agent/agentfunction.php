@@ -20,9 +20,9 @@ class AgentSet {
     private $result_form = [
 	['CODE' => 0],
 	['CODE' => 1],
-	['CODE' => 2, 'ERR_TEXT' => "手続きに失敗しました。<br>手続き上で正しく入力してください。<br>システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。"],
-	['CODE' => 2, 'ERR_TEXT' => "入力チェックエラーです。<br>以下の入力したデータをご確認ください。"],
-	['CODE' => 1, 'ERR_TEXT' => "認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。"],
+	['CODE' => 2, 'ERR_TEXT' => '<ul class="black-view"><li>手続きに失敗しました。</li><li>手続き上で正しく入力してください。システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。</li></ul>'],
+	['CODE' => 2, 'ERR_TEXT' => '<ul class="black-view"><li>入力チェックエラーです。以下の入力したデータをご確認ください。</li>'],
+	['CODE' => 1, 'ERR_TEXT' => '認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。'],
 	['CODE' => 3],
 	['CODE' => 4],
 	['CODE' => 5],
@@ -216,7 +216,7 @@ class AgentSet {
     }
 
     private function check() {
-	$chk_text = '<ul class="black-view">[ERROR_LOG]</ul>';
+	$chk_text = '[ERROR_LOG]</ul>';
 	$chk = '';
 	switch ($this->funid) {
 	    case 12: //作成（ホスト・コミュニティ・MIB・重複確認）
@@ -329,7 +329,7 @@ class AgentSet {
     }
 
     private function get_mib_text(): string {
-	$res = ['<br>'];
+	$res = [''];
 
 	$mb = new MIBData();
 	$data = $mb->getMIB(0, 0, $this->mibs);
@@ -337,7 +337,7 @@ class AgentSet {
 	    foreach ($data['SUB'] as $k => $g) {
 		array_push($res, '【' . $data['GROUP'][$k]['GROUP_OID'] . '】' . $data['GROUP'][$k]['GROUP_NAME']);
 		foreach ($g as $s) {
-		    array_push($res, '[(' . $s['SUB_OID'] . ') ' . $s['SUB_NAME'] . '],');
+		    array_push($res, '▶ (' . $s['SUB_OID'] . ') ' . $s['SUB_NAME']);
 		}
 	    }
 	} else {

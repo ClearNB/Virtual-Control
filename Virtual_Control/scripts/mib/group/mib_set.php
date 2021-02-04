@@ -313,7 +313,7 @@ class MIBGroupSet {
      */
     private function check_groupoid(): string {
 	$test = '';
-	if (!preg_match('/^(([0-9]{1,})[.]){1,}[0-9]$/', $this->group_oid) || mb_strlen($this->group_oid, 'UTF-8') > 255) {
+	if (!preg_match('/^(([0-9]{1,})[.]){1,}[0-9]{1,}$/', $this->group_oid) || mb_strlen($this->group_oid, 'UTF-8') > 255) {
 	    $test = '<li>グループOID記述ルールに違反しています。</li>';
 	} else {
 	    $sel = select(false, 'GSC_MIB_GROUP', 'GOID');
@@ -321,7 +321,7 @@ class MIBGroupSet {
 		$sel_arr = getArray($sel);
 		$flag = false;
 		foreach($sel_arr as $s) {
-		    if(strpos($s['GOID'], $this->group_oid) !== false) {
+		    if(strpos($this->group_oid . '.', $s['GOID'] . '.') !== false) {
 			$flag = true;
 			break;
 		    }
@@ -338,14 +338,14 @@ class MIBGroupSet {
      * [GET] グループ名チェック
      * 
      * グループ名について調べます<br>
-     * 【条件】0〜9, a-z, A-Zのいずれかを利用しており、1〜50文字で指定していること
+     * 【条件】0〜9, a-z, A-Z, _, - のいずれかを利用しており、1〜50文字で指定していること
      * 
      * @return string 違反していた場合はエラー文、そうでない場合はnullが返されます
      */
     private function check_groupname(): string {
 	$test = '';
-	if (!preg_match('/^([0-9]|[a-z]|[A-Z]){1,50}$/', $this->group_name)) {
-	    $test = '<li>グループOID記述ルールに違反しています。</li>';
+	if (!preg_match('/^([0-9]|[a-z]|[A-Z]|[_-]){1,50}$/', $this->group_name)) {
+	    $test = '<li>グループ名記述ルールに違反しています。</li>';
 	}
 	return $test;
     }

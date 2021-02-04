@@ -166,7 +166,7 @@ class AgentPage extends form_generator {
 	$this->SubTitle('入力確認', '入力事項が正しければ「更新する」を押してください。<br>（※）「キャンセル」の場合、アカウント選択画面に遷移します。', 'user-check');
 	$this->Caption($confirm_data);
 	$this->Button('bt_cf_sb', '更新する', 'button', 'sign-in-alt');
-	$this->SmallButton('bt_cf_bk', 'キャンセル', 'button', 'chevron-circle-left');
+	$this->Button('bt_cf_bk', 'キャンセル', 'button', 'chevron-circle-left');
 	return $this->Export();
     }
 

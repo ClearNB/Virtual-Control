@@ -23,16 +23,13 @@ class LinksPage extends form_generator {
 	    case 61: //INDEX
 		$res_page = $this->getIndex();
 		break;
-	    case 62: //LOGIN
-		$res_page = $this->getLogin();
-		break;
-	    case 63: //DASH
+	    case 62: //DASH
 		$res_page = $this->getDash();
 		break;
-	    case 64: //INIT
+	    case 63: //INIT
 		$res_page = $this->getInit();
 		break;
-	    case 65: //OPTION
+	    case 64: //OPTION
 		$res_page = $this->getOption();
 		break;
 	    default:
@@ -56,10 +53,6 @@ class LinksPage extends form_generator {
 	$this->SubTitle('ログインが必要です', 'ここから先はログインユーザのみ閲覧できる情報です。<br>ログインして、監視を行いましょう。', 'user-check', 'WARNING');
 	$this->Button('bt_go_lg', 'ログインする', 'button', 'sign-in-alt');
 	return $this->Export();
-    }
-
-    public function getLogin() {
-	
     }
 
     public function getDash() {

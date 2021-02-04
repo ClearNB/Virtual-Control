@@ -1,6 +1,6 @@
 <?php
 
-include __DIR__ . '/../general/former.php';
+include_once __DIR__ . '/../general/former.php';
 
 class AccountPage extends form_generator {
 
@@ -26,8 +26,40 @@ class AccountPage extends form_generator {
      * 
      * @param string $id ページのIDを指定します（Default: 'fm_pg'）
      */
-    public function __construct($id = 'fm_pg') {
-	parent::__construct($id);
+    public function __construct() {
+	parent::__construct('fm_pg');
+    }
+
+    public function get_page_byid($id, $data) {
+	$res_page = '';
+	switch ($id) {
+	    case 1: $res_page = $this->getSelect($data);
+		break;
+	    case 2: $res_page = $this->getCreate();
+		break;
+	    case 3: $res_page = $this->getEditSelect($data);
+		break;
+	    case 4: case 5: case 6: $res_page = $this->getEdit($id, $data);
+		break;
+	    case 7: $res_page = $this->getDelete($data);
+		break;
+	    case 10: $res_page = $this->getCorrect();
+		break;
+	    case 11: $res_page = $this->getFail($data);
+		break;
+	    case 12: case 15: $res_page = $data;
+		break;
+	    case 13: $res_page = $this->getUserFail();
+		break;
+	    case 14: $res_page = $this->fm_at();
+		break;
+	    case 16: $res_page = $this->getConfirm($data);
+		break;
+	    case 999: $res_page = $this->getFail($data);
+		break;
+	}
+	$this->reset();
+	return $res_page;
     }
 
     /**
@@ -172,23 +204,26 @@ class AccountPage extends form_generator {
 	$this->Button('bt_cf_bk', 'キャンセル', 'button', 'chevron-circle-left');
 	return $this->Export();
     }
-    
+
     public function getFail($log = '〈形式ログはなし〉') {
-	$fm_fl = fm_fl('fm_fl', 'エラーが発生しました。', '以下をご確認ください。');
-	$fm_fl->openList();
-	$fm_fl->addList('データベースとの接続をご確認ください。');
-	$fm_fl->addList('要求しているデータと実際のデータを比べ、記述や内容が正しいかどうかをご確認ください。');
-	$fm_fl->addList('アカウント認証であるセッションが切れていると思われます。もう一度ログインし直してから再試行してください。');
-	$fm_fl->addList('【アクセスログ】<br>' . $log);
-	$fm_fl->closeList();
-	$fm_fl->Button('bt_fl_rt', 'ページを再読込する', 'button', 'sync-alt');
-	return $fm_fl->Export();
+	$logs = [
+	    'データベースとの接続をご確認ください。',
+	    '要求しているデータと実際のデータを比べ、記述や内容が正しいかどうかをご確認ください。',
+	    'アカウント認証であるセッションが切れていると思われます。もう一度ログインし直してから再試行してください。',
+	    $log
+	];
+	$this->fm_fl($logs, ['bt_fl_rt', 'ページを再読込する', 'button', 'sync-alt'], 'エラーが発生しました');
+	return $this->Export();
     }
 
     public function getUserFail() {
-	$fm_fl = fm_fl('fm_fl', 'ユーザに変更を加えることはできません。', 'このユーザは現在ログイン中です。削除時は、あなたを含め、ログインしているユーザは削除できません。');
-	$fm_fl->Button('bt_fl_bk', 'ユーザ選択画面に戻る', 'button', 'chevron-circle-left');
-	return $fm_fl->Export();
+	$logs = [
+	    'このユーザは現在ログイン中です。',
+	    '削除時は、あなたを含め、ログインしているユーザは削除できません。',
+	    '接続先の端末のセッションが切れていてもログイン状態は継続されています。ユーザに変更を加えたい場合は、そのユーザを一度ログインしログアウトする必要があります。'
+	];
+	$this->fm_fl($logs, ['bt_fl_bk', 'ユーザ選択画面に戻る', 'button', 'sync-alt'], 'ユーザに変更を加えることはできません');
+	return $this->Export();
     }
 
     public function getCorrect() {

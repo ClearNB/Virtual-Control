@@ -1,7 +1,6 @@
 <?php
 
 class AccountSet {
-
     /**
      * [VAR] リザルトフォーム
      * 
@@ -20,13 +19,13 @@ class AccountSet {
      */
     private $result_form = [
 	['CODE' => 0], //0
-	['CODE' => 1], //1
-	['CODE' => 2, 'ERR_TEXT' => "手続きに失敗しました。<br>手続き上で正しく入力してください。<br>システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。"], //2
-	['CODE' => 2, 'ERR_TEXT' => "入力チェックエラーです。<br>以下の入力したデータをご確認ください。"], //3
-	['CODE' => 1, 'ERR_TEXT' => "認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。"], //4
+	['CODE' => 1, 'DATA' => '<ul class="black-view"><li>手続きに失敗しました。</li><li>データベースとの接続中にエラーが発生しました。</li></ul>'], //1
+	['CODE' => 2, 'DATA' => '<ul class="black-view"><li>手続きに失敗しました。手続き上で正しく入力してください。</li><li>システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。</li></ul>'], //2
+	['CODE' => 2, 'DATA' => '<ul class="black-view"><li>入力チェックエラーです。以下の入力したデータをご確認ください。</li>'], //3
+	['CODE' => 1, 'DATA' => '認証情報に異常が見つかりました。VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。'], //4
 	['CODE' => 3], //5
 	['CODE' => 4], //6
-	['CODE' => 5], //7
+	['CODE' => 5, 'DATA' => '<ul class="black-view"><li>認証に失敗しました。もう一度入力してください。</li></ul>'], //7
 	['CODE' => 6, 'CONFIRM_DATA' => ''], //8
     ];
     private $userid;
@@ -58,6 +57,7 @@ class AccountSet {
 	$this->r_pass = $r_pass;
 	$this->per = $per;
 	$this->funid = $functionid;
+	$this->check_functionid();
     }
 
     /**
@@ -75,7 +75,7 @@ class AccountSet {
      * 
      * @param int $functionid	実際のファンクションIDです
      */
-    public function check_functionid() {
+    private function check_functionid() {
 	if (!session_auth() && $this->a_pass) {
 	    $set_fun = 999;
 	} else {
@@ -87,7 +87,7 @@ class AccountSet {
 	$this->funid = $set_fun;
     }
 
-    public function check_correct_functionid() {
+    private function check_correct_functionid() {
 	$set_fun = 0;
 	$flag1 = $this->userid && $this->username && $this->pass && $this->r_pass;
 	$flag2 = isset($this->per);
@@ -119,22 +119,15 @@ class AccountSet {
     public function run() {
 	$result_code = 0;
 	switch ($this->funid) {
-	    case 2:
-		$result_code = $this->create();
+	    case 2: $result_code = $this->create();
 		break;
-	    case 4:
-	    case 5:
-	    case 6:
-		$result_code = $this->edit();
+	    case 4: case 5: case 6: $result_code = $this->edit();
 		break;
-	    case 7:
-		$result_code = $this->delete();
+	    case 7: $result_code = $this->delete();
 		break;
-	    case 8:
-		$result_code = 2;
+	    case 8: $result_code = 2;
 		break;
-	    case 999:
-		$result_code = $this->auth();
+	    case 999: $result_code = $this->auth();
 		break;
 	}
 	return $this->result_form[$result_code];
@@ -145,102 +138,62 @@ class AccountSet {
      * @return int (0..完了, 1..アカウント認証が必要, 2..セッション切れにより更新中止, 3..データベース障害が発生)
      */
     private function create(): int {
-	$res_code = 0;
-	//1: 全ての値に関してチェックを行う
 	$chk = $this->check();
-	if ($chk != 0) {
-	    $res_code = $chk;
-	} else {
-	    //2: authidを確認する
-	    if (session_auth()) {
-		//3: INSERT文の実行
-		$salt = random(20);
-		$pass_hash = hash('sha256', $this->pass . $salt);
-		$res = insert("GSC_USERS", ["USERID", "PASSWORDHASH", "USERNAME", "PERMISSION", "SALT"], [$this->userid, $pass_hash, $this->username, $this->per, $salt]);
-		if ($res) {
-		    $res_code = 0;
-		} else {
-		    $res_code = 1;
-		}
-	    } else {
-		$res_code = 6;
-	    }
+	$res_code = ($chk != 0) ? $chk : ((!session_auth()) ? 6 : 0);
+	if ($res_code == 0) {
+	    $salt = random(20);
+	    $pass_hash = hash('sha256', $this->pass . $salt);
+	    $res = insert('GSC_USERS', ['USERID', 'PASSWORDHASH', 'USERNAME', 'PERMISSION', 'SALT'], [$this->userid, $pass_hash, $this->username, $this->per, $salt]);
+	    $res_code = ($res) ? 0 : 1;
 	}
 	return $res_code;
     }
 
     private function edit(): int {
-	$res_code = 0;
 	$chk = $this->check();
-	$chk_login = check_user_login($this->pre_userid);
-	$me = check_users_me($this->pre_userid);
-	if ($chk != 0) {
-	    $res_code = 3;
-	}
-	if ($chk_login && $me) {
-	    $res_code = 5;
-	}
+	$chk_login = $this->check_user_login();
+	$me = $this->check_users_me();
+
+	$res_code = ($chk != 0) ? 3 : (($chk_login && $me) ? 5 : ((!session_auth()) ? 6 : 0));
 	if ($res_code == 0) {
-	    if (session_auth()) {
-		$query = $this->editQuery();
-		if ($query) {
-		    if ($this->funid == 4 && !$me) {
-			session_create('gsc_userid', $this->userid);
-		    }
-		    $res_code = 0;
-		} else {
-		    $res_code = 1;
-		}
-	    } else {
-		$res_code = 6;
+	    $query = $this->editQuery();
+	    if ($query && $this->funid == 4 && !$me) {
+		$res_code = (session_create('gsc_userid', $this->userid)) ? 0 : 1;
 	    }
 	}
 	return $res_code;
     }
 
     private function delete(): int {
-	$res_code = 0;
-	$chk_login = check_user_login($this->pre_userid);
-	if ($chk_login) {
-	    $res_code = 5;
-	}
+	$chk_login = $this->check_user_login();
+	$res_code = ($chk_login) ? 5 : ((!session_auth()) ? 6 : 0);
 	if ($res_code == 0) {
-	    if (session_auth()) {
-		$res = delete("GSC_USERS", "WHERE USERID = '$this->pre_userid'");
-		if ($res) {
-		    $res_code = 0;
-		} else {
-		    $res_code = 1;
-		}
-	    } else {
-		$res_code = 6;
-	    }
+	    $res = delete("GSC_USERS", "WHERE USERID = '$this->pre_userid'");
+	    $res_code = ($res) ? 0 : 1;
 	}
 	return $res_code;
     }
 
     private function check() {
-	$chk_text = '<ul class="black-view">[ERROR_LOG]</ul>';
+	$chk_text = '[DATA]</ul>';
 	$chk = '';
 	switch ($this->funid) {
-	    case 2: //作成（ユーザID・ユーザ名・パスワード確認）
-		$chk .= check_userid($this->userid);
-		$chk .= check_username($this->username);
-		$chk .= check_password($this->pass, $this->r_pass);
+	    case 2: //作成（ユーザID・ユーザ名・パスワード・権限確認）
+		$chk .= $this->check_userid() . $this->check_username() . $this->check_password() . $this->check_permission();
 		break;
 	    case 4: //編集1（ユーザID確認）
-		$chk .= check_userid($this->userid);
+		$chk .= $this->check_userid();
 		break;
 	    case 5: //編集2（ユーザ名確認）
-		$chk .= check_username($this->username);
+		$chk .= $this->check_username();
 		break;
 	    case 6: //編集3（パスワード確認）
-		$chk .= check_password($this->pass, $this->r_pass);
+		$chk .= $this->check_password();
 		break;
 	}
 	if ($chk) {
-	    $chk_text = str_replace('[ERROR_LOG]', $chk, $chk_text);
-	    $this->result_form[3]['ERR_TEXT'] .= $chk_text;
+	    $chk_text = str_replace('[DATA]', $chk, $chk_text);
+	    $this->result_form[3]['DATA'] .= $chk_text;
 	    return 3;
 	} else {
 	    return 0;
@@ -251,15 +204,12 @@ class AccountSet {
 	$res = 0;
 	$s_userid = session_get_userid();
 	switch (session_auth_check($s_userid, $this->a_pass, true)) {
-	    case 0:
-		$res = 8;
+	    case 0: $res = 8;
 		$this->result_form[$res]['CONFIRM_DATA'] = $this->generateList();
 		break;
-	    case 1:
-		$res = 1;
+	    case 1: $res = 1;
 		break;
-	    case 2:
-		$res = 7;
+	    case 2: $res = 7;
 		break;
 	}
 	return $res;
@@ -268,11 +218,9 @@ class AccountSet {
     private function editQuery() {
 	$res = [];
 	switch ($this->funid) {
-	    case 4:
-		$res = ['GSC_USERS', ['USERID'], [$this->userid]];
+	    case 4: $res = ['GSC_USERS', ['USERID'], [$this->userid]];
 		break;
-	    case 5:
-		$res = ['GSC_USERS', ['USERNAME'], [$this->username]];
+	    case 5: $res = ['GSC_USERS', ['USERNAME'], [$this->username]];
 		break;
 	    case 6:
 		$salt = random(20);
@@ -293,14 +241,8 @@ class AccountSet {
 
     private function generateList() {
 	$list_text = '<ul class="black-view">';
-	$func = "<li>ファンクション: [FUNCTION]</li>";
-	$column_list = [
-	    "<li>対象のユーザ: $this->pre_userid</li>",
-	    "<li>新しいユーザID: [NEW_USERID]</li>",
-	    "<li>新しいユーザ名: [NEW_USERNAME]</li>",
-	    "<li>新しいパスワード: [表示できません]</li>",
-	    "<li>権限: [NEW_PERMISSION]</li>"
-	];
+	$func = '<li>ファンクション: [FUNCTION]</li>';
+	$column_list = ['<li>対象のユーザ: ' . $this->pre_userid . '</li>', '<li>新しいユーザID: [NEW_USERID]</li>', '<li>新しいユーザ名: [NEW_USERNAME]</li>', '<li>新しいパスワード: [表示できません]</li>', '<li>権限: [NEW_PERMISSION]</li>'];
 	$columns = [];
 	switch ($this->check_correct_functionid()) {
 	    case 2: $func = str_replace('[FUNCTION]', 'ユーザ作成', $func);
@@ -339,123 +281,112 @@ class AccountSet {
     private function get_permission_text($permission): string {
 	$text = '';
 	switch ($permission) {
-	    case 0:
-		$text = 'VCServer';
+	    case 0: $text = 'VCServer';
 		break;
-	    case 1:
-		$text = 'VCHost';
+	    case 1: $text = 'VCHost';
 		break;
 	}
 	return $text;
     }
 
-}
-
-/**
- * [FUNCTION] 指定ユーザセッション一致確認
- * 
- * 削除しようとしている情報が自分のユーザであるか確認します。
- * ユーザが自分である場合はfalseを返し、それ以外はtrueを返します。
- * @param string $userid 手続き元のユーザIDを指定します
- * @return bool
- */
-function check_users_me($userid): bool {
-    if (session_chk() == 0) {
-	$session_userid = session_get_userid();
-	return !($userid == $session_userid);
-    } else {
-	return false;
+    /**
+     * [GET] 指定ユーザセッション一致確認
+     * 
+     * 削除しようとしている情報が自分のユーザであるか確認します
+     * ユーザが自分である場合はfalseを返し、それ以外はtrueを返します
+     * 
+     * @return bool
+     */
+    private function check_users_me(): bool {
+	$flag = (session_chk() == 0 && !($this->userid == session_get_userid()));
+	return $flag;
     }
-}
 
-/**
- * [FUNCTION] ユーザログインチェック
- * 
- * 指定したユーザがログイン中かどうかを判定します。<br>
- * ログイン中である場合は true, でない場合は false が返されます。
- * @return bool
- */
-function check_user_login($userid): bool {
-    $sql = select(true, 'GSC_USERS', 'LOGINSTATE', "WHERE USERID = '$userid'");
-    $res = ($sql && $sql['LOGINSTATE'] == 1);
-    return $res;
-}
+    /**
+     * [GET] ユーザログインチェック
+     * 
+     * 指定したユーザがログイン中かどうかを判定します<br>
+     * ログイン中である場合は true, でない場合は false が返されます
+     * 
+     * @return bool
+     */
+    private function check_user_login(): bool {
+	$result = select(true, 'GSC_USERS', 'LOGINSTATE', 'WHERE USERID = \'' . $this->userid . '\'');
+	$res = ($result && $result['LOGINSTATE'] == 1);
+	return $res;
+    }
 
-/**
- * [FUNCTION] ユーザ名確認
- * 
- * ユーザ名の記述についてチェックします。<br>
- * 【判定条件】ユーザ名が最大50バイトを超えていないか かつ 1文字以上書いているか<br>
- * <br>（※）表示形式はUTF-8のため、UTF-8でのバイト数で数えます。
- * 
- * @param string $data ユーザ名（手続き元）
- * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
- */
-function check_username($data): string {
-    $len = strlen(mb_convert_encoding($data, 'SJIS', 'UTF-8'));
-    if ($len > 30 || $len < 1) {
-	return '<li>ユーザ名が最大半角文字数30文字を超えています。</li>';
-    } else {
-	return '';
+    /**
+     * [GET] ユーザ名確認
+     * 
+     * ユーザ名の記述についてチェックします。<br>
+     * 【判定条件】ユーザ名が最大50バイトを超えていないか かつ 1文字以上書いているか<br>
+     * <br>（※）表示形式はUTF-8のため、UTF-8でのバイト数で数えます。
+     * 
+     * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
+     */
+    private function check_username(): string {
+	$res = '';
+	$len = strlen(mb_convert_encoding($this->username, 'SJIS', 'UTF-8'));
+	if ($len > 30 || $len < 1) {
+	    $res .= '<li>ユーザ名が最大半角文字数30文字を超えています。</li>';
+	}
+	return $res;
     }
-}
 
-/**
- * [FUNCTION] ユーザID確認
- * 
- * ユーザIDの記述について確認します。<br>
- * 【判定条件】記入しようとしているユーザIDがすでに登録されているか かつ 半角英数字[数字・英字組み合わせ]で5-20文字を遵守しているか<br>
- * （※）ユーザIDは大文字・小文字が区別されます。
- * 
- * @param string $userid ユーザID（手続き元）
- * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
- */
-function check_userid($userid): string {
-    $res = '';
-    $result = select(true, "GSC_USERS", "COUNT(*) AS USERCOUNT", "WHERE USERID = '$userid'");
-    if ($result && $result['USERCOUNT'] >= 1) {
-	$res = '<li>ユーザIDが重複しています。</li>';
+    /**
+     * [GET] ユーザID確認
+     * 
+     * ユーザIDの記述について確認します。<br>
+     * 【判定条件】記入しようとしているユーザIDがすでに登録されているか かつ 半角英数字[数字・英字組み合わせ]で5-20文字を遵守しているか<br>
+     * （※）ユーザIDは大文字・小文字が区別されます。
+     * 
+     * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
+     */
+    private function check_userid(): string {
+	$res = '';
+	$result = select(true, 'GSC_USERS', 'COUNT(*) AS USERCOUNT', 'WHERE USERID = \'' . $this->userid . '\'');
+	if ($result && $result['USERCOUNT'] >= 1) {
+	    $res = '<li>ユーザIDが重複しています。</li>';
+	}
+	if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{5,20}+\z/', $this->userid)) {
+	    $res .= '<li>ユーザID入力ルールに違反しています。</li>';
+	}
+	return $res;
     }
-    if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{5,20}+\z/', $userid)) {
-	$res .= '<li>ユーザID入力ルールに違反しています。</li>';
-    }
-    return $res;
-}
 
-/**
- * [FUNCTION] パスワード確認
- * 
- * パスワードの記述について確認します。<br>
- * 【判定条件】半角英数字・記号($, _ のみ)を用いて10-30文字の範囲で記述しているか
- * 
- * @param string $pass パスワード（手続き元）
- * @param string $r_pass パスワードの確認（手続き元）
- * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
- */
-function check_password($pass, $r_pass) {
-    if (!preg_match('/\A(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)(?=.*?[$_])[a-zA-Z\d$_]{10,30}+\z/', $pass)) {
-	return '<li>パスワードルールに違反しています。</li>';
+    /**
+     * [GET] パスワード確認
+     * 
+     * パスワードの記述について確認します。<br>
+     * 【判定条件】半角英数字・記号($, _ のみ)を用いて10-30文字の範囲で記述しているか
+     * 
+     * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
+     */
+    private function check_password() {
+	$res = '';
+	if (!preg_match('/\A(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)(?=.*?[$_])[a-zA-Z\d$_]{10,30}+\z/', $this->pass)) {
+	    $res .= '<li>パスワードルールに違反しています。</li>';
+	}
+	if ($this->pass != $this->r_pass) {
+	    $res .= '<li>確認用パスワードが間違っています。</li>';
+	}
+	return $res;
     }
-    if ($pass != $r_pass) {
-	return '<li>確認用パスワードが間違っています。</li>';
-    } else {
-	return '';
-    }
-}
 
-/**
- * [FUNCTION] 権限確認
- * 
- * 権限の記述について確認します。
- * 【判定条件】0（VCServer）, 1（VCHost）のいずれかが代入されていること
- * 
- * @param int $per 権限値（手続き元）
- * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
- */
-function check_permission($per) {
-    if (!isset($per) && (($per == 0) || ($per == 1))) {
-	return '<li>権限を選択してください。</li>';
-    } else {
-	return '';
+    /**
+     * [GET] 権限確認
+     * 
+     * 権限の記述について確認します。
+     * 【判定条件】0（VCServer）, 1（VCHost）のいずれかが代入されていること
+     * 
+     * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
+     */
+    private function check_permission() {
+	$res = '';
+	if (!isset($this->per) && (($this->per == 0) || ($this->per == 1))) {
+	    $res .= '<li>権限を選択してください。</li>';
+	}
+	return $res;
     }
 }

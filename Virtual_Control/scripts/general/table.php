@@ -28,7 +28,7 @@ class Table extends loader {
      */
     public function start_table($table_id, $table_title_icon, $table_title, $title_type = 3) {
 	return '<div id="' . $table_id . '">'
-		. '<h' . $title_type . ' class="text-left text-body">'
+		. '<h' . $title_type . ' class="vc-title text-left text-body">'
 		. '<i class="fas fa-fw fa-' . $table_title_icon . '"></i>'
 		. $table_title . '</h' . $title_type . '>'
 		. '<table class="table table-hover">'

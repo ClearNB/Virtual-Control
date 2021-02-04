@@ -1,19 +1,18 @@
 /* global MIB_GROUP_SELECT, MIB_GROUP_SELECT_INIT, fm_ld, ajax_dynamic_post, fm_fl, MIB_SUB_SELECT, OPTION_BACK */
 
 var r_data = 0;
-var f_id = new functionID();
 
 function mib_data_get(fdata = '', duration = 400, iswait = true) {
-    if (f_id.getFunctionIDRow === OPTION_BACK) {
+    if (getFunctionID() === 0) {
         animation_to_sites('data_output', 400, '../');
     } else {
-        if (f_id.getFunctionIDRow === MIB_GROUP_SELECT || f_id.getFunctionIDRow === MIB_GROUP_SELECT_INIT || f_id.getFunctionIDRow === MIB_SUB_SELECT) {
+        if (getFunctionID() === 20 || getFunctionID() === 21) {
             r_data = 0;
         }
         if (fdata === '') {
             fdata = [];
         }
-        fdata.push({'name': 'request_id', 'value': f_id.getFunctionIDRow});
+        fdata.push({'name': 'request_id', 'value': getFunctionID()});
         fdata.push({'name': 'request_data_id', 'value': r_data});
         if (iswait) {
             animation('data_output', duration, fm_ld);
@@ -40,11 +39,14 @@ function mib_data_get(fdata = '', duration = 400, iswait = true) {
             }
             animation(target, 400, data['PAGE']);
         });
-    }
+        if (getFunctionID() % 10 === 0) {
+            r_data = 0;
+        }
+}
 }
 
 $(document).ready(function () {
-    f_id.change_mib_group_select_init();
+    change_mib_group_select_init();
     mib_data_get('', 0);
 });
 
@@ -52,10 +54,10 @@ $(document).ready(function () {
 $(document).on('click', 'button[id^="bt_po_bk"]', function () {
     switch ($(this).attr('id')) {
         case 'bt_po_bk_gr':
-            f_id.change_mib_group_select();
+            change_mib_group_select();
             break;
         case 'bt_po_bk_sb':
-            f_id.change_mib_sub_select();
+            change_mib_sub_select();
             break;
     }
     mib_data_get();
@@ -67,19 +69,19 @@ $(document).on('click', 'button[id^="bt_sl"]', function () {
     if (new RegExp("(cr)$").test(id)) {
         switch (id) {
             case 'bt_sl_gr_cr':
-                f_id.change_mib_group_create();
+                change_mib_group_create();
                 break;
             case 'bt_sl_sb_cr':
-                f_id.change_mib_sub_create();
+                change_mib_sub_create();
                 break;
         }
     } else if (new RegExp("(bk)$").test(id)) {
         switch (id) {
             case 'bt_sl_gr_bk':
-                f_id.change_option_back();
+                change_option_back();
                 break;
             case 'bt_sl_sb_bk':
-                f_id.change_mib_group_select();
+                change_mib_group_select();
                 break;
         }
     } else if (new RegExp("(go|ed|dl)$").test(id)) {
@@ -87,22 +89,22 @@ $(document).on('click', 'button[id^="bt_sl"]', function () {
             r_data = $('input[name="request_data_id"]:checked').val();
             switch (id) {
                 case 'bt_sl_gr_go':
-                    f_id.change_mib_sub_select_init();
+                    change_mib_sub_select_init();
                     break;
                 case 'bt_sl_gr_ed':
-                    f_id.change_mib_group_edit();
+                    change_mib_group_edit();
                     break;
                 case 'bt_sl_gr_dl':
-                    f_id.change_mib_group_delete();
+                    change_mib_group_delete();
                     break;
                 case 'bt_sl_sb_go':
-                    f_id.change_mib_node_edit_init();
+                    change_mib_node_edit_init();
                     break;
                 case 'bt_sl_sb_ed':
-                    f_id.change_mib_sub_edit();
+                    change_mib_sub_edit();
                     break;
                 case 'bt_sl_sb_dl':
-                    f_id.change_mib_sub_delete();
+                    change_mib_sub_delete();
                     break;
             }
         }
@@ -114,23 +116,22 @@ $(document).on('click', 'button[id^="bt_sl"]', function () {
 $(document).on('click', 'button[id^="bt_ed"]', function () {
     switch ($(this).attr('id')) {
         case 'bt_ed_bk_gr':
-            f_id.change_mib_group_edit();
+            change_mib_group_edit();
             break;
         case 'bt_ed_gr_id':
-            f_id.change_mib_group_edit_oid();
+            change_mib_group_edit_oid();
             break;
         case 'bt_ed_gr_nm':
-            f_id.change_mib_group_edit_name();
+            change_mib_group_edit_name();
             break;
-
         case 'bt_ed_bk_sb':
-            f_id.change_mib_sub_edit();
+            change_mib_sub_edit();
             break;
         case 'bt_ed_sb_id':
-            f_id.change_mib_sub_edit_oid();
+            change_mib_sub_edit_oid();
             break;
         case 'bt_ed_sb_nm':
-            f_id.change_mib_sub_edit_name();
+            change_mib_sub_edit_name();
             break;
     }
     mib_data_get();
@@ -164,15 +165,15 @@ $(document).on('click', '#bt_cf_sb, #bt_cf_bk, #bt_at_bk', function () {
 });
 
 $(document).on('click', '#bt_cs_bk', function () {
-    switch (parseInt(f_id.getFunctionIDRow / 10)) {
+    switch (parseInt(getFunctionID() / 10)) {
         case 2:
-            f_id.change_mib_group_select_init();
+            change_mib_group_select_init();
             break;
         case 3:
-            f_id.change_mib_sub_select();
+            change_mib_sub_select();
             break;
         case 4:
-            f_id.change_mib_node_edit();
+            change_mib_node_edit();
             break;
     }
     mib_data_get();

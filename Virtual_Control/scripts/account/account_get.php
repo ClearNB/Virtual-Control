@@ -20,72 +20,51 @@ $pass = post_get_data('in_ac_ps');
 $r_pass = post_get_data('in_ac_ps_rp');
 $a_pass = post_get_data('in_at_ps');
 
-$res = ['SELECTED' => 0, 'PAGE' => ''];
+$code = 999;
+$data = '要求されたデータはサーバ側で処理されませんでした';
 
 $page = new AccountPage();
-$result_page = $page->getFail();
 
 if ($f_id && session_chk() == 0) {
-    $code = 0;
     switch ($f_id) {
 	case 1: //SELECT
 	    initialize();
 	    $data = ACCOUNTData::get_all_users();
 	    if ($data) {
 		session_create('gsc_account', $data);
+		$code = 1;
 		$table = new AccountTable($data);
-		$table_data = $table->generate_table();
-		$result_page = $page->getSelect($table_data);
+		$data = $table->generate_table();
 	    }
 	    break;
-	case 2: //CREATE
+	case 3: //EDIT-SELECT
+	    $s_data = ($d_tp == 0 && $p_id) ? set_selectdata(1, $p_id) : get_sdata();
+	    $data = (isset($s_data['SELECT'])) ? $s_data['SELECT'] : $data;
+	    $code = (isset($s_data['SELECT'])) ? 3 : $code;
+	    break;
+	case 2: case 4: case 5: case 6: case 7:
+	    $type_code = ($f_id == 2) ? 0 : (($f_id == 7) ? 2 : 1);
 	    if ($d_tp == 1) {
-		$data = get_sdata();
-		$res = set_function(0, $data, ['F_ID' => $f_id, 'P_ID' => $p_id, 'USERID' => $userid, 'USERNAME' => $username, 'A_PASS' => $a_pass, 'PASS' => $pass, 'R_PASS' => $r_pass, 'PERMISSION' => $permission]);
+		$s_data = get_sdata();
+		$res_data = set_function($type_code, $s_data, ['F_ID' => $f_id, 'P_ID' => $p_id, 'USERID' => $userid, 'USERNAME' => $username, 'A_PASS' => $a_pass, 'PASS' => $pass, 'R_PASS' => $r_pass, 'PERMISSION' => $permission]);
+		$code = $res_data['CODE'];
+		$data = isset($res_data['DATA']) ? $res_data['DATA'] : '';
 	    } else if ($d_tp == 0) {
-		$result_page = $page->getCreate();
-	    }
-	    break;
-	case 3: //EDIT SELECT
-	    if ($d_tp == 0 && $p_id) {
-		$data = set_selectdata(1, $p_id);
-		if ($data) {
-		    $result_page = $page->getEditSelect($data['SELECT']);
-		}
-	    } else if ($d_tp == 0) {
-		$data = get_sdata();
-		if (isset($data['SELECT'])) {
-		    $result_page = $page->getEditSelect($data['SELECT']);
-		}
-	    }
-	    break;
-	case 4: //EDIT ID
-	case 5: //EDIT NAME
-	case 6: //EDIT PASS
-	    $data = get_sdata();
-	    if ($d_tp == 1) { //ACCOUNT_SET
-		$res = set_function(1, $data, ['F_ID' => $f_id, 'P_ID' => $p_id, 'USERID' => $userid, 'USERNAME' => $username, 'A_PASS' => $a_pass, 'PASS' => $pass, 'R_PASS' => $r_pass, 'PERMISSION' => $permission]);
-	    } else if ($d_tp == 0) {
-		$result_page = $page->getEdit($f_id, $data['SELECT']);
-	    }
-	    break;
-	case 7; //DELETE
-	    $data = get_sdata();
-	    if ($d_tp == 1) {
-		$res = set_function(2, $data, ['F_ID' => $f_id, 'P_ID' => $p_id, 'USERID' => $userid, 'USERNAME' => $username, 'A_PASS' => $a_pass, 'PASS' => $pass, 'R_PASS' => $r_pass, 'PERMISSION' => $permission]);
-	    } else if ($d_tp == 0 && $p_id) {
-		$data = set_selectdata(2, $p_id);
-		$result_page = $page->getDelete($data['SELECT']);
+		$s_data = ($p_id) ? set_selectdata($type_code, $p_id) : get_sdata();
+		$data = (isset($s_data['SELECT'])) ? $s_data['SELECT'] : (($f_id == 2) ? '' : $data);
+		$code = (isset($s_data['SELECT']) || $f_id == 2) ? $f_id : $code;
 	    }
 	    break;
     }
 }
-if ($res['SELECTED'] != 1) {
-    $res['PAGE'] = $result_page;
-}
 
-if (isset($res['SELECTED'])) {
-    unset($res['SELECTED']);
+$res = ['PAGE' => ''];
+
+//FORM WARN
+if ($code == 12 || $code == 15) {
+    $res = ['CODE' => 2, 'PAGE' => $data];
+} else {
+    $res['PAGE'] = $page->get_page_byid($code, $data);
 }
 
 //ob_get_clean();
@@ -145,30 +124,28 @@ function set_accountdata($type, $value) {
 }
 
 function set_function($type, $data, $values) {
-    $res = '';
+    $res = ['CODE' => 11, 'DATA' => '例外が発生しました'];
     $type_text = get_datatype($type);
-    $page = new AccountPage();
     if (($type == 0 || isset($data['SELECT'])) && $type_text) {
 	$si_data = set_accountdata($type, $values);
 	if ($si_data) {
 	    $s_data = $si_data['SELECT'][$type_text];
 	    $set = new AccountSet($s_data['F_ID'], $s_data['P_ID'], $s_data['USERID'], $s_data['USERNAME'], $s_data['A_PASS'], $s_data['PASS'], $s_data['R_PASS'], $s_data['PERMISSION']);
-	    $set->check_functionid();
-	    $runner = $set->run();
-	    switch ($runner['CODE']) {
-		case 0: $res = ['SELECTED' => 1, 'PAGE' => $page->getCorrect()];
+	    $run = $set->run();
+	    switch ($run['CODE']) {
+		case 0: $res = ['CODE' => 10];
 		    break;
-		case 1: $res = ['SELECTED' => 1, 'PAGE' => $page->getFail('データベースサーバへの接続に失敗しました。')];
+		case 1: $res = ['CODE' => 11, 'DATA' => $run['DATA']];
 		    break;
-		case 2: $res = ['SELECTED' => 1, 'ID' => 'fm_warn', 'CODE' => 2, 'PAGE' => $runner['ERR_TEXT']];
+		case 2: $res = ['CODE' => 12, 'DATA' => $run['DATA']];
 		    break;
-		case 3: $res = ['SELECTED' => 1, 'PAGE' => $page->getUserFail()];
+		case 3: $res = ['CODE' => 13];
 		    break;
-		case 4: $res = ['SELECTED' => 1, 'PAGE' => $page->fm_at()];
+		case 4: $res = ['CODE' => 14];
 		    break;
-		case 5: $res = ['SELECTED' => 1, 'ID' => 'fm_warn', 'CODE' => 2, 'PAGE' => '認証エラーが発生しました。'];
+		case 5: $res = ['CODE' => 15, 'DATA' => $run['DATA']];
 		    break;
-		case 6: $res = ['SELECTED' => 1, 'PAGE' => $page->getConfirm($runner['CONFIRM_DATA'])];
+		case 6: $res = ['CODE' => 16, 'DATA' => $run['CONFIRM_DATA']];
 		    break;
 	    }
 	}

@@ -89,5 +89,4 @@ class AGENTData {
 	    return '<新規>';
 	}
     }
-
 }

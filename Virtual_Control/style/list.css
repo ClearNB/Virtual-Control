@@ -1,78 +1,60 @@
-.list {
-    margin: 0;
+ul, ol, dl {
     padding: 0;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    list-style-type: none;
-    justify-content: flex-start;
-    align-items: flex-start;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
-.list-elem {
-    display: inline-block;
-    margin: 0;
+ul.black-view, ol.black-view, ul.orange-view, ol.orange-view {
     padding: 0;
-    padding-bottom: 1rem;
-    width:  calc(100% / 2);
-}
-
-.list-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-radius: .25rem;
     position: relative;
-    border: .2rem solid #ff5a00;
-    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-    transform: translateZ(0);
 }
 
-.list-column:focus, .list-column:hover {
-    cursor: pointer;
-    border: .2rem solid #000;
+ul.black-view li, ol.black-view li {
+    color: #fff;
+    border-left: 0.5rem solid #000;
+    border-bottom: 0.2rem solid #000;
+    border-top: 0.2rem solid #000;
+    border-right: 0.4rem solid #000;
+    border-radius: 0 0.5rem 0 0;
+    margin-bottom: 0.3rem;
+    line-height: 1.5;
+    padding: 0.3em;
+    list-style-type: none !important;
+    overflow-wrap: anywhere;
     background-color: #ff4500;
 }
 
-.list-icon {
-    text-decoration: none;
-    padding: .5rem;
+ul.black-view li.all-view h5, ol.black-view li.all-view h5 {
+    padding: 0.5rem;
+    background-color: #ff4e00;
+    border-left: 0.5rem solid #000;
+    border-bottom: 0.2rem solid #000;
+    border-top: 0.2rem solid #000;
+    border-right: 0.4rem solid #000;
+    border-radius: 0 0.5rem 0 0;
+    margin-bottom: 0.4rem;
+}
+
+ul.black-view li.all-view, ol.black-view li.all-view {
     color: #fff;
-    width: 100%;
-    align-items: center;
-    flex-direction: column;
-    display: flex;
-    border-radius: .25rem;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    border-left: 0.5rem solid #000;
+    border-bottom: 0.2rem solid #000;
+    border-top: 0.2rem solid #000;
+    border-right: 0.4rem solid #000;
+    border-radius: 0 0.5rem 0 0;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    padding: 0.5em;
+    list-style-type: none !important;
+    overflow-wrap: anywhere;
+    background-color: #ff5a00;
 }
 
-.icon-48 {
-    font-size: 48px;
-}
-
-.icon-text {
-    display: block;
+ul.orange-view li, ol.orange-view li {
     color: #fff;
-    font-size: .8rem;
-    text-align: center;
+    border-left: solid 6px #ff5a00;
+    line-height: 1.5;
+    padding: 0.5em;
+    list-style-type: none !important;
+    overflow-wrap: anywhere;
 }
-
-@media screen and (min-width: 77.5rem) {
-    .list-elem {
-	width: calc(100% / 9);
-    }
-}
-
-@media screen and (min-width: 60em) {
-    .list-elem {
-	width: calc(100% / 6);
-    }
-}
-
-@media screen and (max-width: 60em) and (min-width: 30em) {
-    .list-elem {
-	width: calc(100% / 4);
-    }
-}
-

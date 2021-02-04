@@ -14,7 +14,6 @@
     transition: all 0.2s ease;
     -moz-transition: all 0.2s ease;
     -webkit-transition: all 0.2s ease;
-
 }
 
 .vc-back-card:hover, .vc-back-card:focus {

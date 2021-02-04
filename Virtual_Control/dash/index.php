@@ -6,4 +6,4 @@ session_action_user();
 $getdata = session_get_userdata();
 
 $ld = new loader();
-echo $ld->getPage('Virtual Control', 'DASH', 'align-justify', $getdata['PERMISSION'], 'dash.js');
+$ld->getPage('Virtual Control', 'DASH', 'align-justify', $getdata['PERMISSION'], 'dash.js');

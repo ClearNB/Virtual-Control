@@ -1,10 +1,8 @@
 /* global ajax_dynamic_post, fm_ld */
 
-var f_id = new functionID();
-
 function page_get() {
     var fdata = [];
-    fdata.push({'name': 'f_id', 'value': f_id.getFunctionIDRow});
+    fdata.push({'name': 'f_id', 'value': getFunctionID()});
     animation('data_output', 0, fm_ld);
     ajax_dynamic_post('/scripts/links/links_get.php', fdata).then(function (data) {
         animation('data_output', 400, data['PAGE']);
@@ -12,7 +10,7 @@ function page_get() {
 }
 
 $(document).ready(function () {
-    f_id.change_dash();
+    change_dash();
     page_get();
 });
 

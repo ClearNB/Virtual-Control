@@ -266,5 +266,4 @@ class SNMPData {
 	    return '';
 	}
     }
-
 }
