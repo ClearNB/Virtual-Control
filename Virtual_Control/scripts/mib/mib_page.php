@@ -1,8 +1,8 @@
 <?php
 
-include_once __DIR__ . '/../general/former.php';
+include_once __DIR__ . '/../general/page.php';
 
-class MIBPage extends form_generator {
+class MIBPage extends Page {
 
     private static $ruleData = [
 	'GROUP_OID' => '【判定条件】半角数字（0〜9）と記号（.）を用いて255文字まで, グループOIDは一意で、配下に依存していない必要があります<br>【例】1.3.6.1.2.1',
@@ -19,89 +19,85 @@ class MIBPage extends form_generator {
 	'SUB_NAME' => 'sliders-h'
     ];
 
-    public function __construct() {
-	parent::__construct('fm_pg');
+    /**
+     * [SET] CONSTRUCTOR
+     * 
+     * オブジェクトコンストラクタです
+     * 
+     * @param int $code レスポンスコードを指定します
+     * @param string $data レスポンスデータを指定します
+     * @param string $id フォームIDを指定します（Default: 'fm_pg'）
+     */
+    public function __construct($code, $data, $id = 'fm_pg') {
+	parent::__construct($code, $data, $id);
     }
 
-    public function get_mibpage_bycode($response_code, $response_data) {
+    /**
+     * [GET] MIBページデータ取得
+     * 
+     * レスポンスコードより識別される情報でページの分岐を行います<br>
+     * 継承により分岐の拡張ができます
+     * 
+     * @return string レスポンスコードによって取得するページを分岐し、ページをHTMLの文字列で返します
+     */
+    public function setPageFunc() {
 	$res_page = '';
-	switch ($response_code) {
+	switch ($this->response_code) {
 	    //GENERAL
 	    case 0: $res_page = $this->getCorrect();
-		break;       //COMPLETE
-	    case 1: $res_page = $this->getError($response_data);
+		break;     //COMPLETE
+	    case 1: $res_page = $this->getError();
 		break;     //ERROR (GENERAL)
 	    case 2: $res_page = $this->getQueryError();
 		break;     //ERROR (QUERY)
-	    case 3: case 5: $res_page = $response_data;
+	    case 3: case 5: $res_page = $this->response_data;
 		break;     //ERROR (INPUT, AUTH)
 	    case 4: $res_page = $this->getAuth();
 		break;     //AUTH
-	    case 6: $res_page = $this->getConfirm($response_data);
+	    case 6: $res_page = $this->getConfirm();
 		break;     //CONFIRM
 	    //GROUP
-	    case 10: $res_page = $this->getGroupSelect($response_data);
+	    case 10: $res_page = $this->getGroupSelect();
 		break;     //SELECT
 	    case 11: $res_page = $this->getGroupCreate();
 		break;      //CREATE
-	    case 12: $res_page = $this->getGroupEditSelect($response_data);
+	    case 12: $res_page = $this->getGroupEditSelect();
 		break;     //EDIT SELECT
-	    case 13: $res_page = $this->getGroupEditOID($response_data);
+	    case 13: $res_page = $this->getGroupEditOID();
 		break;     //EDIT OID
-	    case 14: $res_page = $this->getGroupEditName($response_data);
+	    case 14: $res_page = $this->getGroupEditName();
 		break;     //EDIT NAME
-	    case 15: $res_page = $this->getGroupDelete($response_data);
+	    case 15: $res_page = $this->getGroupDelete();
 		break;     //DELETE
 	    //SUB
-	    case 20: $res_page = $this->getSubSelect($response_data);
+	    case 20: $res_page = $this->getSubSelect();
 		break;     //SELECT
-	    case 21: $res_page = $this->getSubCreate($response_data);
+	    case 21: $res_page = $this->getSubCreate();
 		break;     //CREATE
-	    case 22: $res_page = $this->getSubEditSelect($response_data);
+	    case 22: $res_page = $this->getSubEditSelect();
 		break;     //EDIT SELECT
-	    case 23: $res_page = $this->getSubEditOID($response_data);
+	    case 23: $res_page = $this->getSubEditOID();
 		break;     //EDIT OID
-	    case 24: $res_page = $this->getSubEditName($response_data);
+	    case 24: $res_page = $this->getSubEditName();
 		break;     //EDIT NAME
-	    case 25: $res_page = $this->getSubDelete($response_data);
+	    case 25: $res_page = $this->getSubDelete();
 		break;     //DELETE
 	    //NODE
 	    case 30:
+		$res_page = $this->getNodeEditSelect();
 		break;     //EDIT
 	    case 31:
-		break;     //EDIT ADD & EDIT (EMPTY)
 	    case 32:
-		break;     //EDIT ADD & EDIT (ADD AS NORMAL)
 	    case 33:
-		break;     //EDIT ADD & EDIT (ADD AS TABLE)
 	    case 34:
-		break;     //EDIT ADD & EDIT (ADD AS TABLE DATA)
 	    case 35:
-		break;     //EDIT ADD & EDIT (ICON SELECT)
+		break;     //EDIT ADD & EDIT (31: ~TYPE_SELECT, 32: ~)
 	    case 36:
 		break;     //EDIT DELETE
 	    default: $res_page = $this->getError();
 		break;
 	}
-	$this->reset();
 	return $res_page;
-    }
-
-    public function getCorrect() {
-	$this->SubTitle('更新に成功しました！', 'ボタンを押して変更が反映したか確認しましょう！', 'check-square');
-	$this->Button('bt_cs_bk', '戻る', 'button', 'chevron-circle-left');
-	return $this->Export();
-    }
-
-    public function getError($log = '〈ログなし〉') {
-	$logs = [
-	    'データベースとの接続をご確認ください。',
-	    '要求しているデータと実際のデータを比べ、記述や内容が正しいかどうかをご確認ください。',
-	    'アカウントセッションが切れていると思われます。もう一度ログインし直してから再試行してください。',
-	    $log
-	];
-	$this->fm_fl($logs, ['bt_fl_rt', 'ページを再読込する', 'button', 'sync-alt'], 'データベースエラー');
-	return $this->Export();
     }
 
     public function getQueryError() {
@@ -220,6 +216,7 @@ class MIBPage extends form_generator {
 	$this->openList();
 	$this->setSelectedGroupData($group);
 	$this->closeList();
+	$this->SubTitle('MIBサブツリー選択', '以下からMIBサブツリーを選択し、管理を行ってください。', 'mouse');
 	$this->openFormGroup();
 	if (sizeof($group_sub) == 0) {
 	    $this->SubTitle('サブツリーがありません', 'サブツリーがないため、選択することができません。サブツリーを作成しましょう。', 'question-circle');
@@ -311,17 +308,13 @@ class MIBPage extends form_generator {
 	return $this->Export();
     }
 
-    public function getNodeEditTop() {
-	
-    }
-    
     public function getNodeEditForm($data) {
 	$group = $data['GROUP']['STORE'];
 	$sub = $data['SUB']['STORE'];
 	$node = (isset($data['NODE']['INPUT'])) ? $data['NODE']['INPUT'] : (isset($data['NODE']['STORE']) ? $data['NODE']['INPUT'] : '');
 	$type = $data['TYPE'];
 	$this->Button('bt_po_bk_nd', 'ノード編集トップに戻る', 'button', 'chevron-circle-left');
-	switch($type) {
+	switch ($type) {
 	    case 0: //CREATE
 		$this->SubTitle('ノード要素追加', 'ノード要素を以下の通りに追加します。', 'object-group');
 		$this->setSelectedNodeData($group, $sub, $node);
@@ -331,18 +324,83 @@ class MIBPage extends form_generator {
 	}
     }
 
+    public function getNodeEditSelect($data) {
+	$group = $data['GROUP']['STORE'];
+	$sub = $data['SUB']['STORE'];
+	$node = $data['NODE']['PARENT'];
+	$this->ButtonIcon('bt_nd_cr', '追加', 'plus');
+	$this->Button('bt_sl_nd_bk', 'サブツリー選択に戻る', 'button', 'chevron-circle-left');
+	$this->SubTitle('ノード編集', 'ノード単位で追加・編集・削除を行うことができます。', 'edit');
+	$this->openList();
+	$this->setSelectedSubData($group, $sub);
+	$this->closeList();
+
+	$this->OpenCaption();
+	$this->SubTitle('ノード一覧', '追加は左下のボタン、編集・削除は以下の一覧から対象のノードをクリックしてください。', 'object-group');
+	$this->openList();
+	$open_flag = false;
+
+	$size = 0;
+	foreach ($node as $n) {
+	    $size += ($n['NODE_TYPE'] != 2 && $n['NODE_TYPE'] != 5) ? 1 : 0;
+	}
+	$i = 0;
+
+	foreach ($node as $n) {
+	    $format = '【' . $n['NODE_OID'] . '】' . $n['NODE_JAPTLANS'] . '（' . $n['NODE_DESCR'] . '）';
+	    if ($i % 10 == 0) {
+		$start = $i + 1;
+		$end = ($start + 9 < $size) ? $start + 9 : $size;
+		$this->openDetails('【1】' . $sub['SUB_OID'] . ' ( .' . $start . ' ~ .' . $end . ' )');
+	    }
+	    switch ($n['NODE_TYPE']) {
+		case 3: //NORMAL (TRAP)
+		    $format = 'TRAP: ' . $format;
+		case 0: //NORMAL
+		    $format = '<i class="fas fa-fw fa-lx fa-' . $n['NODE_ICON_NAME'] . '"></i>' . $format;
+		    if ($open_flag) {
+			$this->closeListElem();
+			$open_flag = false;
+		    }
+		    $this->addList($format, 'nd-' . $n['NODE_ID'], true);
+		    $i += 1;
+		    break;
+
+		case 4: //TABLE (TRAP)
+		    $format = 'TRAP: ' . $format;
+		case 1: //TABLE
+		    if ($open_flag) {
+			$this->closeListElem();
+		    }
+		    $this->openListElem('[TABLE]' . $format, 'nd-' . $n['NODE_ID'], true);
+		    $open_flag = true;
+		    $i += 1;
+		    break;
+		case 5: //TABLE DATA (TRAP)
+		    $format = 'TRAP: ' . $format;
+		case 2: //TABLE DATA
+		    $format = '<i class="fas fa-fw fa-lx fa-' . $n['NODE_ICON_NAME'] . '"></i>' . $format;
+		    $this->addList($format, 'nd-' . $n['NODE_ID'], true);
+		    break;
+	    }
+	}
+	$this->closeList();
+	$this->CloseCaption();
+	return $this->Export();
+    }
+
     public function getNodeEditForm1($data) {
 	
     }
-    
+
     public function getNodeEditForm2() {
 	
     }
-    
+
     public function getNodeEditForm3() {
 	
     }
-    
+
     public function getNodeEditForm4() {
 	
     }
@@ -367,10 +425,13 @@ class MIBPage extends form_generator {
     }
 
     public function setSelectedNodeData($group, $sub, $node) {
+	$this->openList();
 	$this->openListElem('選択ノード情報');
 	$this->addList('OID: ' . $node['NODE_OID'] . ', NAME: ' . $node['NODE_NAME']);
 	$this->addList('所属グループ: (OID: ' . $group['GROUP_OID'] . ', NAME: ' . $group['GROUP_NAME'] . ')');
 	$this->addList('所属サブツリー: (OID: ' . $sub['SUB_OID'] . ', NAME: ' . $sub['SUB_NAME'] . ')');
 	$this->closeListElem();
+	$this->closeList();
     }
+
 }

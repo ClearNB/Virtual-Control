@@ -1,6 +1,6 @@
 <?php
 
-class MIBSet {
+class AgentSet {
 
     /**
      * [VAR] リザルトフォーム
@@ -20,15 +20,18 @@ class MIBSet {
     private $result_form = [
 	['CODE' => 0],
 	['CODE' => 1],
-	['CODE' => 2, 'ERR_TEXT' => "手続きに失敗しました。<br>手続き上で正しく入力してください。<br>システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。"],
-	['CODE' => 2, 'ERR_TEXT' => "入力チェックエラーです。<br>以下の入力したデータをご確認ください。"],
-	['CODE' => 1, 'ERR_TEXT' => "認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。"],
+	['CODE' => 2, 'ERR_TEXT' => '<ul class="black-view"><li>手続きに失敗しました。</li><li>手続き上で正しく入力してください。システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。</li></ul>'],
+	['CODE' => 2, 'ERR_TEXT' => '<ul class="black-view"><li>入力チェックエラーです。以下の入力したデータをご確認ください。</li>'],
+	['CODE' => 1, 'ERR_TEXT' => '認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。'],
 	['CODE' => 3],
 	['CODE' => 4],
 	['CODE' => 5],
-	['CODE' => 6],
+	['CODE' => 6, 'CONFIRM_DATA' => ''],
     ];
-    
+    private $agenthost;
+    private $pre_agentid;
+    private $community;
+    private $mibs;
     private $a_pass;
     private $funid;
 
@@ -74,7 +77,7 @@ class MIBSet {
 	} else {
 	    $set_fun = $this->check_correct_functionid();
 	    if ($set_fun != $this->funid) {
-		$set_fun = 7;
+		$set_fun = 18;
 	    }
 	}
 	$this->funid = $set_fun;
@@ -83,15 +86,15 @@ class MIBSet {
     public function check_correct_functionid() {
 	$set_fun = 0;
 	if ($this->agenthost && $this->community && $this->mibs) {
-	    $set_fun = 1;
+	    $set_fun = 12;
 	} else if ($this->pre_agentid && $this->agenthost) {
-	    $set_fun = 2;
+	    $set_fun = 14;
 	} else if ($this->pre_agentid && $this->community) {
-	    $set_fun = 3;
+	    $set_fun = 15;
 	} else if ($this->pre_agentid && $this->mibs) {
-	    $set_fun = 4;
+	    $set_fun = 16;
 	} else if ($this->pre_agentid) {
-	    $set_fun = 5;
+	    $set_fun = 17;
 	}
 	return $set_fun;
     }
@@ -110,18 +113,18 @@ class MIBSet {
     public function run() {
 	$result_code = 0;
 	switch ($this->funid) {
-	    case 1:
+	    case 12:
 		$result_code = $this->create();
 		break;
-	    case 2:
-	    case 3:
-	    case 4:
+	    case 14:
+	    case 15:
+	    case 16:
 		$result_code = $this->edit();
 		break;
-	    case 5:
+	    case 17:
 		$result_code = $this->delete();
 		break;
-	    case 7:
+	    case 18:
 		$result_code = 2;
 		break;
 	    case 999:
@@ -154,7 +157,7 @@ class MIBSet {
 		    $agentid = $sel['AGENTID'];
 		    //4: INSERT文の実行（GSC_AGENT_MIB）
 		    foreach ($this->mibs as $m) {
-			$res3 = insert("GSC_AGENT_MIB", ["AGENTID", "SUBID"], [$agentid, $m]);
+			$res3 = insert("GSC_AGENT_MIB", ["AGENTID", "SID"], [$agentid, $m]);
 			$flag &= $res3;
 			if (!$flag) {
 			    break;
@@ -200,7 +203,7 @@ class MIBSet {
     private function delete(): int {
 	if (session_auth()) {
 	    $res1 = delete("GSC_AGENT_MIB", "WHERE AGENTID = $this->pre_agentid");
-	    $res2 = delete("GSC_AGENT", "WHERE AGENTID = '$this->pre_agentid'");
+	    $res2 = delete("GSC_AGENT", "WHERE AGENTID = $this->pre_agentid");
 	    if ($res1 && $res2) {
 		$res_code = 0;
 	    } else {
@@ -213,24 +216,24 @@ class MIBSet {
     }
 
     private function check() {
-	$chk_text = '<ul class="black-view">[ERROR_LOG]</ul>';
+	$chk_text = '[ERROR_LOG]</ul>';
 	$chk = '';
 	switch ($this->funid) {
-	    case 1: //作成（ホスト・コミュニティ・MIB・重複確認）
+	    case 12: //作成（ホスト・コミュニティ・MIB・重複確認）
 		$chk .= check_host($this->agenthost);
 		$chk .= check_community($this->community);
 		$chk .= check_mib($this->mibs);
 		$chk .= check_duplicate($this->agenthost, $this->community);
 		break;
-	    case 2: //編集1（ホスト・重複確認）
+	    case 14: //編集1（ホスト・重複確認）
 		$chk .= check_host($this->agenthost);
 		$chk .= check_duplicate_onchange(0, $this->pre_agentid, $this->agenthost);
 		break;
-	    case 3: //編集2（コミュニティ・重複確認）
+	    case 15: //編集2（コミュニティ・重複確認）
 		$chk .= check_community($this->community);
 		$chk .= check_duplicate_onchange(1, $this->pre_agentid, $this->community);
 		break;
-	    case 4: //編集3（MIB確認）
+	    case 16: //編集3（MIB確認）
 		$chk .= check_mib($this->mibs);
 		break;
 	}
@@ -249,7 +252,7 @@ class MIBSet {
 	switch (session_auth_check($s_userid, $this->a_pass, true)) {
 	    case 0:
 		$res = 8;
-		$this->result_form[$res]['DATA'] = $this->generateList();
+		$this->result_form[$res]['CONFIRM_DATA'] = $this->generateList();
 		break;
 	    case 1:
 		$res = 1;
@@ -264,16 +267,16 @@ class MIBSet {
     private function editQuery() {
 	$flag = true;
 	switch ($this->funid) {
-	    case 2:
+	    case 14:
 		$flag &= update("GSC_AGENT", "AGENTHOST", $this->agenthost, "WHERE AGENTID = $this->pre_agentid");
 		break;
-	    case 3:
+	    case 15:
 		$flag &= update("GSC_AGENT", "COMMUNITY", $this->community, "WHERE AGENTID = $this->pre_agentid");
 		break;
-	    case 4:
+	    case 16:
 		$flag &= delete("GSC_AGENT_MIB", "WHERE AGENTID = $this->pre_agentid");
 		foreach ($this->mibs as $m) {
-		    $flag &= insert("GSC_AGENT_MIB", ["AGENTID", "SUBID"], [$this->pre_agentid, $m]);
+		    $flag &= insert("GSC_AGENT_MIB", ["AGENTID", "SID"], [$this->pre_agentid, $m]);
 		    if (!$flag) {
 			break;
 		    }
@@ -290,19 +293,19 @@ class MIBSet {
 	$column_list = ["<li>対象のエージェント: [AGENT_INFO]</li>", "<li>エージェントホスト: [HOST]</li>", "<li>コミュニティ名: [COMMUNITY]</li>", "<li>監視対象MIB: [MIBS_NAMES]</li>"];
 	$columns = [];
 	switch ($this->check_correct_functionid()) {
-	    case 1: $func = str_replace('[FUNCTION]', 'エージェント作成', $func);
+	    case 12: $func = str_replace('[FUNCTION]', 'エージェント作成', $func);
 		$columns = [1, 2, 3];
 		break;
-	    case 2: $func = str_replace('[FUNCTION]', 'エージェント編集（エージェントホスト）', $func);
+	    case 14: $func = str_replace('[FUNCTION]', 'エージェント編集（エージェントホスト）', $func);
 		$columns = [0, 1];
 		break;
-	    case 3: $func = str_replace('[FUNCTION]', 'エージェント編集（コミュニティ名）', $func);
+	    case 15: $func = str_replace('[FUNCTION]', 'エージェント編集（コミュニティ名）', $func);
 		$columns = [0, 2];
 		break;
-	    case 4: $func = str_replace('[FUNCTION]', 'エージェント編集（監視対象MIB）', $func);
+	    case 16: $func = str_replace('[FUNCTION]', 'エージェント編集（監視対象MIB）', $func);
 		$columns = [0, 3];
 		break;
-	    case 5: $func = str_replace('[FUNCTION]', 'エージェント削除', $func);
+	    case 17: $func = str_replace('[FUNCTION]', 'エージェント削除', $func);
 		$columns = [0];
 		break;
 	}
@@ -326,18 +329,21 @@ class MIBSet {
     }
 
     private function get_mib_text(): string {
-	$res = [];
+	$res = [''];
 
-	$mibs_text = implode(', ', $this->mibs);
-	$q1 = select(false, "GSC_MIB_SUB", "SUBOBJECTID, SUBNAME", "WHERE SUBID IN ($mibs_text)");
-	if ($q1) {
-	    while ($var = $q1->fetch_assoc()) {
-		array_push($res, "[(" . $var['SUBOBJECTID'] . ") " . $var["SUBNAME"] . "]");
+	$mb = new MIBData();
+	$data = $mb->getMIB(0, 0, $this->mibs);
+	if ($data) {
+	    foreach ($data['SUB'] as $k => $g) {
+		array_push($res, '【' . $data['GROUP'][$k]['GROUP_OID'] . '】' . $data['GROUP'][$k]['GROUP_NAME']);
+		foreach ($g as $s) {
+		    array_push($res, '▶ (' . $s['SUB_OID'] . ') ' . $s['SUB_NAME']);
+		}
 	    }
 	} else {
 	    $res = '（取得不可）';
 	}
-	return implode(', ', $res);
+	return implode('<br>', $res);
     }
 
 }
@@ -444,13 +450,15 @@ function check_community($com) {
  * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
  */
 function check_mib($mib): string {
-    if(!isset($mib)) {
+    if (!isset($mib)) {
 	return '<li>MIBが指定されていません。</li>';
     }
     $flag = true;
-    foreach($mib as $m) {
-	$flag &= select(true, "GSC_MIB_SUB", "SUBID", "WHERE SUBID = $m");
-	if(!$flag) { break; }
+    foreach ($mib as $m) {
+	$flag &= select(true, 'GSC_MIB_SUB', 'SID', 'WHERE SID = ' . $m);
+	if (!$flag) {
+	    break;
+	}
     }
     if (!$flag) {
 	return '<li>データベース内にないMIBサブツリーIDを検出しました。正しい登録はできません。</li>';

@@ -1,4 +1,4 @@
 <?php
-require_once __DIR__ . '/../session/session_chk.php';
+include_once __DIR__ . '/../general/session.php';
 
 session_action_scripts();

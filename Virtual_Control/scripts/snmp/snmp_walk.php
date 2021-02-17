@@ -10,10 +10,10 @@
  */
 include_once __DIR__ . '/../general/sqldata.php';
 include_once __DIR__ . '/../general/loader.php';
-include_once __DIR__ . '/snmptable.php';
-include_once __DIR__ . '/snmpdata.php';
-include_once __DIR__ . '/../session/session_chk.php';
-include_once __DIR__ . '/../mib/mibdata.php';
+include_once __DIR__ . '/../general/session.php';
+include_once __DIR__ . '/snmp_table.php';
+include_once __DIR__ . '/snmp_data.php';
+include_once __DIR__ . '/../mib/mib_data.php';
 
 session_action_scripts();
 
@@ -38,7 +38,7 @@ function get_walk_result($agentid) {
 	$res = convert_data($subdata['AGENTHOST'], $subdata['COMMUNITY'], $alldata);
 	$res['AGENTID'] = $agentid;
     } else {
-	$res = ['CODE' => 2, 'LOG' => ob_get_contents()];
+	$res = ['CODE' => 2, 'DATA' => ob_get_contents()];
     }
     return $res;
 }

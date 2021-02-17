@@ -1,3 +1,4 @@
+
 input, button, select, optgroup, textarea {
     margin: 0;
     font-family: 'JetBrainsMono', 'NotoSansJP Medium';
@@ -104,4 +105,45 @@ button.btn-vc-sm {
     button.btn-vc:focus, button.btn-vc:hover {
 	width: 100%;
     }
+}
+
+button.left_bottom {
+    position: fixed;
+    bottom: 0%;
+    left: 0%;
+    width: 5rem;
+    padding: 0;
+    border-radius: 50rem;
+    z-index: 999;
+    margin-left: 0.5rem;
+    text-align: center;
+    opacity: 50%;
+    
+    -webkit-transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+}
+
+button.left_bottom span {
+    display: none;
+    text-align: right;
+    vertical-align: super;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.2rem;
+    
+    -webkit-transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+}
+
+button.left_bottom:focus, button.left_bottom:hover {
+    width: 10rem;
+    opacity: 100%;
+    text-align: left;
+}
+
+button.left_bottom:focus span, button.left_bottom:hover span {
+    display: inline-block;
+    opacity: 100%;
 }

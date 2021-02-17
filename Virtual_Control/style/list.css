@@ -58,3 +58,15 @@ ul.orange-view li, ol.orange-view li {
     list-style-type: none !important;
     overflow-wrap: anywhere;
 }
+
+list-click {
+    cursor: pointer;
+}
+
+list-click:focus, list-click:hover {
+    background-color: #666;
+}
+
+list-click:active {
+    background-color: #333;
+}

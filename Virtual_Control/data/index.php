@@ -1,10 +1,3 @@
 <?php
-
-$requestmg = filter_input(INPUT_SERVER, 'HTTP_X_REQUESTED_WITH');
-
-$request = isset($requestmg) ? strtolower($requestmg) : '';
-if ($request !== 'xmlhttprequest') {
-    http_response_code(403);
-    header("Location: /error.php");
-    exit();
-}
+include_once __DIR__ . '/../scripts/general/session.php';
+session_action_scripts();

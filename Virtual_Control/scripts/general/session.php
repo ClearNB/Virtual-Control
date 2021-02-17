@@ -135,7 +135,7 @@ function session_action_user(): void {
 	    header('location: /error.php');
 	    exit();
 	    break;
-	case 2:
+	case 2: case 3:
 	    http_response_code(301);
 	    header('location: /logout');
 	    exit();
@@ -157,6 +157,11 @@ function session_action_guest(): void {
 	    header('location: /dash');
 	    exit();
 	    break;
+	case 3:
+	    http_response_code(301);
+	    header('location: /init.php');	    
+	    exit();
+	    break;
     }
 }
 
@@ -165,7 +170,7 @@ function session_action_guest(): void {
  * 
  * ユーザ判定を行います
  * 
- * return int 0..正常（ユーザである）, 1..異常（ユーザではない）, 2..異常（データベースまたはログイン状態）
+ * return int 0..正常（ユーザである）, 1..異常（ユーザではない）, 2..異常（データベースまたはログイン状態）, 3..整合性エラー（ユーザ未登録状態）
  */
 function session_chk(): int {
     session_start_once();
@@ -173,11 +178,11 @@ function session_chk(): int {
     if (session_exists('gsc_userid')) {
 	$userid = session_get_userid();
 	$res = select(true, "GSC_USERS", "LOGINSTATE", "WHERE USERID = '$userid'");
-	if ($res && $res['LOGINSTATE'] == 1) {
-	    $chk = 0;
-	} else {
-	    $chk = 2;
-	}
+	$chk = ($res && $res['LOGINSTATE'] == 1) ? 0 : 2;
+    }
+    if($chk == 2) {
+	$res = select(false, 'GSC_USERS', 'USERID');
+	$chk = ($res) ? 2 : 3;
     }
     return $chk;
 }

@@ -9,7 +9,7 @@
  * @package VirtualControl_scripts_snmp
  */
 include_once __DIR__ . '/../scripts/general/output.php';
-include_once __DIR__ . '/../scripts/session/session_chk.php';
+include_once __DIR__ . '/../scripts/general/session.php';
 
 if (session_chk() != 0) {
     header("Location: /error.php");

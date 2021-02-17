@@ -46,8 +46,8 @@ class WarnTable {
 	$this->s_data .= '</div></details>';
     }
 
-    private function getData($size) {
-	return ['TABLE' => $this->s_data, 'COUNT' => $size];
+    private function getData($id, $size) {
+	return ['ID' => $id, 'TABLE' => $this->s_data, 'COUNT' => $size];
     }
 
     private function resetData() {
@@ -72,7 +72,7 @@ class WarnTable {
 	    $this->r_data['COUNT'] += $size;
 	    $this->r_data['LIST'] .= $this->loader->addListGroup($id, $g . ' - (' . $size . '件)', 'poll-h', '最新: ' . $updated_data, '詳しくはクリック！');
 	    
-	    $this->r_data['SUB'][$id] = $this->getData($size);
+	    $this->r_data['SUB'][$id] = $this->getData($g, $size);
 	    $this->resetData();
 	}
 	$this->r_data['LIST'] .= $this->loader->closeListGroup();

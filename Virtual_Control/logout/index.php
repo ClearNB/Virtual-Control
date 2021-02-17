@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__ . '/../scripts/session/session_chk.php';
+include_once __DIR__ . '/../scripts/general/session.php';
 include_once __DIR__ . '/../scripts/general/sqldata.php';
 
 session_start_once();

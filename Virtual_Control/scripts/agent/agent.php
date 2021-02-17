@@ -1,64 +1,28 @@
 <?php
 
-include_once __DIR__ . '/agentdata.php';
-include_once __DIR__ . '/agent_page.php';
-include_once __DIR__ . '/agentselect.php';
-include_once __DIR__ . '/agent_set.php';
-include_once __DIR__ . '/../mib/mibdata.php';
-include_once __DIR__ . '/../mib/mibselect.php';
+include_once __DIR__ . '/../general/sqldata.php';
+include_once __DIR__ . '/../general/session.php';
 
-class AgentGet extends Get {
+session_action_scripts();
 
-    private $sh_code;
-    private $pre_agentid;
-    private $agenthost;
-    private $mib;
-    private $a_pass;
 
-    /**
-     * [SET] CONSTRUCTOR
-     * 
-     * オブジェクトコンストラクタです
-     * 
-     * @param int $request_code リクエストコードを指定します
-     */
-    public function __construct($request_code) {
-	parent::__construct($request_code, 'gsc_agent');
-	$this->sh_code = post_get_data('d_tp');
-	$this->pre_agentid = post_get_data('p_id');
-	$this->agenthost = post_get_data('in_ag_hs');
-	$this->agenthost = post_get_data('in_ag_cm');
-	$this->mib = post_get_data_array('sl_mb');
-	$this->a_pass = post_get_data('in_at_ps');
-    }
 
-    private function getMIBData() {
-	$this->mib_subdata = session_get('gsc_mibdata');
-	$mibdata = new MIBData();
-	return $mibdata->getMIB(0);
-    }
+$f_id = post_get_data('f_id');
+$d_tp = post_get_data('d_tp');
+$p_id = post_get_data('p_id');
+$agenthost = post_get_data('in_ag_hs');
+$community = post_get_data('in_ag_cm');
+$mib = post_get_data_array('sl_mb');
+$a_pass = post_get_data('in_at_ps');
 
-    /**
-     * [SET] セッション初期化
-     * 
-     * MIBData, AuthIDをもとに初期化を行います
-     */
-    protected function initialize() {
-	parent::initialize();
-	session_unset_byid('gsc_authid');
-    }
+$res_data = ['CODE' => 999, 'DATA' => '要求は受け取れませんでした。'];
 
-    public function run(): array {
-	$res_data = ['CODE' => 999, 'DATA' => '要求は受け取れませんでした。'];
-	switch($this->request_code) {
-	    
-	}
-	return $res_data;
-    }
-}
+$page = new AgentPage();
+$result_page = $page->getFail();
 
 if ($f_id && session_chk() == 0) {
-
+    $mibdata = new MIBData();
+    $subdata = $mibdata->getMIB(0);
 
     if ($subdata) {
 	$code = 0;
@@ -120,7 +84,7 @@ if ($f_id && session_chk() == 0) {
 	}
     }
 }
-if ($res['CODE'] < 10) {
+if($res['CODE'] < 10) {
     
 }
 

@@ -349,5 +349,4 @@ class MIBGroupSet {
 	}
 	return $test;
     }
-
 }

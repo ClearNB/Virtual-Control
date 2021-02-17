@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__ . '/indexdata.php';
+include_once __DIR__ . '/index_data.php';
 
 /**
  * [CLASS] SNMPData

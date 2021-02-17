@@ -12,7 +12,7 @@
  */
 include_once __DIR__ . '/login_page.php';
 include_once __DIR__ . '/../general/sqldata.php';
-include_once __DIR__ . '/../session/session_chk.php';
+include_once __DIR__ . '/../general/session.php';
 
 session_action_scripts();
 
@@ -23,9 +23,9 @@ $pass = post_get_data('in_lg_ps');
 $page = new LoginPage();
 $res = ['CODE' => 0];
 
-if ($funid && $funid == 72 && $userid && $pass) {
+if ($funid && $funid == 12 && $userid && $pass) {
     $res['CODE'] = getState($userid, $pass);
-} else if ($funid && $funid == 71) {
+} else if ($funid && $funid == 11) {
     $res['CODE'] = 0;
 } else {
     $res['CODE'] = 999;

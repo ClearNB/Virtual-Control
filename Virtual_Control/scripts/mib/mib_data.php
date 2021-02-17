@@ -759,7 +759,7 @@ class MIBData {
 		    array_push($query, ' AND c.TYPE IN (0, 1, 2)');
 		    break;
 		case 2:
-		    array_push($query, ' AND c.TYPE IN (3, 4)');
+		    array_push($query, ' AND c.TYPE IN (3, 4, 5)');
 		    break;
 	    }
 	    array_push($query, $other);
@@ -770,7 +770,7 @@ class MIBData {
 		    array_push($query, 'WHERE c.TYPE IN (0, 1, 2)');
 		    break;
 		case 2:
-		    array_push($query, 'WHERE c.TYPE IN (3, 4)');
+		    array_push($query, 'WHERE c.TYPE IN (3, 4, 5)');
 		    break;
 	    }
 	    array_push($query, $other);

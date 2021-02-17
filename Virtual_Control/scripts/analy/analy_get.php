@@ -1,97 +1,81 @@
 <?php
 
-/**
- * [Ajax] SNMPWALK・テーブルデータ表示
- * 
- * SNMPWALK専用のファンクションです。SNMP取得およびテーブル表示化を行います。
- * 
- * @author ClearNB
- * @package VirtualControl_scripts_snmp
- */
-include_once __DIR__ . '/../agent/agentdata.php';
-include_once __DIR__ . '/../agent/agentselect.php';
 include_once __DIR__ . '/../snmp/snmp_walk.php';
-include_once __DIR__ . '/analy_page.php';
-include_once __DIR__ . '/../session/session_chk.php';
+include_once __DIR__ . '/../agent/agent_data.php';
+include_once __DIR__ . '/../agent/agent_select.php';
+include_once __DIR__ . '/../general/get.php';
 
-session_action_scripts();
+class AnalyGet extends Get {
 
-$loader = new loader();
+    private $agent_data;
+    private $sub_data;
 
-//取得データ
-$f_id = post_get_data('f_id');
-$agent = post_get_data('sl_agt');
-$sub = post_get_data('sl_sub');
+    /**
+     * [SET] CONSTRUCTOR
+     * 
+     * オブジェクトコンストラクタです
+     * 
+     * @param int $request_code リクエストコードを指定します
+     */
+    public function __construct($request_code) {
+	parent::__construct($request_code, 'gsc_analy_result');
+	$this->agent_data = post_get_data('sl_agt');
+	$this->sub_data = post_get_data('sl_sub');
+    }
 
-$res = [];
-$page = new AnalyPage();
-$result_page = $page->getFail();
-
-if ($f_id && session_chk() == 0) {
-    $page->reset();
-
-    if ($f_id == 51) { //AGENT SELECT
-	initialize();
-	$agentdata = AGENTData::get_agent_info();
-	$sl = new AgentSelect($agentdata);
-	$agentselect = $sl->getSelect();
-	$result_page = $page->getAgentSelect($agentselect);
-    } else if ($f_id == 52 && $agent) { //SNMPWALK
-	$data = get_walk_result($agent);
-	switch ($data['CODE']) {
-	    case 0:
-		session_create('gsc_analy_result', $data);
-		$result_page = $page->getWalkResult($data['DATE'], $data['HOST'], $data['COMMUNITY'], $data['LIST'], $data['SIZE']);
-		$res['CSV'] = $data['CSV'];
-		break;
-	    case 1:
-	    case 2:
-		$result_page = $page->getFailSNMPWALK($data['LOG']);
-		break;
-	}
-    } else if ($f_id == 53 && $sub) {  //SUB RESULT
-	$data = session_get('gsc_analy_result');
-	if (isset($data['SUBDATA'][$sub])) {
-	    $result_page = $page->getSubResult($data['HOST'], $data['COMMUNITY'], $data['SUBDATA'][$sub]['MIB'], $data['DATE'], $data['SUBDATA'][$sub]['TABLE'], $data['SUBDATA'][$sub]['ERROR'], $data['SUBDATA'][$sub]['SIZE']);
-	}
-    } else if ($f_id == 54) {  //BACK RESULT
-	$data = session_get('gsc_analy_result');
-	if ($data) {
-	    $result_page = $page->getWalkResult($data['DATE'], $data['HOST'], $data['COMMUNITY'], $data['LIST'], $data['SIZE']);
-	}
-    } else if ($f_id == 55) {
-	$agentdata = session_get('gsc_analy_result');
-	if (isset($agentdata['AGENTID'])) {
-	    $agentid = $agentdata['AGENTID'];
-	    $data = get_walk_result($agentid);
-	    switch ($data['CODE']) {
-		case 0:
-		    session_create('gsc_analy_result', $data);
-		    $result_page = $page->getWalkResult($data['DATE'], $data['HOST'], $data['COMMUNITY'], $data['LIST'], $data['SIZE']);
-		    $res['CSV'] = $data['CSV'];
+    /**
+     * [GET] ANALY処理
+     * 
+     * クラス内のデータをもとにデータ処理を行います
+     * 
+     * @return array CODE, DATAによる連想配列で返します（CODEはレスポンスコード、DATAはレスポンスデータとなります）
+     */
+    public function run(): array {
+	$res = ['CODE' => 1, 'DATA' => '要求データを受け取れませんでした'];
+	if (session_chk() == 0) {
+	    switch ($this->request_code) {
+		case 51: //AGENT_SELECT
+		    $this->initialize();
+		    $agentdata = AGENTData::get_agent_info();
+		    $sl = new AgentSelect($agentdata);
+		    $res['DATA'] = $sl->getSelect();
+		    $res['CODE'] = 0;
 		    break;
-		case 1:
-		case 2:
-		    $result_page = $page->getFailSNMPWALK($data['LOG']);
+		case 52: case 55: //SNMP_WALK
+		    if ($this->request_code == 55) {
+			$res_data = get_session();
+			$this->agent_data = $res_data['AGENTID'];
+		    }
+		    if ($this->agent_data) {
+			$data = get_walk_result($this->agent_data);
+			$this->set_session($data);
+			$data['DATA'] = $data;
+			$res['CODE'] = $data['CODE'];
+		    }
+		    break;
+		case 53: //SNMP_WALK
+		    if ($this->sub_data) {
+			$data = $this->get_session();
+			if (isset($data['SUBDATA'][$this->sub_data])) {
+			    $res['DATA'] = $data['SUBDATA'][$this->sub_data];
+			    $res['CODE'] = 2;
+			}
+		    }
+		    break;
+		case 54: //BACK_RESULT
+		    $data = $this->get_session();
+		    if ($data) {
+			$res['DATA'] = $data;
+			$res['CODE'] = 1;
+		    }
 		    break;
 	    }
+	    if (ob_get_contents()) {
+		$res['CODE'] = 3;
+		$res['DATA'] = ob_get_contents();
+		ob_clean();
+	    }
 	}
+	return $res;
     }
-}
-$res['PAGE'] = $result_page;
-
-if (ob_get_contents()) {
-    $page->reset();
-    $res['PAGE'] = $page->getFailSNMPWALK(ob_get_contents());
-    ob_clean();
-}
-
-echo json_encode($res);
-
-function initialize() {
-    session_unset_byid('gsc_analy_result');
-}
-
-function get_result() {
-    return session_get('gsc_analy_result');
 }

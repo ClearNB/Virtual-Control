@@ -4,9 +4,9 @@ include_once __DIR__ . '/../general/sqldata.php';
 include_once __DIR__ . '/../general/table.php';
 include_once __DIR__ . '/accountdata.php';
 include_once __DIR__ . '/account_page.php';
-include_once __DIR__ . '/accounttable.php';
-include_once __DIR__ . '/accountfunction.php';
-include_once __DIR__ . '/../session/session_chk.php';
+include_once __DIR__ . '/account_table.php';
+include_once __DIR__ . '/account_set.php';
+include_once __DIR__ . '/general/session.php';
 
 session_action_scripts();
 
