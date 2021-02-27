@@ -1,6 +1,6 @@
 <?php //Virtual Control : INDEX (VC-01) by Project GSC
 include_once __DIR__ . '/scripts/general/loader.php';
-include_once __DIR__ . '/scripts/general/session_chk.php';
+include_once __DIR__ . '/scripts/general/session.php';
 
 session_action_guest();
 

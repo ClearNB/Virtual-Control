@@ -1,7 +1,7 @@
 <?php //Virtual Control : ERROR (VC-12) by Project GSC
 include_once __DIR__ . '/scripts/general/loader.php';
 include_once __DIR__ . '/scripts/general/former.php';
-include_once __DIR__ . '/scripts/session/session_chk.php';
+include_once __DIR__ . '/scripts/general/session.php';
 
 $loader = new loader();
 
