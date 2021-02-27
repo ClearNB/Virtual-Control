@@ -47,8 +47,8 @@ function getState($userid, $pass) {
     if ($code == 0) {
 	session_start_once();
 	$_SESSION['gsc_userid'] = $userid;
-	$r1 = update('GSC_USERS', 'LOGINSTATE', 1, 'WHERE USERID = "' . $userid . '"');
-	$r2 = update('GSC_USERS', 'LOGINUPTIME', date('Y-m-d H:i:s'), 'WHERE USERID = "' . $userid . '"');
+	$r1 = update('VC_USERS', 'LOGINSTATE', 1, 'WHERE USERID = "' . $userid . '"');
+	$r2 = update('VC_USERS', 'LOGINUPTIME', date('Y-m-d H:i:s'), 'WHERE USERID = "' . $userid . '"');
 	$code = ($r1 && $r2) ? 3 : 1;
     }
     return $code;

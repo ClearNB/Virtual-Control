@@ -1,14 +1,13 @@
 <?php
 
 include_once __DIR__ . '/../general/sqldata.php';
-include_once __DIR__ . '/../icons/icondata.php';
-include_once __DIR__ . '/../icons/iconselect.php';
-include_once __DIR__ . '/mibdata.php';
-include_once __DIR__ . '/mibpage.php';
+include_once __DIR__ . '/../icons/icon_data.php';
+include_once __DIR__ . '/../icons/icon_select.php';
+include_once __DIR__ . '/mib_data.php';
+include_once __DIR__ . '/mib_page.php';
 include_once __DIR__ . '/../session/session_chk.php';
 
 include_once __DIR__ . '/mib_get.php';
-
 include_once __DIR__ . '/group/mib_get.php';
 include_once __DIR__ . '/node/mib_get.php';
 include_once __DIR__ . '/sub/mib_get.php';

@@ -2,7 +2,7 @@
 
 include_once __DIR__ . '/../general/sqldata.php';
 include_once __DIR__ . '/../general/table.php';
-include_once __DIR__ . '/accountdata.php';
+include_once __DIR__ . '/account_data.php';
 include_once __DIR__ . '/account_page.php';
 include_once __DIR__ . '/account_table.php';
 include_once __DIR__ . '/account_set.php';

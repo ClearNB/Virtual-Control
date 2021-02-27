@@ -177,11 +177,11 @@ function session_chk(): int {
     $chk = 1;
     if (session_exists('gsc_userid')) {
 	$userid = session_get_userid();
-	$res = select(true, "GSC_USERS", "LOGINSTATE", "WHERE USERID = '$userid'");
+	$res = select(true, "VC_USERS", "LOGINSTATE", "WHERE USERID = '$userid'");
 	$chk = ($res && $res['LOGINSTATE'] == 1) ? 0 : 2;
     }
     if($chk == 2) {
-	$res = select(false, 'GSC_USERS', 'USERID');
+	$res = select(false, 'VC_USERS', 'USERID');
 	$chk = ($res) ? 2 : 3;
     }
     return $chk;
@@ -212,7 +212,7 @@ function session_auth(): bool {
 function session_auth_check($userid, $pass, $isauthid = false): int {
     $res = 0;
 
-    $q01 = select(true, "GSC_USERS", "SALT", "WHERE USERID = '$userid'");
+    $q01 = select(true, "VC_USERS", "SALT", "WHERE USERID = '$userid'");
     $salt = '';
     if (!$q01) {
 	$res = 1;
@@ -225,7 +225,7 @@ function session_auth_check($userid, $pass, $isauthid = false): int {
     } else {
 	$hash = hash('sha256', $pass . $salt);
 
-	$result = select(true, "GSC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERID = '$userid'");
+	$result = select(true, "VC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERID = '$userid'");
 	$password_matches = $result['PASSWORD_MATCHES'];
 
 	if ($password_matches) {
@@ -251,7 +251,7 @@ function session_auth_check($userid, $pass, $isauthid = false): int {
 function session_get_userdata(): array {
     session_start_once();
     $userid = session_get_userid();
-    $sql = select(true, "GSC_USERS", "USERID, USERNAME, PERMISSION, LOGINSTATE", "WHERE USERID = '$userid'");
+    $sql = select(true, "VC_USERS", "USERID, USERNAME, PERMISSION, LOGINSTATE", "WHERE USERID = '$userid'");
     session_set_data($sql);
     return $sql;
 }

@@ -679,10 +679,9 @@ class Former {
      * 失敗画面を作成します。
      * 
      * @param $log ログ詳細を配列で渡します
-     * @param $button ボタン（1つ）を追加します
-     * @param string $title 失敗画面でのタイトルを指定します
-     * @param string $text その原因となるテキスト部分を指定します
-     * @return \form_generator 作成したform_generatorオブジェクトとして返します
+     * @param $button ボタン（1つ）を追加する
+     * @param string $title 失敗画面でのタイトルを指定する
+     * @param string $text その原因となるテキスト部分を指定する
      */
     function fm_fl($log, $button, $title = 'エラーが発生しました', $text = '以下のエラーをご確認ください') {
 	$this->SubTitle($title, $text, 'exclamation-triangle');
@@ -695,31 +694,15 @@ class Former {
 /**
  * [FUNCTION] ローディング画面作成
  * 
- * ローディング画面を作成します。
+ * ローディング画面を作成する
  * 
- * @param string $id フォームに与えるIDを指定します
- * @param string $title ローディング中に出すタイトル部分です
- * @param string $text ローディング中に出すテキスト部分です
- * @return \form_generator 作成したform_generatorオブジェクトとして返します
+ * @param string $id フォームに与えるIDを指定する
+ * @param string $title ローディング中に出すタイトル部分である
+ * @param string $text ローディング中に出すテキスト部分である
+ * @return \Former 作成したFormerオブジェクトとして返す
  */
 function fm_ld($id, $title = '更新反映中です...', $text = '反映されるまで、ページを変えずにしばらくお待ちください...') {
     $fm = new Former($id, '');
     $fm->SubTitle($title, $text, 'circle-notch fa-spin');
-    return $fm;
-}
-
-/**
- * [FUNCTION] 失敗画面作成
- * 
- * 失敗画面を作成します。
- * 
- * @param string $id フォームに与えるIDを指定します
- * @param string $title 失敗画面でのタイトルを指定します
- * @param string $text その原因となるテキスト部分を指定します
- * @return \form_generator 作成したform_generatorオブジェクトとして返します
- */
-function fm_fl($id, $title = '失敗しました', $text = '[原因]') {
-    $fm = new Former($id, '');
-    $fm->SubTitle($title, $text, 'exclamation-triangle');
     return $fm;
 }

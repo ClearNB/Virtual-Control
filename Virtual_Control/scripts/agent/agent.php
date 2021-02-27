@@ -5,8 +5,6 @@ include_once __DIR__ . '/../general/session.php';
 
 session_action_scripts();
 
-
-
 $f_id = post_get_data('f_id');
 $d_tp = post_get_data('d_tp');
 $p_id = post_get_data('p_id');

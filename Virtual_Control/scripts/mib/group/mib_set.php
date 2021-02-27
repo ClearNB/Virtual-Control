@@ -116,7 +116,7 @@ class MIBGroupSet {
 	$chk = $this->check();
 	if ($chk == 0) {
 	    if (session_auth()) {
-		$res = insert('GSC_MIB_GROUP', ['GOID', 'GNAME'], [$this->group_oid, $this->group_name]);
+		$res = insert('VC_MIB_GROUP', ['GOID', 'GNAME'], [$this->group_oid, $this->group_name]);
 		$res_code = ($res) ? 0 : 1;
 	    } else {
 		$res_code = 4;
@@ -146,16 +146,16 @@ class MIBGroupSet {
     private function delete(): int {
 	$flag = true;
 	if (session_auth()) {
-	    $flag &= delete('GSC_MIB_GROUP', 'WHERE GID = ' . $this->pre_groupid);
-	    $sel1 = select(false, 'GSC_MIB_SUB', 'SID', 'WHERE GID = ' . $this->pre_groupid);
-	    $flag &= delete('GSC_MIB_SUB', 'WHERE GID = ' . $this->pre_groupid);
+	    $flag &= delete('VC_MIB_GROUP', 'WHERE GID = ' . $this->pre_groupid);
+	    $sel1 = select(false, 'VC_MIB_SUB', 'SID', 'WHERE GID = ' . $this->pre_groupid);
+	    $flag &= delete('VC_MIB_SUB', 'WHERE GID = ' . $this->pre_groupid);
 	    if ($sel1 && $flag) {
 		$sel1_arr = [];
 		while ($var = $sel1->fetch_assoc()) {
 		    array_push($sel1_arr, $var['SID']);
 		}
 		if (sizeof($sel1_arr) > 0) {
-		    $flag &= delete('GSC_AGENT_MIB', 'WHERE SID IN (' . implode(', ', $sel1_arr) . ')');
+		    $flag &= delete('VC_AGENT_MIB', 'WHERE SID IN (' . implode(', ', $sel1_arr) . ')');
 		}
 	    }
 	    $res_code = ($flag) ? 0 : 1;
@@ -217,10 +217,10 @@ class MIBGroupSet {
 	$flag = true;
 	switch ($this->funid) {
 	    case 24:
-		$flag &= update('GSC_MIB_GROUP', 'GOID', $this->group_oid, 'WHERE GID = ' . $this->pre_groupid);
+		$flag &= update('VC_MIB_GROUP', 'GOID', $this->group_oid, 'WHERE GID = ' . $this->pre_groupid);
 		break;
 	    case 25:
-		$flag &= update('GSC_MIB_GROUP', 'GNAME', $this->group_name, 'WHERE GID = ' . $this->pre_groupid);
+		$flag &= update('VC_MIB_GROUP', 'GNAME', $this->group_name, 'WHERE GID = ' . $this->pre_groupid);
 		break;
 	}
 	return $flag;
@@ -270,14 +270,14 @@ class MIBGroupSet {
 
     private function get_selectedagent() {
 	$res = '【エージェント選択】<p>なし</p>';
-	$sel1 = select(false, 'GSC_MIB_SUB', 'SID', 'WHERE GID = ' . $this->pre_groupid);
+	$sel1 = select(false, 'VC_MIB_SUB', 'SID', 'WHERE GID = ' . $this->pre_groupid);
 	if ($sel1) {
 	    $sel1_arr = [];
 	    while ($var = $sel1->fetch_assoc()) {
 		array_push($sel1_arr, $var['SID']);
 	    }
 	    if (sizeof($sel1_arr) > 0) {
-		$sel2 = select(false, 'GSC_AGENT_MIB a INNER JOIN GSC_AGENT b ON a.AGENTID = b.AGENTID', 'b.AGENTHOST, b.COMMUNITY', 'WHERE a.SID IN (' . implode(', ', $sel1_arr) . ') GROUP BY b.AGENTHOST, b.COMMUNITY');
+		$sel2 = select(false, 'VC_AGENT_MIB a INNER JOIN VC_AGENT b ON a.AGENTID = b.AGENTID', 'b.AGENTHOST, b.COMMUNITY', 'WHERE a.SID IN (' . implode(', ', $sel1_arr) . ') GROUP BY b.AGENTHOST, b.COMMUNITY');
 		if ($sel2) {
 		    $sel2_arr = getArray($sel2);
 		    $res = '【エージェント選択】<ul class="black-view">';
@@ -316,7 +316,7 @@ class MIBGroupSet {
 	if (!preg_match('/^(([0-9]{1,})[.]){1,}[0-9]{1,}$/', $this->group_oid) || mb_strlen($this->group_oid, 'UTF-8') > 255) {
 	    $test = '<li>グループOID記述ルールに違反しています。</li>';
 	} else {
-	    $sel = select(false, 'GSC_MIB_GROUP', 'GOID');
+	    $sel = select(false, 'VC_MIB_GROUP', 'GOID');
 	    if($sel) {
 		$sel_arr = getArray($sel);
 		$flag = false;

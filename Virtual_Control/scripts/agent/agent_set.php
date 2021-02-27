@@ -149,15 +149,15 @@ class AgentSet {
 	    if (session_auth()) {
 		$flag = true;
 
-		//3: INSERT文の実行 (GSC_AGENT)
-		$res = insert("GSC_AGENT", ["AGENTHOST", "COMMUNITY"], [$this->agenthost, $this->community]);
-		$sel = select(true, "GSC_AGENT", "AGENTID", "WHERE AGENTHOST = '$this->agenthost' AND COMMUNITY = '$this->community'");
+		//3: INSERT文の実行 (VC_AGENT)
+		$res = insert("VC_AGENT", ["AGENTHOST", "COMMUNITY"], [$this->agenthost, $this->community]);
+		$sel = select(true, "VC_AGENT", "AGENTID", "WHERE AGENTHOST = '$this->agenthost' AND COMMUNITY = '$this->community'");
 		if ($res && $sel) {
 		    //AgentIDの取得（発行時）
 		    $agentid = $sel['AGENTID'];
-		    //4: INSERT文の実行（GSC_AGENT_MIB）
+		    //4: INSERT文の実行（VC_AGENT_MIB）
 		    foreach ($this->mibs as $m) {
-			$res3 = insert("GSC_AGENT_MIB", ["AGENTID", "SID"], [$agentid, $m]);
+			$res3 = insert("VC_AGENT_MIB", ["AGENTID", "SID"], [$agentid, $m]);
 			$flag &= $res3;
 			if (!$flag) {
 			    break;
@@ -202,8 +202,8 @@ class AgentSet {
 
     private function delete(): int {
 	if (session_auth()) {
-	    $res1 = delete("GSC_AGENT_MIB", "WHERE AGENTID = $this->pre_agentid");
-	    $res2 = delete("GSC_AGENT", "WHERE AGENTID = $this->pre_agentid");
+	    $res1 = delete("VC_AGENT_MIB", "WHERE AGENTID = $this->pre_agentid");
+	    $res2 = delete("VC_AGENT", "WHERE AGENTID = $this->pre_agentid");
 	    if ($res1 && $res2) {
 		$res_code = 0;
 	    } else {
@@ -268,22 +268,22 @@ class AgentSet {
 	$flag = true;
 	switch ($this->funid) {
 	    case 14:
-		$flag &= update("GSC_AGENT", "AGENTHOST", $this->agenthost, "WHERE AGENTID = $this->pre_agentid");
+		$flag &= update("VC_AGENT", "AGENTHOST", $this->agenthost, "WHERE AGENTID = $this->pre_agentid");
 		break;
 	    case 15:
-		$flag &= update("GSC_AGENT", "COMMUNITY", $this->community, "WHERE AGENTID = $this->pre_agentid");
+		$flag &= update("VC_AGENT", "COMMUNITY", $this->community, "WHERE AGENTID = $this->pre_agentid");
 		break;
 	    case 16:
-		$flag &= delete("GSC_AGENT_MIB", "WHERE AGENTID = $this->pre_agentid");
+		$flag &= delete("VC_AGENT_MIB", "WHERE AGENTID = $this->pre_agentid");
 		foreach ($this->mibs as $m) {
-		    $flag &= insert("GSC_AGENT_MIB", ["AGENTID", "SID"], [$this->pre_agentid, $m]);
+		    $flag &= insert("VC_AGENT_MIB", ["AGENTID", "SID"], [$this->pre_agentid, $m]);
 		    if (!$flag) {
 			break;
 		    }
 		}
 		break;
 	}
-	$flag &= update("GSC_AGENT", "AGENTUPTIME", date("Y-m-d H:i:s"), "WHERE AGENTID = $this->pre_agentid");
+	$flag &= update("VC_AGENT", "AGENTUPTIME", date("Y-m-d H:i:s"), "WHERE AGENTID = $this->pre_agentid");
 	return $flag;
     }
 
@@ -376,7 +376,7 @@ function check_host($host): string {
  * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
  */
 function check_duplicate($host, $com): string {
-    $result = select(true, "GSC_AGENT", "COUNT(*) AS AGENTCOUNT", "WHERE AGENTHOST = '$host' AND COMMUNITY = '$com'");
+    $result = select(true, "VC_AGENT", "COUNT(*) AS AGENTCOUNT", "WHERE AGENTHOST = '$host' AND COMMUNITY = '$com'");
     if ($result['AGENTCOUNT'] == 1) {
 	return '<li>データが他の情報と重複しています。エージェントホストとコミュニティは他のと違う情報にしてください。</li>';
     } else {
@@ -401,11 +401,11 @@ function check_duplicate_onchange($type, $pre_agentid, $changes): string {
     $c = [];
     switch ($type) {
 	case 0: $pare = 1;
-	    $query = [true, "GSC_AGENT", "COMMUNITY", "WHERE AGENTID = $pre_agentid"];
+	    $query = [true, "VC_AGENT", "COMMUNITY", "WHERE AGENTID = $pre_agentid"];
 	    $c = [$changes, ''];
 	    break;
 	case 1: $pare = 0;
-	    $query = [true, "GSC_AGENT", "AGENTHOST", "WHERE AGENTID = $pre_agentid"];
+	    $query = [true, "VC_AGENT", "AGENTHOST", "WHERE AGENTID = $pre_agentid"];
 	    $c = ['', $changes];
 	    break;
     }
@@ -455,7 +455,7 @@ function check_mib($mib): string {
     }
     $flag = true;
     foreach ($mib as $m) {
-	$flag &= select(true, 'GSC_MIB_SUB', 'SID', 'WHERE SID = ' . $m);
+	$flag &= select(true, 'VC_MIB_SUB', 'SID', 'WHERE SID = ' . $m);
 	if (!$flag) {
 	    break;
 	}

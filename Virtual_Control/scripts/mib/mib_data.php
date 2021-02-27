@@ -724,28 +724,28 @@ class MIBData {
 	switch ($query_num) {
 	    case 0: //グループ - サブツリー
 		$query = [
-		    'GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GID = b.GID',
+		    'VC_MIB_GROUP a INNER JOIN VC_MIB_SUB b ON a.GID = b.GID',
 		    'a.GID, a.GOID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME',
 		    'GROUP BY a.GID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME'
 		];
 		break;
 	    case 1: //グループ - ノード（アイコンなし）
 		$query = [
-		    'GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GID = b.GID INNER JOIN GSC_MIB_NODE c ON b.SID = c.SID',
+		    'VC_MIB_GROUP a INNER JOIN VC_MIB_SUB b ON a.GID = b.GID INNER JOIN VC_MIB_NODE c ON b.SID = c.SID',
 		    'a.GID, a.GOID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME, c.NID, c.NOID, c.SUB, c.TABLEID, c.TYPE, c.OPTIONID, c.DESCR, c.JAPTLANS',
 		    'ORDER BY a.GID, b.SID, c.NID'
 		];
 		break;
 	    case 2: //グループ - ノード（アイコン有り）
 		$query = [
-		    'GSC_MIB_GROUP a INNER JOIN GSC_MIB_SUB b ON a.GID = b.GID INNER JOIN GSC_MIB_NODE c ON b.SID = c.SID LEFT OUTER JOIN GSC_ICONS d ON c.ICONID = d.ICONID',
+		    'VC_MIB_GROUP a INNER JOIN VC_MIB_SUB b ON a.GID = b.GID INNER JOIN VC_MIB_NODE c ON b.SID = c.SID LEFT OUTER JOIN VC_ICONS d ON c.ICONID = d.ICONID',
 		    'a.GID, a.GOID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME, c.NID, c.NOID, c.SUB, c.TABLEID, c.TYPE, c.OPTIONID, c.DESCR, c.JAPTLANS, c.ICONID, d.ICON',
 		    'ORDER BY a.GID, b.SID, c.NID'
 		];
 		break;
 	    case 3: //グループ - ノード（NULL状態でも全てのデータを抽出）
 		$query = [
-		    'GSC_MIB_GROUP a LEFT OUTER JOIN GSC_MIB_SUB b ON a.GID = b.GID LEFT OUTER JOIN GSC_MIB_NODE c ON b.SID = c.SID LEFT OUTER JOIN GSC_ICONS d ON c.ICONID = d.ICONID',
+		    'VC_MIB_GROUP a LEFT OUTER JOIN VC_MIB_SUB b ON a.GID = b.GID LEFT OUTER JOIN VC_MIB_NODE c ON b.SID = c.SID LEFT OUTER JOIN VC_ICONS d ON c.ICONID = d.ICONID',
 		    'a.GID, a.GOID, a.GNAME, b.SID, b.SOID, b.SNAME, b.UTIME, c.NID, c.NOID, c.SUB, c.TABLEID, c.TYPE, c.OPTIONID, c.DESCR, c.JAPTLANS, c.ICONID, d.ICON',
 		    'ORDER BY b.SID, c.NID'
 		];

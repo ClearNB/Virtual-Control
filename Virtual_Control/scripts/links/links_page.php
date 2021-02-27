@@ -25,8 +25,6 @@ class LinksPage extends Page {
      * @return string レスポンスコードによって取得するページを分岐し、ページをHTMLの文字列で返します
      */
     public function setPageFunc(): string {
-	$res_page = '';
-
 	switch ($this->response_code) {
 	    case 1: //INDEX
 		$this->setIndex();

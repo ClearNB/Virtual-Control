@@ -52,6 +52,6 @@ class initGet {
 	$salt = random(20);
 
 	$pass_hash = hash('sha256', $this->pass . $salt);
-	return ["GSC_USERS", ["USERID", "PASSWORDHASH", "USERNAME", "PERMISSION", "SALT"], [$this->userid, $pass_hash, $username, $permission, $salt]];
+	return ["VC_USERS", ["USERID", "PASSWORDHASH", "USERNAME", "PERMISSION", "SALT"], [$this->userid, $pass_hash, $username, $permission, $salt]];
     }
 }
