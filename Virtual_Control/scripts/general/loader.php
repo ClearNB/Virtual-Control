@@ -30,7 +30,7 @@ class loader {
     public function getPage($site_title, $title, $title_icon, $permission_num, $js_file = '', $istitle = true) {
 	$data = '<!DOCTYPE html><html><head>';
 	$data .= $this->loadHeader($site_title, $title);
-	$data .= form_generator::ExportClass();
+	$data .= Former::ExportClass();
 	$data .= '</head><body class="text-monospace">';
 	$data .= $this->navigation($permission_num);
 	$data .= $this->load_Logo();
