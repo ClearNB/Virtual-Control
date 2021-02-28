@@ -58,8 +58,6 @@ class AgentGet extends Get {
 }
 
 if ($f_id && session_chk() == 0) {
-
-
     if ($subdata) {
 	$code = 0;
 	switch ($f_id) {

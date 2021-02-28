@@ -6,3 +6,4 @@ session_action_guest();
 
 $ld = new loader();
 $ld->getPage('Virtual Control', 'LOGIN', 'sign-in-alt', 2, 'login.js');
+

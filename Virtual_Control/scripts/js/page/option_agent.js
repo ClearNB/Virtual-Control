@@ -13,7 +13,7 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
     if (data === '') {
 	data = [];
     }
-    data.push({name: 'f_id', value: getFunctionID()});
+    data.push({name: 'f_id', value: get_funid()});
     data.push({name: 'd_tp', value: type});
     if (iswait) {
 	animation('data_output', duration, fm_ld);
@@ -34,7 +34,7 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
 
 //読み込み時
 $(document).ready(function () {
-    change_agent_select();
+    change_agent_sel();
     get_page('', 0, 0);
 });
 
@@ -50,12 +50,12 @@ $(document).on('click', '#bt_ag_bk, #bt_ag_cr, #bt_ag_ed, #bt_ag_dl', function (
 	    get_page('', 0);
 	    break;
 	case "bt_ag_ed":
-	    change_agent_edit();
+	    change_agent_edit_sel();
 	    data.push({name: 'p_id', value: $('input[name="sl_ag"]:checked').val()});
 	    get_page(data, 0);
 	    break;
 	case "bt_ag_dl":
-	    change_agent_delete();
+	    change_agent_del();
 	    data.push({name: 'p_id', value: $('input[name="sl_ag"]:checked').val()});
 	    get_page(data, 0);
 	    break;
@@ -95,19 +95,19 @@ $(document).on('click', '#bt_cf_sb', function () {
 $(document).on('click', '#bt_ed_hs, #bt_ed_cm, #bt_ed_oi, #bt_ed_bk', function () {
     switch ($(this).attr('id')) {
 	case "bt_ed_hs":
-	    change_agent_edit_host();
+	    change_agent_edit_hs();
 	    get_page('');
 	    break;
 	case "bt_ed_cm":
-	    change_agent_edit_community();
+	    change_agent_edit_cm();
 	    get_page('');
 	    break;
 	case "bt_ed_oi":
-	    change_agent_edit_mib();
+	    change_agent_edit_mb();
 	    get_page('');
 	    break;
 	case "bt_ed_bk":
-	    change_agent_select();
+	    change_agent_sel();
 	    get_page('');
 	    break;
     }
@@ -115,7 +115,7 @@ $(document).on('click', '#bt_ed_hs, #bt_ed_cm, #bt_ed_oi, #bt_ed_bk', function (
 
 //編集・各画面からの戻るボタン
 $(document).on('click', '#bt_hs_bk, #bt_cm_bk, #bt_oi_bk', function () {
-    change_agent_edit();
+    change_agent_edit_sel();
     get_page('');
 });
 

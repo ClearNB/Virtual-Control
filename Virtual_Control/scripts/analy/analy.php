@@ -14,14 +14,11 @@ include_once __DIR__ . '/../general/session.php';
 
 session_action_scripts();
 
-$res = ['PAGE' => '', 'CSV' => ''];
+$res = ['PAGE' => ''];
 
 $f_id = post_get_data('f_id');
 $get = new AnalyGet($f_id);
 $response = $get->run();
 $page = new AnalyPage($response['CODE'], $response['DATA']);
 $res['PAGE'] = $page->getPage();
-if($response['CODE'] == 1) {
-    $res['CSV'] = $response['DATA']['CSV'];
-}
 echo json_encode($res);

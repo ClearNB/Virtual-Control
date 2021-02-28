@@ -11,7 +11,7 @@ include_once __DIR__ . '/../general/loader.php';
  */
 class WarnTable {
 
-    static $column = ['SYSTIME' => 'システム稼働時間', 'TIME' => '発生時刻', 'ADDRESS' => 'ホストアドレス', 'COMMUNITY' => 'コミュニティ', 'OID' => '対象OID', 'AGENT' => 'エージェント情報', 'ENTERPRISE' => '情報出力先OID', 'INTERFACE' => 'インタフェースID', 'SOURCE' => 'その他情報', 'MESSAGE' => 'メッセージ'];
+    static $column = ['GROUP' => 'グループ情報', 'SYSTIME' => 'システム稼働時間', 'TIME' => '発生時刻', 'ADDRESS' => 'ホストアドレス', 'COMMUNITY' => 'コミュニティ', 'OID' => '対象OID', 'AGENT' => 'エージェント情報', 'ENTERPRISE' => '情報出力先OID', 'INTERFACE' => 'インタフェースID', 'SOURCE' => 'その他情報', 'MESSAGE' => 'メッセージ'];
     private $data;
     private $u_data;
     private $s_data;

@@ -25,13 +25,13 @@ class WarnPage extends Page {
      */
     public function setPageFunc() {
 	switch ($this->response_code) {
-	    case 0: $this->getWarnResult();
+	    case 0: $this->setWarnResult();
 		break;
-	    case 1: $this->getSubResult();
+	    case 1: $this->setSubResult();
 		break;
-	    case 2: $this->getFailWarn();
+	    case 2: $this->setFailWarn();
 		break;
-	    default: $this->getFail();
+	    default: $this->setFail();
 		break;
 	}
     }

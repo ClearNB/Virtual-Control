@@ -26,7 +26,7 @@ class initGet {
 		}
 	    }
 	}
-	$res = ['CODE' => ($f) ? 0 : 1, 'DATA' => ($f) ? ['USERID' => $this->userid, 'PASS' => $this->pass] : ob_get_contents()];
+	$res = ['CODE' => ($f) ? 1 : 2, 'DATA' => ($f) ? ['USERID' => $this->userid, 'PASS' => $this->pass] : ob_get_contents()];
 	return $res;
     }
 

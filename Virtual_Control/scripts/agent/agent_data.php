@@ -3,7 +3,7 @@
 include_once __DIR__ . '/../general/sqldata.php';
 include_once __DIR__ . '/../mib/mibdata.php';
 
-class AGENTData {
+class AgentData {
 
     private static $set = [];
     private $agentid;

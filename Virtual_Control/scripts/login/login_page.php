@@ -28,6 +28,9 @@ class LoginPage extends Page {
 	    case 0:
 		$this->setLogin();
 		break;
+	    case 1: case 2: case 3:
+		$this->setResCodeToData();
+		break;
 	    default:
 		$this->setFail();
 	}

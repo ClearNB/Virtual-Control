@@ -18,7 +18,7 @@ class AnalyGet extends Get {
      * @param int $request_code リクエストコードを指定します
      */
     public function __construct($request_code) {
-	parent::__construct($request_code, 'gsc_analy_result');
+	parent::__construct($request_code, 'vc_analy');
 	$this->agent_data = post_get_data('sl_agt');
 	$this->sub_data = post_get_data('sl_sub');
     }
@@ -34,35 +34,37 @@ class AnalyGet extends Get {
 	$res = ['CODE' => 1, 'DATA' => '要求データを受け取れませんでした'];
 	if (session_chk() == 0) {
 	    switch ($this->request_code) {
-		case 51: //AGENT_SELECT
+		case 31: //AGENT_SELECT
 		    $this->initialize();
 		    $agentdata = AGENTData::get_agent_info();
 		    $sl = new AgentSelect($agentdata);
 		    $res['DATA'] = $sl->getSelect();
 		    $res['CODE'] = 0;
 		    break;
-		case 52: case 55: //SNMP_WALK
-		    if ($this->request_code == 55) {
-			$res_data = get_session();
+		case 32: case 35: //SNMP_WALK
+		    if ($this->request_code == 35) {
+			$res_data = $this->get_session();
 			$this->agent_data = $res_data['AGENTID'];
 		    }
 		    if ($this->agent_data) {
 			$data = get_walk_result($this->agent_data);
 			$this->set_session($data);
-			$data['DATA'] = $data;
+			$res['DATA'] = $data;
 			$res['CODE'] = $data['CODE'];
 		    }
+		    
 		    break;
-		case 53: //SNMP_WALK
+		case 33: //SUB GET
 		    if ($this->sub_data) {
 			$data = $this->get_session();
 			if (isset($data['SUBDATA'][$this->sub_data])) {
-			    $res['DATA'] = $data['SUBDATA'][$this->sub_data];
+			    $data['SUBDATA']['SELECT'] = $data['SUBDATA'][$this->sub_data];
+			    $res['DATA'] = $data;
 			    $res['CODE'] = 2;
 			}
 		    }
 		    break;
-		case 54: //BACK_RESULT
+		case 34: //BACK_RESULT
 		    $data = $this->get_session();
 		    if ($data) {
 			$res['DATA'] = $data;

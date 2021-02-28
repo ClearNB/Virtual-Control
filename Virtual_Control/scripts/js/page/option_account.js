@@ -13,14 +13,14 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
     if (data === '') {
 	data = [];
     }
-    data.push({name: 'f_id', value: getFunctionID()});
+    data.push({name: 'f_id', value: get_funid()});
     data.push({name: 'd_tp', value: type});
     if (iswait) {
 	animation('data_output', duration, fm_ld);
     } else {
 	$('button').attr('disabled', true);
     }
-    ajax_dynamic_post('/scripts/account/account_get.php', data).then(function (data) {
+    ajax_dynamic_post('/scripts/account/account.php', data).then(function (data) {
 	if (data['CODE'] === 2) {
 	    animation('fm_warn', 400, data['PAGE']);
 	} else {
@@ -34,7 +34,7 @@ function get_page(data, type = 0, duration = 400, iswait = true) {
 
 //読み込み時
 $(document).ready(function () {
-    change_account_select();
+    change_account_sel();
     get_page('', 0, 0);
 });
 
@@ -50,12 +50,12 @@ $(document).on('click', '#bt_ac_bk, #bt_ac_cr, #bt_ac_ed, #bt_ac_dl', function (
 	    get_page('', 0);
 	    break;
 	case "bt_ac_ed":
-	    change_account_edit();
+	    change_account_edit_sel();
 	    data.push({name: 'p_id', value: $('input[name="p_id"]:checked').val()});
 	    get_page(data, 0);
 	    break;
 	case "bt_ac_dl":
-	    change_account_delete();
+	    change_account_del();
 	    data.push({name: 'p_id', value: $('input[name="p_id"]:checked').val()});
 	    get_page(data, 0);
 	    break;
@@ -64,7 +64,7 @@ $(document).on('click', '#bt_ac_bk, #bt_ac_cr, #bt_ac_ed, #bt_ac_dl', function (
 
 //ユーザ選択画面に戻る
 $(document).on('click', '#bt_cs_bk, #bt_cr_bk, #bt_ed_bk, #bt_dl_bk, #bt_fl_us_bk, #bt_cf_bk, #bt_at_bk, #bt_fl_bk', function () {
-    change_account_select();
+    change_account_sel();
     get_page('', 0);
 });
 
@@ -95,19 +95,19 @@ $(document).on('click', '#bt_cf_sb', function () {
 $(document).on('click', '#bt_ed_id, #bt_ed_nm, #bt_ed_ps, #bt_ed_bk', function () {
     switch ($(this).attr('id')) {
 	case "bt_ed_id":
-	    change_account_edit_userid();
+	    change_account_edit_id();
 	    get_page('');
 	    break;
 	case "bt_ed_nm":
-	    change_account_edit_username();
+	    change_account_edit_name();
 	    get_page('');
 	    break;
 	case "bt_ed_ps":
-	    change_account_edit_password();
+	    change_account_edit_pass();
 	    get_page('');
 	    break;
 	case "bt_ed_bk":
-	    change_account_select();
+	    change_account_sel();
 	    get_page('');
 	    break;
     }
@@ -115,7 +115,7 @@ $(document).on('click', '#bt_ed_id, #bt_ed_nm, #bt_ed_ps, #bt_ed_bk', function (
 
 //編集・各画面からの戻るボタン
 $(document).on('click', '#bt_id_bk, #bt_nm_bk, #bt_ps_bk', function () {
-    change_account_edit();
+    change_account_edit_sel();
     get_page('');
 });
 

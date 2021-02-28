@@ -49,7 +49,7 @@ class AnalyPage extends Page {
      * エージェント選択画面を設定します<br>
      * レスポンスデータにエージェント選択HTMLが必要です
      */
-    private function setAgentSelect(): string {
+    private function setAgentSelect() {
 	$this->Button('bt_sl_bk', 'ホームに戻る', 'button', 'home');
 	$this->SubTitle('エージェント選択', '以下からエージェントを選択してください。', 'server');
 	$this->Caption($this->response_data);
@@ -65,7 +65,7 @@ class AnalyPage extends Page {
      * SNMPWALKの取得結果を設定します<br>
      * レスポンスデータにSNMPWALKの取得結果を指定する必要があります
      */
-    private function setWalkResult(): string {
+    private function setWalkResult() {
 	$this->Button('bt_rt_bk', 'エージェント選択に戻る', 'button', 'caret-square-left');
 	$this->SubTitle('ANALY', '取得情報を以下に参照します。', 'poll');
 	$this->openList();
@@ -89,23 +89,24 @@ class AnalyPage extends Page {
      * [SET] サブデータ
      */
     private function setSubResult() {
+	$sub_data = $this->response_data['SUBDATA']['SELECT'];
 	$this->Button('bt_sb_bk', '結果画面に戻る', 'button', 'chevron-circle-left');
 	$this->Title('ANALY - データ取得結果', 'poll-h');
 	$this->openList();
 	$this->openListElem('取得情報');
 	$this->addList('エージェントホスト: ' . $this->response_data['HOST']);
-	$this->addList('コミュニティ情報: ' . $this->response_data['HOST']);
-	$this->addList('対象MIB: ' . $this->response_data['MIB']);
-	$this->addList('データ総数: ' . $this->response_data['SIZE']);
-	$this->addList('取得日時: ' . $this->response_data['DATE']);
+	$this->addList('コミュニティ情報: ' . $this->response_data['COM']);
+	$this->addList('対象MIB: ' . $sub_data['MIB']);
+	$this->addList('データ総数: ' . $sub_data['SIZE']);
+	$this->addList('取得日時: ' . $sub_data['DATE']);
 	$this->closeListElem();
 	$this->closeList();
 	$this->OpenCaption();
 	$this->SubTitle('SNMPデータ', '以下は、データベースのMIB情報より認識した情報の一覧です。', 'object-group');
-	$this->setHTML($this->response_data['TABLE']);
+	$this->setHTML($sub_data['TABLE']);
 	$this->CloseCaption();
 	$this->SubTitle('SNMPデータエラー', 'MIBとの紐付けを行っている際に起こったエラーはここに表示されます。', 'exclamation-circle');
-	$this->ListCreate($this->response_data['ERROR']);
+	$this->ListCreate($sub_data['ERROR']);
 	$this->Button('bt_sb_bk', '結果画面に戻る', 'button', 'chevron-circle-left');
     }
     

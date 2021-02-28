@@ -9,6 +9,10 @@ function change_login() {
 }
 
 function change_login_post() {
+    fid = 12;
+}
+
+function change_dash() {
     fid = 21;
 }
 
@@ -58,6 +62,10 @@ function change_warn_dl() {
 
 function change_init() {
     fid = 51;
+}
+
+function change_init_post() {
+    fid = 52;
 }
 
 function change_option() {

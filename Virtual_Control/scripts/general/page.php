@@ -16,6 +16,7 @@ include_once __DIR__ . '/former.php';
 class Page extends Former {
     protected $response_code;
     protected $response_data;
+    protected $page_flag;
     
     /**
      * [SET] CONSTRUCTOR
@@ -31,6 +32,7 @@ class Page extends Former {
 	parent::__construct($id);
 	$this->response_code = $code;
 	$this->response_data = $data;
+	$this->page_flag = 0;
     }
     
     /**
@@ -59,7 +61,24 @@ class Page extends Former {
 	if(!$this->data) {
 	    $this->setFail();
 	}
-	return $this->Export();
+	$res_page = '';
+	switch($this->page_flag) {
+	    case 0:
+		$res_page = $this->Export();
+		break;
+	    case 1:
+		$res_page = $this->response_data;
+	}
+	return $res_page;
+    }
+    
+    /**
+     * [SET] レスポンスデータ・ページ化
+     * 
+     * ページフラグを1に設定し、出力する際にはresponse_dataに格納されているデータだけ出力するようにします
+     */
+    protected function setResCodeToData() {
+	$this->page_flag = 1;
     }
     
     /**
@@ -99,7 +118,7 @@ class Page extends Former {
      * [SET] 更新確認画面設定
      * 
      * 入力〜認証までの段階をクリアした場合、入力された情報をもう一度確認する画面を設定します<br>
-     * 作成時にはレスポンスデータに確認用のデータ（各）を組み込む必要です
+     * 作成時にはレスポンスデータに確認用のデータ（各）を組み込む必要があります
      */
     protected function setConfirm() {
 	$this->SubTitle('入力確認', '入力事項が正しければ「更新する」を押してください。<br>（※）「キャンセル」の場合、アカウント選択画面に遷移します。', 'user-check');

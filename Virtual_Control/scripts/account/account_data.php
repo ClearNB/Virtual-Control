@@ -2,7 +2,7 @@
 
 include_once __DIR__ . '/../general/sqldata.php';
 
-class ACCOUNTData {
+class AccountData {
 
     private static $set = [];
     private $userid;

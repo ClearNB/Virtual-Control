@@ -159,7 +159,29 @@ function session_action_guest(): void {
 	    break;
 	case 3:
 	    http_response_code(301);
-	    header('location: /init.php');	    
+	    header('location: /init');	    
+	    exit();
+	    break;
+    }
+}
+
+/**
+ * [FUNCTION] ゲスト判定ファンクション
+ * 
+ * セッション行動についてゲスト確認を行い、適切な処理を行います<br>
+ * ユーザである場合: /dash へ<br>
+ * ゲストとして利用できる場合: / へ
+ */
+function session_action_init(): void {
+    switch(session_chk()) {
+	case 0:
+	    http_response_code(301);
+	    header('location: /dash');
+	    exit();
+	    break;
+	case 1:
+	    http_response_code(301);
+	    header('location: /');
 	    exit();
 	    break;
     }
@@ -175,15 +197,16 @@ function session_action_guest(): void {
 function session_chk(): int {
     session_start_once();
     $chk = 1;
-    if (session_exists('gsc_userid')) {
+    if (session_exists('vc_userid')) {
 	$userid = session_get_userid();
 	$res = select(true, "VC_USERS", "LOGINSTATE", "WHERE USERID = '$userid'");
 	$chk = ($res && $res['LOGINSTATE'] == 1) ? 0 : 2;
     }
-    if($chk == 2) {
+    if($chk == 2 || $chk == 1) {
 	$res = select(false, 'VC_USERS', 'USERID');
-	$chk = ($res) ? 2 : 3;
+	$chk = ($res) ? $chk : 3;
     }
+    ob_get_clean();
     return $chk;
 }
 
@@ -197,7 +220,7 @@ function session_chk(): int {
  */
 function session_auth(): bool {
     session_start_once();
-    return isset($_SESSION['gsc_authid']) && ($_SESSION['gsc_authid'] == $_SESSION['gsc_userid']) && session_per_chk();
+    return isset($_SESSION['vc_authid']) && ($_SESSION['vc_authid'] == $_SESSION['vc_userid']) && session_per_chk();
 }
 
 /**
@@ -224,13 +247,11 @@ function session_auth_check($userid, $pass, $isauthid = false): int {
 	$res = 2;
     } else {
 	$hash = hash('sha256', $pass . $salt);
-
 	$result = select(true, "VC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERID = '$userid'");
 	$password_matches = $result['PASSWORD_MATCHES'];
-
 	if ($password_matches) {
 	    if ($isauthid) {
-		session_create('gsc_authid', $userid);
+		session_create('vc_authid', $userid);
 	    }
 	} else {
 	    $res = 2;
@@ -264,7 +285,7 @@ function session_get_userdata(): array {
  * @return string|null セッションがある場合はそのユーザIDを返します
  */
 function session_get_userid(): string {
-    return session_get('gsc_userid');
+    return session_get('vc_userid');
 }
 
 /**

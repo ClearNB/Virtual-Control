@@ -54,7 +54,7 @@ class Get {
      * 
      * @return array|string|int セッションの取得に成功した場合はそのデータが、失敗した場合はnullが返されます
      */
-    protected function get_session(): bool {
+    protected function get_session() {
 	return session_get($this->session_id);
     }
 
@@ -67,6 +67,19 @@ class Get {
      * @return bool 追加に成功した場合はtrue、失敗した場合はfalseが返されます
      */
     protected function set_session($data): bool {
+	return session_create($this->session_id, $data);
+    }
+    
+    /**
+     * [GET] セッションデータリセット・代入
+     * 
+     * セッションIDをもとに、現在のデータを一旦削除した上で、新たなデータを代入します
+     * 
+     * @param array|string|int $data セッションとして代入するデータを指定します
+     * @return bool 再代入に成功した場合はtrue、失敗した場合はfalseが返されます
+     */
+    protected function reset_session($data): bool {
+	session_unset_byid($this->session_id);
 	return session_create($this->session_id, $data);
     }
     

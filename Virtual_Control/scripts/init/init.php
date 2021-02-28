@@ -8,10 +8,18 @@ $f_id = post_get_data('f_id');
 
 session_action_scripts();
 
-$d = new initDatabase();
-$v = $d->init();
+$res_data = ['CODE' => 2, 'DATA' => '要求した内容は受け取れませんでした。'];
+
+switch ($f_id) {
+    case 51: //Page Get
+	$res_data = ['CODE' => 0, 'DATA' => ''];
+	break;
+    case 52: //Post
+	$init = new initGet();
+	$res_data = $init->init();
+	break;
+}
 ob_get_clean();
 
-$page = new InitPage($v['CODE'], $v['DATA']);
-
+$page = new InitPage($res_data['CODE'], $res_data['DATA']);
 echo json_encode(['PAGE' => $page->getPage()]);

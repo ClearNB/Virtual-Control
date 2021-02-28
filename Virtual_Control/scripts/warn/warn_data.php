@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__ . '/../agent/agentdata.php';
+include_once __DIR__ . '/../agent/agent_data.php';
 include_once __DIR__ . '/../mib/mib_data.php';
 
 class WarnData {

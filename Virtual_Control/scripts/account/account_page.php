@@ -162,13 +162,13 @@ class AccountPage extends Page {
      * 
      * 削除を行う前に、情報を確認する画面を設定します
      */
-    protected function setDelete($account_data) {
+    protected function setDelete() {
 	$this->Button('bt_dl_bk', 'アカウント選択画面に戻る', 'button', 'chevron-circle-left');
 	$this->SubTitle('アカウント削除', '以下のユーザを削除します。', 'trash-alt');
 	$this->openList();
-	$this->addList('ユーザID: ' . $account_data['USERID']);
-	$this->addList('ユーザ名: ' . $account_data['USERNAME']);
-	$this->addList('権限: ' . $account_data['PERMISSION']);
+	$this->addList('ユーザID: ' . $this->response_data['USERID']);
+	$this->addList('ユーザ名: ' . $this->response_data['USERNAME']);
+	$this->addList('権限: ' . $this->response_data['PERMISSION']);
 	$this->closeList();
 	$this->Button('bt_dl_sb', '削除する', 'button', 'sign-in-alt');
     }

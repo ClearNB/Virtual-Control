@@ -5,6 +5,7 @@ include_once __DIR__ . '/warn_data.php';
 include_once __DIR__ . '/warn_table.php';
 
 class WarnGet extends Get {
+
     private $sub_data;
 
     /**
@@ -15,7 +16,7 @@ class WarnGet extends Get {
      * @param int $request_code リクエストコードを指定します
      */
     public function __construct($request_code) {
-	parent::__construct($request_code, 'gsc_warn_result');
+	parent::__construct($request_code, 'vc_warn');
 	$this->sub_data = post_get_data('sub');
     }
 
@@ -30,8 +31,8 @@ class WarnGet extends Get {
 	$res = ['CODE' => 1, 'DATA' => '要求データを受け取れませんでした'];
 	if (session_chk() == 0) {
 	    switch ($this->request_code) {
-		case 81:
-		    initialize();
+		case 41: case 44:
+		    $this->initialize();
 		    $data = WarnData::getWarn();
 		    $table = new WarnTable($data);
 		    $res_data = $table->getHTML();
@@ -39,17 +40,17 @@ class WarnGet extends Get {
 		    $res['DATA'] = ['SUB' => $res_data['SUB'], 'DATE' => $data['DATE'], 'LIST' => $res_data['LIST'], 'CSV' => $data['CSV'], 'COUNT' => $res_data['COUNT']];
 		    $this->set_session($res['DATA']);
 		    break;
-		case 83:
-		    $data = get_session();
-		    $res['CODE'] = ($data) ? 0 : $res['CODE'];
-		    $res['DATA'] = ($data) ? $data : $res['DATA'];
-		    break;
-		case 82:
+		case 42:
 		    if ($this->sub_data) {
 			$data = $this->get_session_byid($this->sub_data);
 			$res['CODE'] = ($data) ? 1 : $res['CODE'];
 			$res['DATA'] = ($data) ? $data : $res['DATA'];
 		    }
+		    break;
+		case 43:
+		    $data = $this->get_session();
+		    $res['CODE'] = ($data) ? 0 : $res['CODE'];
+		    $res['DATA'] = ($data) ? $data : $res['DATA'];
 		    break;
 	    }
 	    if (ob_get_contents()) {
@@ -58,7 +59,7 @@ class WarnGet extends Get {
 		ob_clean();
 	    }
 	}
-	
+
 	return $res;
     }
 
@@ -74,4 +75,5 @@ class WarnGet extends Get {
 	$data = $this->get_session();
 	return (isset($data['SUB'][$id])) ? $data['SUB'][$id] : '';
     }
+
 }

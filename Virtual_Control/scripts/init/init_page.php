@@ -45,8 +45,8 @@ class InitPage extends Page {
     protected function setCorrect() {
 	$this->SubTitle('初期化が完了しました！', '早速、新しくなったデータで試しましょう！', 'thumbs-up');
 	$this->openList();
-	$this->addList('ユーザ名: [USERID]');
-	$this->addList('パスワード: [PASS]');
+	$this->addList('ユーザ名: ' . $this->response_data['USERID']);
+	$this->addList('パスワード: ' . $this->response_data['PASS']);
 	$this->closeList();
 	$this->Button('bt_sc_ln', 'ホームに戻る', 'button', 'home');
     }

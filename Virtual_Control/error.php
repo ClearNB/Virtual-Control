@@ -20,7 +20,7 @@ $response_caption = [
 
 $response_code = http_response_code();
 
-$fm_pg = new form_generator('fm_pg');
+$fm_pg = new Former('fm_pg');
 $fm_pg->SubTitle($response_caption[$response_code][1], $response_caption[$response_code][2], 'times-circle');
 $fm_pg->Button('bt_pg_bk', 'ホームへ戻る', 'button', 'home');
 

@@ -2,8 +2,7 @@
 include_once __DIR__ . '/../scripts/general/loader.php';
 include_once __DIR__ . '/../scripts/general/session.php';
 
-session_action_user();
-$getdata = session_get_userdata();
+session_action_init();
 
 $ld = new loader();
-$ld->getPage('Virtual Control', 'INIT', 'align-justify', $getdata['PERMISSION'], 'init.js');
+$ld->getPage('Virtual Control', 'INIT', 'align-justify', 999, 'init.js');
