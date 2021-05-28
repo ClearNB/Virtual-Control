@@ -11,7 +11,7 @@ include_once __DIR__ . '/../general/loader.php';
  */
 class WarnTable {
 
-    static $column = ['SYSTIME' => 'システム稼働時間', 'TIME' => '発生時刻', 'ADDRESS' => 'ホストアドレス', 'COMMUNITY' => 'コミュニティ', 'OID' => '対象OID', 'AGENT' => 'エージェント情報', 'ENTERPRISE' => '情報出力先OID', 'INTERFACE' => 'インタフェースID', 'SOURCE' => 'その他情報', 'MESSAGE' => 'メッセージ'];
+    static $column = ['GROUP' => 'グループ情報', 'SYSTIME' => 'システム稼働時間', 'TIME' => '発生時刻', 'ADDRESS' => 'ホストアドレス', 'COMMUNITY' => 'コミュニティ', 'OID' => '対象OID', 'AGENT' => 'エージェント情報', 'ENTERPRISE' => '情報出力先OID', 'INTERFACE' => 'インタフェースID', 'SOURCE' => 'その他情報', 'MESSAGE' => 'メッセージ'];
     private $data;
     private $u_data;
     private $s_data;
@@ -46,8 +46,8 @@ class WarnTable {
 	$this->s_data .= '</div></details>';
     }
 
-    private function getData($size) {
-	return ['TABLE' => $this->s_data, 'COUNT' => $size];
+    private function getData($id, $size) {
+	return ['ID' => $id, 'TABLE' => $this->s_data, 'COUNT' => $size];
     }
 
     private function resetData() {
@@ -72,7 +72,7 @@ class WarnTable {
 	    $this->r_data['COUNT'] += $size;
 	    $this->r_data['LIST'] .= $this->loader->addListGroup($id, $g . ' - (' . $size . '件)', 'poll-h', '最新: ' . $updated_data, '詳しくはクリック！');
 	    
-	    $this->r_data['SUB'][$id] = $this->getData($size);
+	    $this->r_data['SUB'][$id] = $this->getData($g, $size);
 	    $this->resetData();
 	}
 	$this->r_data['LIST'] .= $this->loader->closeListGroup();

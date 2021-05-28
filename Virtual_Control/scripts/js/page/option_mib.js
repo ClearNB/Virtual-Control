@@ -59,6 +59,9 @@ $(document).on('click', 'button[id^="bt_po_bk"]', function () {
         case 'bt_po_bk_sb':
             change_mib_sub_select();
             break;
+        case 'bt_po_bk_nd':
+            change_mib_node_edit();
+            break;
     }
     mib_data_get();
 });
@@ -74,6 +77,9 @@ $(document).on('click', 'button[id^="bt_sl"]', function () {
             case 'bt_sl_sb_cr':
                 change_mib_sub_create();
                 break;
+            case 'bt_sl_nd_cr':
+                change_mib_node_edit_form();
+                break;
         }
     } else if (new RegExp("(bk)$").test(id)) {
         switch (id) {
@@ -82,6 +88,9 @@ $(document).on('click', 'button[id^="bt_sl"]', function () {
                 break;
             case 'bt_sl_sb_bk':
                 change_mib_group_select();
+                break;
+            case 'bt_sl_nd_bk':
+                change_mib_sub_select();
                 break;
         }
     } else if (new RegExp("(go|ed|dl)$").test(id)) {
@@ -181,5 +190,10 @@ $(document).on('click', '#bt_cs_bk', function () {
 
 $(document).on('change', 'input[name="request_data_id"]', function () {
     $('button[id$="_ed"], button[id$="_dl"], button[id$="_go"]').attr('disabled', (($('input[name="request_data_id"]:checked').length === 1) ? false : true));
-}
-);
+});
+
+//NODE
+$(document).on('click', 'button[id^="nd-"]', function () {
+    rdata = $(this).attr('id');
+    change_mib_get_edit_select();
+});

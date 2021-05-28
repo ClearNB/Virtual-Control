@@ -1,60 +1,79 @@
 <?php
 
-include_once __DIR__ . '/warn_page.php';
-include_once __DIR__ . '/warndata.php';
-include_once __DIR__ . '/warntable.php';
-include_once __DIR__ . '/../general/loader.php';
-include_once __DIR__ . '/../session/session_chk.php';
+include_once __DIR__ . '/../general/get.php';
+include_once __DIR__ . '/warn_data.php';
+include_once __DIR__ . '/warn_table.php';
 
-session_action_scripts();
+class WarnGet extends Get {
 
-$f_id = post_get_data('f_id');
-$s_id = post_get_data('sub');
+    private $sub_data;
 
-$res = ['CODE' => 3, 'DATA' => '手続きの要求は受け取れませんでした。'];
-$page = new WarnPage();
+    /**
+     * [SET] CONSTRUCTOR
+     * 
+     * オブジェクトコンストラクタです
+     * 
+     * @param int $request_code リクエストコードを指定します
+     */
+    public function __construct($request_code) {
+	parent::__construct($request_code, 'vc_warn');
+	$this->sub_data = post_get_data('sub');
+    }
 
-switch ($f_id) {
-    case 81:
-	initialize();
-    case 83:
-	$data = get_session();
-	$res['CODE'] = ($data) ? 0 : $res['CODE'];
-	$res['DATA'] = ($data) ? $data : $res['DATA'];
-	break;
-    case 82:
-	$data = get_session_byselect($s_id);
-	$res['CODE'] = ($data) ? 1 : $res['CODE'];
-	$res['DATA'] = ($data) ? $data : $res['DATA'];
-	break;
-}
-$response_page = $page->get_page_byid($res['CODE'], $res['DATA']);
+    /**
+     * [GET] WARN処理
+     * 
+     * クラス内のデータをもとにデータ処理を行います
+     * 
+     * @return array CODE, DATAによる連想配列で返します（CODEはレスポンスコード、DATAはレスポンスデータとなります）
+     */
+    public function run(): array {
+	$res = ['CODE' => 1, 'DATA' => '要求データを受け取れませんでした'];
+	if (session_chk() == 0) {
+	    switch ($this->request_code) {
+		case 41: case 44:
+		    $this->initialize();
+		    $data = WarnData::getWarn();
+		    $table = new WarnTable($data);
+		    $res_data = $table->getHTML();
+		    $res['CODE'] = 0;
+		    $res['DATA'] = ['SUB' => $res_data['SUB'], 'DATE' => $data['DATE'], 'LIST' => $res_data['LIST'], 'CSV' => $data['CSV'], 'COUNT' => $res_data['COUNT']];
+		    $this->set_session($res['DATA']);
+		    break;
+		case 42:
+		    if ($this->sub_data) {
+			$data = $this->get_session_byid($this->sub_data);
+			$res['CODE'] = ($data) ? 1 : $res['CODE'];
+			$res['DATA'] = ($data) ? $data : $res['DATA'];
+		    }
+		    break;
+		case 43:
+		    $data = $this->get_session();
+		    $res['CODE'] = ($data) ? 0 : $res['CODE'];
+		    $res['DATA'] = ($data) ? $data : $res['DATA'];
+		    break;
+	    }
+	    if (ob_get_contents()) {
+		$res['CODE'] = 2;
+		$res['DATA'] = ob_get_contents();
+		ob_clean();
+	    }
+	}
 
-$res_array = ['PAGE' => $response_page];
-if ($f_id == 81 || $f_id == 83) {
-    $res_array['CSV'] = $res['DATA']['CSV'];
-}
+	return $res;
+    }
 
-ob_clean();
+    /**
+     * [GET] サブデータ取得
+     * 
+     * セッションよりデータを取得し、ログデータ内のサブ情報を取り出し返します
+     * 
+     * @param string $id サブ情報を判別するIDを指定します
+     * @return array|null 正しく指定されている場合はその情報を、指定できていない場合はnullを返します
+     */
+    private function get_session_byid($id) {
+	$data = $this->get_session();
+	return (isset($data['SUB'][$id])) ? $data['SUB'][$id] : '';
+    }
 
-echo json_encode($res_array);
-
-function initialize() {
-    session_unset_byid('warn_data');
-    WarnData::setData();
-    WarnData::load_data();
-    $data = WarnData::getArray();
-    $table = new WarnTable($data);
-    $res_data = $table->getHTML();
-    $res = ['SUB' => $res_data['SUB'], 'DATE' => $data['DATE'], 'LIST' => $res_data['LIST'], 'CSV' => $data['CSV'], 'COUNT' => $res_data['COUNT']];
-    session_create('warn_data', $res);
-}
-
-function get_session() {
-    return session_get('warn_data');
-}
-
-function get_session_byselect($id) {
-    $data = get_session();
-    return (isset($data['SUB'][$id])) ? $data['SUB'][$id] : '';
 }

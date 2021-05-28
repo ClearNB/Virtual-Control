@@ -3,7 +3,7 @@
 include_once __DIR__ . '/../general/sqldata.php';
 include_once __DIR__ . '/../mib/mibdata.php';
 
-class AGENTData {
+class AgentData {
 
     private static $set = [];
     private $agentid;
@@ -37,8 +37,8 @@ class AGENTData {
      * @return array|null エージェントの全ての情報が取得できればその情報を配列で、それ以外はnullを返します
      */
     public static function get_agent_info() {
-	$q01 = select(false, 'GSC_AGENT', 'AGENTID, AGENTHOST, COMMUNITY, AGENTUPTIME');
-	$q02 = select(false, 'GSC_AGENT_MIB', 'AGENTID, SID');
+	$q01 = select(false, 'VC_AGENT', 'AGENTID, AGENTHOST, COMMUNITY, AGENTUPTIME');
+	$q02 = select(false, 'VC_AGENT_MIB', 'AGENTID, SID');
 	if ($q01 && $q02) {
 	    $result = [
 		'VALUE' => [],

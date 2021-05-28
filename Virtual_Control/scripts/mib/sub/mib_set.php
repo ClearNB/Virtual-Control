@@ -121,7 +121,7 @@ class MIBSubSet {
 	$chk = $this->check();
 	$res_code = ($chk != 0) ? $chk : ((!session_auth()) ? 4 : 0);
 	if ($res_code == 0) {
-	    $res = insert('GSC_MIB_SUB', ['GID', 'SOID', 'SNAME'], [$this->pre_groupid, $this->sub_oid, $this->sub_name]);
+	    $res = insert('VC_MIB_SUB', ['GID', 'SOID', 'SNAME'], [$this->pre_groupid, $this->sub_oid, $this->sub_name]);
 	    $res_code = ($res) ? 0 : 1;
 	}
 	return $res_code;
@@ -140,8 +140,8 @@ class MIBSubSet {
     private function delete(): int {
 	$res_code = (!session_auth()) ? 4 : 0;
 	if ($res_code == 0) {
-	    $flag = delete('GSC_MIB_SUB', 'WHERE SID = ' . $this->pre_subid);
-	    $flag &= delete('GSC_AGENT_MIB', 'WHERE SID = ' . $this->pre_subid);
+	    $flag = delete('VC_MIB_SUB', 'WHERE SID = ' . $this->pre_subid);
+	    $flag &= delete('VC_AGENT_MIB', 'WHERE SID = ' . $this->pre_subid);
 	    $res_code = ($flag) ? 0 : 1;
 	}
 	return $res_code;
@@ -198,10 +198,10 @@ class MIBSubSet {
 	$flag = true;
 	switch ($this->funid) {
 	    case 34:
-		$flag &= update('GSC_MIB_SUB', 'SOID', intval($this->sub_oid), 'WHERE SID = ' . $this->pre_subid);
+		$flag &= update('VC_MIB_SUB', 'SOID', intval($this->sub_oid), 'WHERE SID = ' . $this->pre_subid);
 		break;
 	    case 35:
-		$flag &= update('GSC_MIB_SUB', 'SNAME', $this->sub_name, 'WHERE SID = ' . $this->pre_subid);
+		$flag &= update('VC_MIB_SUB', 'SNAME', $this->sub_name, 'WHERE SID = ' . $this->pre_subid);
 		break;
 	}
 	return $flag;
@@ -251,7 +251,7 @@ class MIBSubSet {
 
     private function get_selectedagent() {
 	$res = '<h5 class="vc-title">エージェント選択</h5><ul class="black-view">';
-	$sel1 = select(false, 'GSC_AGENT_MIB a INNER JOIN GSC_AGENT b ON a.AGENTID = b.AGENTID', 'b.AGENTHOST, b.COMMUNITY', 'WHERE a.SID = ' . $this->pre_subid);
+	$sel1 = select(false, 'VC_AGENT_MIB a INNER JOIN VC_AGENT b ON a.AGENTID = b.AGENTID', 'b.AGENTHOST, b.COMMUNITY', 'WHERE a.SID = ' . $this->pre_subid);
 	if ($sel1) {
 	    $sel1_arr = getArray($sel1);
 	    if (sizeof($sel1_arr)) {

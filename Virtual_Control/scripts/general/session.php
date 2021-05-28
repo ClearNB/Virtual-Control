@@ -135,7 +135,7 @@ function session_action_user(): void {
 	    header('location: /error.php');
 	    exit();
 	    break;
-	case 2:
+	case 2: case 3:
 	    http_response_code(301);
 	    header('location: /logout');
 	    exit();
@@ -157,6 +157,33 @@ function session_action_guest(): void {
 	    header('location: /dash');
 	    exit();
 	    break;
+	case 3:
+	    http_response_code(301);
+	    header('location: /init');	    
+	    exit();
+	    break;
+    }
+}
+
+/**
+ * [FUNCTION] ゲスト判定ファンクション
+ * 
+ * セッション行動についてゲスト確認を行い、適切な処理を行います<br>
+ * ユーザである場合: /dash へ<br>
+ * ゲストとして利用できる場合: / へ
+ */
+function session_action_init(): void {
+    switch(session_chk()) {
+	case 0:
+	    http_response_code(301);
+	    header('location: /dash');
+	    exit();
+	    break;
+	case 1:
+	    http_response_code(301);
+	    header('location: /');
+	    exit();
+	    break;
     }
 }
 
@@ -165,20 +192,21 @@ function session_action_guest(): void {
  * 
  * ユーザ判定を行います
  * 
- * return int 0..正常（ユーザである）, 1..異常（ユーザではない）, 2..異常（データベースまたはログイン状態）
+ * return int 0..正常（ユーザである）, 1..異常（ユーザではない）, 2..異常（データベースまたはログイン状態）, 3..整合性エラー（ユーザ未登録状態）
  */
 function session_chk(): int {
     session_start_once();
     $chk = 1;
-    if (session_exists('gsc_userid')) {
+    if (session_exists('vc_userid')) {
 	$userid = session_get_userid();
-	$res = select(true, "GSC_USERS", "LOGINSTATE", "WHERE USERID = '$userid'");
-	if ($res && $res['LOGINSTATE'] == 1) {
-	    $chk = 0;
-	} else {
-	    $chk = 2;
-	}
+	$res = select(true, "VC_USERS", "LOGINSTATE", "WHERE USERID = '$userid'");
+	$chk = ($res && $res['LOGINSTATE'] == 1) ? 0 : 2;
     }
+    if($chk == 2 || $chk == 1) {
+	$res = select(false, 'VC_USERS', 'USERID');
+	$chk = ($res) ? $chk : 3;
+    }
+    ob_get_clean();
     return $chk;
 }
 
@@ -192,7 +220,7 @@ function session_chk(): int {
  */
 function session_auth(): bool {
     session_start_once();
-    return isset($_SESSION['gsc_authid']) && ($_SESSION['gsc_authid'] == $_SESSION['gsc_userid']) && session_per_chk();
+    return isset($_SESSION['vc_authid']) && ($_SESSION['vc_authid'] == $_SESSION['vc_userid']) && session_per_chk();
 }
 
 /**
@@ -207,7 +235,7 @@ function session_auth(): bool {
 function session_auth_check($userid, $pass, $isauthid = false): int {
     $res = 0;
 
-    $q01 = select(true, "GSC_USERS", "SALT", "WHERE USERID = '$userid'");
+    $q01 = select(true, "VC_USERS", "SALT", "WHERE USERID = '$userid'");
     $salt = '';
     if (!$q01) {
 	$res = 1;
@@ -219,13 +247,11 @@ function session_auth_check($userid, $pass, $isauthid = false): int {
 	$res = 2;
     } else {
 	$hash = hash('sha256', $pass . $salt);
-
-	$result = select(true, "GSC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERID = '$userid'");
+	$result = select(true, "VC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERID = '$userid'");
 	$password_matches = $result['PASSWORD_MATCHES'];
-
 	if ($password_matches) {
 	    if ($isauthid) {
-		session_create('gsc_authid', $userid);
+		session_create('vc_authid', $userid);
 	    }
 	} else {
 	    $res = 2;
@@ -246,7 +272,7 @@ function session_auth_check($userid, $pass, $isauthid = false): int {
 function session_get_userdata(): array {
     session_start_once();
     $userid = session_get_userid();
-    $sql = select(true, "GSC_USERS", "USERID, USERNAME, PERMISSION, LOGINSTATE", "WHERE USERID = '$userid'");
+    $sql = select(true, "VC_USERS", "USERID, USERNAME, PERMISSION, LOGINSTATE", "WHERE USERID = '$userid'");
     session_set_data($sql);
     return $sql;
 }
@@ -259,7 +285,7 @@ function session_get_userdata(): array {
  * @return string|null セッションがある場合はそのユーザIDを返します
  */
 function session_get_userid(): string {
-    return session_get('gsc_userid');
+    return session_get('vc_userid');
 }
 
 /**

@@ -2,7 +2,7 @@
 
 function page_get() {
     var fdata = [];
-    fdata.push({'name': 'f_id', 'value': getFunctionID()});
+    fdata.push({'name': 'f_id', 'value': get_funid()});
     animation('data_output', 0, fm_ld);
     ajax_dynamic_post('/scripts/links/links_get.php', fdata).then(function (data) {
         animation('data_output', 400, data['PAGE']);

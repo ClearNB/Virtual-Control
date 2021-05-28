@@ -20,7 +20,7 @@ class IconData {
 
     public static function getAllIconData() {
 	$res = [];
-	$icon = select(false, 'GSC_ICONS', 'ICONID, ICON');
+	$icon = select(false, 'VC_ICONS', 'ICONID, ICON');
 	if ($icon) {
 	    $icon_d = getArray($icon);
 	    foreach ($icon_d as $i) {

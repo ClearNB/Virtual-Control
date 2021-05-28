@@ -143,7 +143,7 @@ class AccountSet {
 	if ($res_code == 0) {
 	    $salt = random(20);
 	    $pass_hash = hash('sha256', $this->pass . $salt);
-	    $res = insert('GSC_USERS', ['USERID', 'PASSWORDHASH', 'USERNAME', 'PERMISSION', 'SALT'], [$this->userid, $pass_hash, $this->username, $this->per, $salt]);
+	    $res = insert('VC_USERS', ['USERID', 'PASSWORDHASH', 'USERNAME', 'PERMISSION', 'SALT'], [$this->userid, $pass_hash, $this->username, $this->per, $salt]);
 	    $res_code = ($res) ? 0 : 1;
 	}
 	return $res_code;
@@ -168,7 +168,7 @@ class AccountSet {
 	$chk_login = $this->check_user_login();
 	$res_code = ($chk_login) ? 5 : ((!session_auth()) ? 6 : 0);
 	if ($res_code == 0) {
-	    $res = delete("GSC_USERS", "WHERE USERID = '$this->pre_userid'");
+	    $res = delete("VC_USERS", "WHERE USERID = '$this->pre_userid'");
 	    $res_code = ($res) ? 0 : 1;
 	}
 	return $res_code;
@@ -218,14 +218,14 @@ class AccountSet {
     private function editQuery() {
 	$res = [];
 	switch ($this->funid) {
-	    case 4: $res = ['GSC_USERS', ['USERID'], [$this->userid]];
+	    case 4: $res = ['VC_USERS', ['USERID'], [$this->userid]];
 		break;
-	    case 5: $res = ['GSC_USERS', ['USERNAME'], [$this->username]];
+	    case 5: $res = ['VC_USERS', ['USERNAME'], [$this->username]];
 		break;
 	    case 6:
 		$salt = random(20);
 		$pass_hash = hash('sha256', $this->pass . $salt);
-		$res = ['GSC_USERS', ['PASSWORDHASH', 'SALT'], [$pass_hash, $salt]];
+		$res = ['VC_USERS', ['PASSWORDHASH', 'SALT'], [$pass_hash, $salt]];
 		break;
 	}
 	$flag = true;
@@ -311,7 +311,7 @@ class AccountSet {
      * @return bool
      */
     private function check_user_login(): bool {
-	$result = select(true, 'GSC_USERS', 'LOGINSTATE', 'WHERE USERID = \'' . $this->userid . '\'');
+	$result = select(true, 'VC_USERS', 'LOGINSTATE', 'WHERE USERID = \'' . $this->userid . '\'');
 	$res = ($result && $result['LOGINSTATE'] == 1);
 	return $res;
     }
@@ -345,7 +345,7 @@ class AccountSet {
      */
     private function check_userid(): string {
 	$res = '';
-	$result = select(true, 'GSC_USERS', 'COUNT(*) AS USERCOUNT', 'WHERE USERID = \'' . $this->userid . '\'');
+	$result = select(true, 'VC_USERS', 'COUNT(*) AS USERCOUNT', 'WHERE USERID = \'' . $this->userid . '\'');
 	if ($result && $result['USERCOUNT'] >= 1) {
 	    $res = '<li>ユーザIDが重複しています。</li>';
 	}

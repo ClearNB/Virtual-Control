@@ -1,33 +1,63 @@
 <?php
 
-include_once __DIR__ . '/../general/sqldata.php';
 include_once __DIR__ . '/agentdata.php';
 include_once __DIR__ . '/agent_page.php';
 include_once __DIR__ . '/agentselect.php';
-include_once __DIR__ . '/agentfunction.php';
-include_once __DIR__ . '/../session/session_chk.php';
+include_once __DIR__ . '/agent_set.php';
 include_once __DIR__ . '/../mib/mibdata.php';
 include_once __DIR__ . '/../mib/mibselect.php';
 
-session_action_scripts();
+class AgentGet extends Get {
 
-$f_id = post_get_data('f_id');
-$d_tp = post_get_data('d_tp');
-$p_id = post_get_data('p_id');
-$agenthost = post_get_data('in_ag_hs');
-$community = post_get_data('in_ag_cm');
-$mib = post_get_data_array('sl_mb');
-$a_pass = post_get_data('in_at_ps');
+    private $sh_code;
+    private $pre_agentid;
+    private $agenthost;
+    private $mib;
+    private $a_pass;
 
-$res = ['SELECTED' => 0, 'PAGE' => ''];
+    /**
+     * [SET] CONSTRUCTOR
+     * 
+     * オブジェクトコンストラクタです
+     * 
+     * @param int $request_code リクエストコードを指定します
+     */
+    public function __construct($request_code) {
+	parent::__construct($request_code, 'gsc_agent');
+	$this->sh_code = post_get_data('d_tp');
+	$this->pre_agentid = post_get_data('p_id');
+	$this->agenthost = post_get_data('in_ag_hs');
+	$this->agenthost = post_get_data('in_ag_cm');
+	$this->mib = post_get_data_array('sl_mb');
+	$this->a_pass = post_get_data('in_at_ps');
+    }
 
-$page = new AgentPage();
-$result_page = $page->getFail();
+    private function getMIBData() {
+	$this->mib_subdata = session_get('gsc_mibdata');
+	$mibdata = new MIBData();
+	return $mibdata->getMIB(0);
+    }
+
+    /**
+     * [SET] セッション初期化
+     * 
+     * MIBData, AuthIDをもとに初期化を行います
+     */
+    protected function initialize() {
+	parent::initialize();
+	session_unset_byid('gsc_authid');
+    }
+
+    public function run(): array {
+	$res_data = ['CODE' => 999, 'DATA' => '要求は受け取れませんでした。'];
+	switch($this->request_code) {
+	    
+	}
+	return $res_data;
+    }
+}
 
 if ($f_id && session_chk() == 0) {
-    $mibdata = new MIBData();
-    $subdata = $mibdata->getMIB(0);
-
     if ($subdata) {
 	$code = 0;
 	switch ($f_id) {
@@ -88,12 +118,8 @@ if ($f_id && session_chk() == 0) {
 	}
     }
 }
-if ($res['SELECTED'] != 1) {
-    $res['PAGE'] = $result_page;
-}
-
-if (isset($res['SELECTED'])) {
-    unset($res['SELECTED']);
+if ($res['CODE'] < 10) {
+    
 }
 
 //ob_get_clean();
@@ -165,22 +191,22 @@ function set_function($type, $data, $values) {
 	    $set->check_functionid();
 	    $runner = $set->run();
 	    switch ($runner['CODE']) {
-		case 0: $res = ['SELECTED' => 1, 'PAGE' => $page->getCorrect()];
+		case 0: $res = ['CODE' => 10];
 		    break;
-		case 1: $res = ['SELECTED' => 1, 'PAGE' => $page->getFail('データベースサーバへの接続に失敗しました。')];
+		case 1: $res = ['CODE' => 11, 'DATA' => 'データベースサーバへの接続に失敗しました。'];
 		    break;
-		case 2: $res = ['SELECTED' => 1, 'ID' => 'fm_warn', 'CODE' => 2, 'PAGE' => $runner['ERR_TEXT']];
+		case 2: $res = ['CODE' => 12, 'ID' => 'fm_warn', 'DATA' => $runner['ERR_TEXT']];
 		    break;
-		case 3: $res = ['SELECTED' => 1, 'PAGE' => $page->getFail()];
+		case 3: $res = ['CODE' => 13];
 		    break;
-		case 4: $res = ['SELECTED' => 1, 'PAGE' => $page->fm_at()];
+		case 4: $res = ['CODE' => 14, 'DATA' => $page->fm_at()];
 		    break;
-		case 5: $res = ['SELECTED' => 1, 'ID' => 'fm_warn', 'CODE' => 2, 'PAGE' => '認証エラーが発生しました。'];
+		case 5: $res = ['CODE' => 15, 'ID' => 'fm_warn', 'DATA' => '認証エラーが発生しました。'];
 		    break;
 		case 6:
 		    $agt_data = ($type == 1 || $type == 2) ? '【' . $si_data['SELECT']['AGENTHOST'] . '】' . $si_data['SELECT']['COMMUNITY'] : '';
 		    $runner['CONFIRM_DATA'] = str_replace('[AGENT_INFO]', $agt_data, $runner['CONFIRM_DATA']);
-		    $res = ['SELECTED' => 1, 'PAGE' => $page->getConfirm($runner['CONFIRM_DATA'])];
+		    $res = ['CODE' => 16, 'DATA' => $page->getConfirm($runner['CONFIRM_DATA'])];
 		    break;
 	    }
 	}
