@@ -12,6 +12,7 @@ include_once __DIR__ . '/analy_page.php';
 include_once __DIR__ . '/analy_get.php';
 include_once __DIR__ . '/../general/session.php';
 
+ini_set('display_errors', 0);
 session_action_scripts();
 
 $res = ['PAGE' => ''];
@@ -21,4 +22,5 @@ $get = new AnalyGet($f_id);
 $response = $get->run();
 $page = new AnalyPage($response['CODE'], $response['DATA']);
 $res['PAGE'] = $page->getPage();
+
 echo json_encode($res);

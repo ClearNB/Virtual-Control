@@ -17,6 +17,18 @@ include_once __DIR__ . '/../mib/mib_data.php';
 
 session_action_scripts();
 
+/**
+ * [ANALY] SNMPWALK実行処理
+ * 
+ * SNMPWALKの主な処理を行うメイン処理フォームです<br>
+ * 本プログラムでは、以下の処理を行います:<br>
+ * 1. 指定されたエージェントIDから、ホストアドレス・コミュニティ名・監視サブツリーOIDをもつエージェント情報を取得します<br>
+ * 2. 3つの情報を、監視サブツリーOIDごとSNMPWALKを実行し、結果一覧を作るページ、各OIDごとのリザルトページの作成を行います<br>
+ * 3. リザルトコードを付けて、データと一緒に送出します
+ * 
+ * @param int $agentid エージェントIDを指定します
+ * @return array リザルトコードとHTMLデータ・エラーメッセージなどのリザルトデータを含む配列を返します
+ */
 function get_walk_result($agentid) {
     $res = [];
 

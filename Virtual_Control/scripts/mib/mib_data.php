@@ -751,8 +751,8 @@ class MIBData {
 		];
 		break;
 	}
-	if ($query && $type && $filter_subid && is_array($filter_subid)) {
-	    $other = array_pop($query);
+	if ($query && $type && $filter_subid) {
+	    $other = array_pop($query); //ORDER BY句を取り出す
 	    array_push($query, 'WHERE b.SID IN (' . implode(', ', $filter_subid) . ')');
 	    switch ($type) {
 		case 1:

@@ -1,7 +1,7 @@
 <?php
 
 include_once __DIR__ . '/../general/sqldata.php';
-include_once __DIR__ . '/../mib/mibdata.php';
+include_once __DIR__ . '/../mib/mib_data.php';
 
 class AgentData {
 

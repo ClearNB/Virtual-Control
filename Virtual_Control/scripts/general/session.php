@@ -230,6 +230,7 @@ function session_auth(): bool {
  * 
  * @param string $userid ユーザIDを指定します
  * @param string $pass $useridに対してのパスワードを指定します
+ * @param bool $isauthid vc_authid に対してユーザ名を登録するかどうかを指定します（Default: false）
  * @return int 成功した場合は0、データベースが原因で失敗した場合は1、ユーザIDまたはパスワードが違う場合は2を返します
  */
 function session_auth_check($userid, $pass, $isauthid = false): int {

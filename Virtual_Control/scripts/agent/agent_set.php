@@ -9,24 +9,22 @@ class AgentSet {
      * [1] = データベースエラー<br>
      * [2] = 手続きエラー（ファンクションと内容が違う）<br>
      * [3] = チェックエラー（入力チェック）<br>
-     * [4] = 認証エラー<br>
-     * [5] = ログインエラー（編集・削除）<br>
-     * [6] = 認証ハック<br>
-     * [7] = 認証エラー<br>
-     * [8] = 確認ハック
+     * [4] = セッション認証エラー<br>
+     * [5] = 認証ハック<br>
+     * [6] = 認証エラー<br>
+     * [7] = 確認ハック
      * 
      * @var array
      */
     private $result_form = [
-	['CODE' => 0],
-	['CODE' => 1],
-	['CODE' => 2, 'ERR_TEXT' => '<ul class="black-view"><li>手続きに失敗しました。</li><li>手続き上で正しく入力してください。システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。</li></ul>'],
-	['CODE' => 2, 'ERR_TEXT' => '<ul class="black-view"><li>入力チェックエラーです。以下の入力したデータをご確認ください。</li>'],
-	['CODE' => 1, 'ERR_TEXT' => '認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。'],
-	['CODE' => 3],
-	['CODE' => 4],
-	['CODE' => 5],
-	['CODE' => 6, 'CONFIRM_DATA' => ''],
+	['CODE' => 10],
+	['CODE' => 11],
+	['CODE' => 12, 'ID' => 'fm_warn', 'DATA' => '<ul class="black-view"><li>手続きに失敗しました。</li><li>手続き上で正しく入力してください。システム上の正しい動作のため、UI上の操作以外での通信は拒否されます。</li></ul>'],
+	['CODE' => 12, 'ID' => 'fm_warn', 'DATA' => '<ul class="black-view"><li>入力チェックエラーです。以下の入力したデータをご確認ください。</li>'],
+	['CODE' => 999, 'VALUE' => '認証情報に異常が見つかりました。<br>VCServer権限のみ実行可能な処理のため、認証情報が異なるユーザでは処理することができません。'],
+	['CODE' => 13],
+	['CODE' => 14, 'ID' => 'fm_warn', 'DATA' => '認証エラーが発生しました。パスワードが異なります。'],
+	['CODE' => 15, 'DATA' => ''],
     ];
     private $agenthost;
     private $pre_agentid;
@@ -54,6 +52,7 @@ class AgentSet {
 	$this->mibs = $mibs;
 	$this->a_pass = $a_pass;
 	$this->funid = $functionid;
+	$this->check_functionid();
     }
 
     /**
@@ -77,7 +76,7 @@ class AgentSet {
 	} else {
 	    $set_fun = $this->check_correct_functionid();
 	    if ($set_fun != $this->funid) {
-		$set_fun = 18;
+		$set_fun = 88;
 	    }
 	}
 	$this->funid = $set_fun;
@@ -86,15 +85,15 @@ class AgentSet {
     public function check_correct_functionid() {
 	$set_fun = 0;
 	if ($this->agenthost && $this->community && $this->mibs) {
-	    $set_fun = 12;
+	    $set_fun = 82;
 	} else if ($this->pre_agentid && $this->agenthost) {
-	    $set_fun = 14;
+	    $set_fun = 84;
 	} else if ($this->pre_agentid && $this->community) {
-	    $set_fun = 15;
+	    $set_fun = 85;
 	} else if ($this->pre_agentid && $this->mibs) {
-	    $set_fun = 16;
+	    $set_fun = 86;
 	} else if ($this->pre_agentid) {
-	    $set_fun = 17;
+	    $set_fun = 87;
 	}
 	return $set_fun;
     }
@@ -113,18 +112,18 @@ class AgentSet {
     public function run() {
 	$result_code = 0;
 	switch ($this->funid) {
-	    case 12:
+	    case 82:
 		$result_code = $this->create();
 		break;
-	    case 14:
-	    case 15:
-	    case 16:
+	    case 84:
+	    case 85:
+	    case 86:
 		$result_code = $this->edit();
 		break;
-	    case 17:
+	    case 87:
 		$result_code = $this->delete();
 		break;
-	    case 18:
+	    case 88:
 		$result_code = 2;
 		break;
 	    case 999:
@@ -136,7 +135,7 @@ class AgentSet {
 
     /**
      * エージェントを作成します（作成フラグは以下参照）
-     * @return int (0..完了, 6..アカウント認証が必要, 2..セッション切れにより更新中止, 1..データベース障害が発生)
+     * @return int (0..完了, 5..アカウント認証が必要, 2..セッション切れにより更新中止, 1..データベース障害が発生)
      */
     private function create(): int {
 	$res_code = 0;
@@ -167,13 +166,9 @@ class AgentSet {
 		    $flag = false;
 		}
 
-		if ($flag) {
-		    $res_code = 0;
-		} else {
-		    $res_code = 1;
-		}
+		$res_code = $flag ? 0 : 1;
 	    } else {
-		$res_code = 6;
+		$res_code = 5;
 	    }
 	}
 	return $res_code;
@@ -188,13 +183,9 @@ class AgentSet {
 	if ($res_code == 0) {
 	    if (session_auth()) {
 		$query = $this->editQuery();
-		if ($query) {
-		    $res_code = 0;
-		} else {
-		    $res_code = 1;
-		}
+		$res_code = ($query) ? 0 : 1;
 	    } else {
-		$res_code = 6;
+		$res_code = 5;
 	    }
 	}
 	return $res_code;
@@ -210,7 +201,7 @@ class AgentSet {
 		$res_code = 1;
 	    }
 	} else {
-	    $res_code = 6;
+	    $res_code = 5;
 	}
 	return $res_code;
     }
@@ -219,27 +210,27 @@ class AgentSet {
 	$chk_text = '[ERROR_LOG]</ul>';
 	$chk = '';
 	switch ($this->funid) {
-	    case 12: //作成（ホスト・コミュニティ・MIB・重複確認）
+	    case 82: //作成（ホスト・コミュニティ・MIB・重複確認）
 		$chk .= check_host($this->agenthost);
 		$chk .= check_community($this->community);
 		$chk .= check_mib($this->mibs);
 		$chk .= check_duplicate($this->agenthost, $this->community);
 		break;
-	    case 14: //編集1（ホスト・重複確認）
+	    case 84: //編集1（ホスト・重複確認）
 		$chk .= check_host($this->agenthost);
 		$chk .= check_duplicate_onchange(0, $this->pre_agentid, $this->agenthost);
 		break;
-	    case 15: //編集2（コミュニティ・重複確認）
+	    case 85: //編集2（コミュニティ・重複確認）
 		$chk .= check_community($this->community);
 		$chk .= check_duplicate_onchange(1, $this->pre_agentid, $this->community);
 		break;
-	    case 16: //編集3（MIB確認）
+	    case 86: //編集3（MIB確認）
 		$chk .= check_mib($this->mibs);
 		break;
 	}
 	if ($chk) {
 	    $chk_text = str_replace('[ERROR_LOG]', $chk, $chk_text);
-	    $this->result_form[3]['ERR_TEXT'] .= $chk_text;
+	    $this->result_form[3]['DATA'] .= $chk_text;
 	    return 3;
 	} else {
 	    return 0;
@@ -251,14 +242,14 @@ class AgentSet {
 	$s_userid = session_get_userid();
 	switch (session_auth_check($s_userid, $this->a_pass, true)) {
 	    case 0:
-		$res = 8;
-		$this->result_form[$res]['CONFIRM_DATA'] = $this->generateList();
+		$res = 7;
+		$this->result_form[$res]['DATA'] = $this->generateList();
 		break;
 	    case 1:
 		$res = 1;
 		break;
 	    case 2:
-		$res = 7;
+		$res = 6;
 		break;
 	}
 	return $res;
@@ -267,13 +258,13 @@ class AgentSet {
     private function editQuery() {
 	$flag = true;
 	switch ($this->funid) {
-	    case 14:
+	    case 84:
 		$flag &= update("VC_AGENT", "AGENTHOST", $this->agenthost, "WHERE AGENTID = $this->pre_agentid");
 		break;
-	    case 15:
+	    case 85:
 		$flag &= update("VC_AGENT", "COMMUNITY", $this->community, "WHERE AGENTID = $this->pre_agentid");
 		break;
-	    case 16:
+	    case 86:
 		$flag &= delete("VC_AGENT_MIB", "WHERE AGENTID = $this->pre_agentid");
 		foreach ($this->mibs as $m) {
 		    $flag &= insert("VC_AGENT_MIB", ["AGENTID", "SID"], [$this->pre_agentid, $m]);
@@ -292,20 +283,21 @@ class AgentSet {
 	$func = "<li>ファンクション: [FUNCTION]</li>";
 	$column_list = ["<li>対象のエージェント: [AGENT_INFO]</li>", "<li>エージェントホスト: [HOST]</li>", "<li>コミュニティ名: [COMMUNITY]</li>", "<li>監視対象MIB: [MIBS_NAMES]</li>"];
 	$columns = [];
+
 	switch ($this->check_correct_functionid()) {
-	    case 12: $func = str_replace('[FUNCTION]', 'エージェント作成', $func);
+	    case 82: $func = str_replace('[FUNCTION]', 'エージェント作成', $func);
 		$columns = [1, 2, 3];
 		break;
-	    case 14: $func = str_replace('[FUNCTION]', 'エージェント編集（エージェントホスト）', $func);
+	    case 84: $func = str_replace('[FUNCTION]', 'エージェント編集（エージェントホスト）', $func);
 		$columns = [0, 1];
 		break;
-	    case 15: $func = str_replace('[FUNCTION]', 'エージェント編集（コミュニティ名）', $func);
+	    case 85: $func = str_replace('[FUNCTION]', 'エージェント編集（コミュニティ名）', $func);
 		$columns = [0, 2];
 		break;
-	    case 16: $func = str_replace('[FUNCTION]', 'エージェント編集（監視対象MIB）', $func);
+	    case 86: $func = str_replace('[FUNCTION]', 'エージェント編集（監視対象MIB）', $func);
 		$columns = [0, 3];
 		break;
-	    case 17: $func = str_replace('[FUNCTION]', 'エージェント削除', $func);
+	    case 87: $func = str_replace('[FUNCTION]', 'エージェント削除', $func);
 		$columns = [0];
 		break;
 	}
@@ -313,7 +305,7 @@ class AgentSet {
 	foreach ($columns as $col) {
 	    $text = $column_list[$col];
 	    switch ($col) {
-		case 0: $text = str_replace('[HOST]', $this->agenthost, str_replace('[COMMUNITY]', $this->community, $text));
+		case 0: $text = str_replace('[AGENT_INFO]', $this->get_current_agent(), $text);
 		    break;
 		case 1: $text = str_replace('[HOST]', $this->agenthost, $text);
 		    break;
@@ -328,6 +320,15 @@ class AgentSet {
 	return $list_text;
     }
 
+    private function get_current_agent() {
+	$res = '';
+	$sql = select(true, 'VC_AGENT', 'AGENTID, AGENTHOST, COMMUNITY, AGENTUPTIME', 'WHERE AGENTID = ' . $this->pre_agentid);
+	if ($sql) {
+	    $res = '【' . $sql['COMMUNITY'] . '】' . $sql['AGENTHOST'];
+	}
+	return $res;
+    }
+
     private function get_mib_text(): string {
 	$res = [''];
 
@@ -336,8 +337,8 @@ class AgentSet {
 	if ($data) {
 	    foreach ($data['SUB'] as $k => $g) {
 		array_push($res, '【' . $data['GROUP'][$k]['GROUP_OID'] . '】' . $data['GROUP'][$k]['GROUP_NAME']);
-		foreach ($g as $s) {
-		    array_push($res, '▶ (' . $s['SUB_OID'] . ') ' . $s['SUB_NAME']);
+		foreach ($this->mibs as $s) {
+			array_push($res, '├ (' . $g[$s]['SUB_OID'] . ') ' . $g[$s]['SUB_NAME']);
 		}
 	    }
 	} else {

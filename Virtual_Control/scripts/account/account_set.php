@@ -158,7 +158,7 @@ class AccountSet {
 	if ($res_code == 0) {
 	    $query = $this->editQuery();
 	    if ($query && $this->funid == 4 && !$me) {
-		$res_code = (session_create('gsc_userid', $this->userid)) ? 0 : 1;
+		$res_code = (session_create('vc_userid', $this->userid)) ? 0 : 1;
 	    }
 	}
 	return $res_code;

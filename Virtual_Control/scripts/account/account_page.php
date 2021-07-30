@@ -72,7 +72,7 @@ class AccountPage extends Page {
      * アカウントテーブルデータをもとに、アカウント選択画面を設定します
      */
     protected function setSelect() {
-	$this->Button('bt_ac_bk', '設定一覧へ', 'button', 'list');
+	$this->Button('bt_ac_bk', '設定一覧に戻る', 'button', 'list');
 	$this->SubTitle('ユーザ作成・編集・削除', '作成は「作成」ボタンを、編集・削除は「未ログイン」のユーザを左のラジオボタンで選択してからボタンを押します。<br>（※）「編集」のみ、自分のユーザを選択して編集することができます。', 'user');
 	$this->Caption($this->response_data);
 	$this->Button('bt_ac_cr', '作成', 'button', 'plus-square');
@@ -92,13 +92,14 @@ class AccountPage extends Page {
 	$this->Input('in_ac_nm', 'ユーザ名', self::$rules['USERNAME'], 'user-circle', true);
 	$this->Password('in_ac_ps', 'パスワード', self::$rules['PASSWORD'], 'key');
 	$this->Password('in_ac_ps_rp', 'パスワードの確認', self::$rules['PASSWORD_CONFIRM'], 'key');
-	$this->FormTitle('権限', 'user-shield');
+	$this->FormStart('権限', 'user-shield');
 	$this->openList();
 	$this->addList('VCServer: 監視に加え、設定管理（ユーザ・エージェント・MIB）を行うことができます。つまり管理者権限です。');
 	$this->addList('VCHost: ANALY, WARNでの監視のみの権限が与えられます。設定管理を行うことはできません。');
 	$this->closeList();
 	$this->Check(1, 'rd_01', 'in_ac_pr', '0', 'VCServer', true);
 	$this->Check(1, 'rd_02', 'in_ac_pr', '1', 'VCHost', false);
+	$this->FormEnd();
 	$this->WarnForm('fm_warn');
 	$this->Button('bt_cr_nx', '次へ', 'submit', 'sign-in-alt');
     }

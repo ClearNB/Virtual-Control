@@ -41,18 +41,21 @@ class AnalyGet extends Get {
 		    $res['DATA'] = $sl->getSelect();
 		    $res['CODE'] = 0;
 		    break;
-		case 32: case 35: //SNMP_WALK
-		    if ($this->request_code == 35) {
+		case 32: case 35: //SNMP_WALK (32: START, 35: RESTART)
+		    if ($this->request_code == 35) { //35: 選んだエージェントデータを取り出す
 			$res_data = $this->get_session();
 			$this->agent_data = $res_data['AGENTID'];
 		    }
-		    if ($this->agent_data) {
-			$data = get_walk_result($this->agent_data);
-			$this->set_session($data);
+		    if ($this->agent_data) { //エージェントデータがない場合はWALKできない
+			$data = get_walk_result($this->agent_data); //snmp_walk.phpの関数に移動（SNMPWALKの結果を返す）
+			
+			if ($data['CODE'] != 3) { //3以外のときだけセッションに登録する
+			    $this->set_session($data);
+			}
 			$res['DATA'] = $data;
 			$res['CODE'] = $data['CODE'];
 		    }
-		    
+
 		    break;
 		case 33: //SUB GET
 		    if ($this->sub_data) {
@@ -75,9 +78,10 @@ class AnalyGet extends Get {
 	    if (ob_get_contents()) {
 		$res['CODE'] = 3;
 		$res['DATA'] = ob_get_contents();
-		ob_clean();
+		ob_get_clean();
 	    }
 	}
 	return $res;
     }
+
 }

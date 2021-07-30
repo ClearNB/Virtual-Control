@@ -92,6 +92,7 @@ class AnalyPage extends Page {
 	$sub_data = $this->response_data['SUBDATA']['SELECT'];
 	$this->Button('bt_sb_bk', '結果画面に戻る', 'button', 'chevron-circle-left');
 	$this->Title('ANALY - データ取得結果', 'poll-h');
+	
 	$this->openList();
 	$this->openListElem('取得情報');
 	$this->addList('エージェントホスト: ' . $this->response_data['HOST']);
@@ -101,12 +102,16 @@ class AnalyPage extends Page {
 	$this->addList('取得日時: ' . $sub_data['DATE']);
 	$this->closeListElem();
 	$this->closeList();
+	
 	$this->OpenCaption();
 	$this->SubTitle('SNMPデータ', '以下は、データベースのMIB情報より認識した情報の一覧です。', 'object-group');
 	$this->setHTML($sub_data['TABLE']);
 	$this->CloseCaption();
+	
+	$this->OpenCaption();
 	$this->SubTitle('SNMPデータエラー', 'MIBとの紐付けを行っている際に起こったエラーはここに表示されます。', 'exclamation-circle');
 	$this->ListCreate($sub_data['ERROR']);
+	$this->CloseCaption();
 	$this->Button('bt_sb_bk', '結果画面に戻る', 'button', 'chevron-circle-left');
     }
     

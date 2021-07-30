@@ -52,7 +52,7 @@ class Get {
      * 
      * 事前に指定された共通セッションIDをもとにセッションデータを取得します
      * 
-     * @return array|string|int セッションの取得に成功した場合はそのデータが、失敗した場合はnullが返されます
+     * @return array|string|int セッションの取得に成功した場合はそのデータ、失敗した場合はnullを返します
      */
     protected function get_session() {
 	return session_get($this->session_id);
@@ -64,26 +64,125 @@ class Get {
      * セッションIDをもとに、現在のデータを代入・上書きします
      * 
      * @param array|string|int $data セッションとして代入するデータを指定します
-     * @return bool 追加に成功した場合はtrue、失敗した場合はfalseが返されます
+     * @return bool 追加に成功した場合はtrue、失敗した場合はfalseがを返します
      */
     protected function set_session($data): bool {
 	return session_create($this->session_id, $data);
     }
-    
+
     /**
      * [GET] セッションデータリセット・代入
      * 
      * セッションIDをもとに、現在のデータを一旦削除した上で、新たなデータを代入します
      * 
      * @param array|string|int $data セッションとして代入するデータを指定します
-     * @return bool 再代入に成功した場合はtrue、失敗した場合はfalseが返されます
+     * @return bool 再代入に成功した場合はtrue、失敗した場合はfalseを返します
      */
     protected function reset_session($data): bool {
 	session_unset_byid($this->session_id);
 	return session_create($this->session_id, $data);
     }
-    
+
+    /**
+     * [GET] セッションデータ確認
+     * 
+     * Getオブジェクトで設定されたセッションIDのデータが存在することを確認します
+     * 
+     * @return bool 設定されたセッションIDのデータが存在すればtrue、それ以外はfalseを返します
+     */
     protected function is_session(): bool {
 	return session_exists($this->session_id);
     }
+
+    /**
+     * [GET] 選択データ一時保存
+     * 
+     * 選択されたデータをセッション内に一時保存しておくSELECTキーを作成し、その中に作成します
+     * 
+     * @param string $id 選択するデータのIDを指定します
+     * @param string $data_id セッション内の選択データIDより前に設定するキーを指定します（Default: ''）
+     * @param bool $isconfirm ログ上でデータの中身を確認するかどうかを設定します（Default: false）
+     * @return bool 選択データを登録できていればtrue、そうでない場合はfalseを返します
+     */
+    protected function set_select($id, $data_id = '', $isconfirm = false) {
+	$session = $this->get_session();
+	if($isconfirm) {
+	    var_dump($session);
+	}
+	if ($data_id) {
+	    $session['SELECT'] = $session[$data_id][$id];
+	} else {
+	    $session['SELECT'] = $session[$id];
+	}
+	$res = '';
+	if($this->reset_session($session)) {
+	    $res = $session;
+	}
+	return $res;
+    }
+
+    /**
+     * [GET] 選択データ取得
+     * 
+     * セッション内に選択データがあるかどうかを確認した上で、選択データを取得します
+     * 
+     * @return string|array 選択データがある場合はそのデータを、ない場合はnullを返します
+     */
+    protected function get_select() {
+	$session = $this->get_session();
+	return isset($session['SELECT']) ? $session['SELECT'] : '';
+    }
+
+    /**
+     * [GET] ユーザ選択データリセット
+     * 
+     * 現在あるユーザ選択データをリセットし、選択されていない状態にします
+     * 
+     * @return bool ユーザ選択データをリセットできていればture、それ以外はfalseを返します
+     */
+    protected function reset_select() {
+	$session = $this->get_session();
+	unset($session['SELECT']);
+	return $this->reset_session(session);
+    }
+
+    /**
+     * [SET] ユーザ入力データ一時保存
+     * 
+     * 入力されたデータをセッション内に一時保存します
+     * 
+     * @param string|array $value 入力データを指定します
+     * @return bool 入力データを登録できていればtrue、そうでない場合はfalseを返します
+     */
+    protected function set_input($value) {
+	$session = $this->get_session();
+	$session['INPUT'] = $value;
+	return $this->reset_session($session);
+    }
+
+    /**
+     * [GET] 入力データ取得
+     * 
+     * セッション内に入力データがあるかどうかを確認した上で、入力データを取得します
+     * 
+     * @return string|array 入力データがある場合はそのデータを、ない場合はnullを返します
+     */
+    protected function get_input() {
+	$session = $this->get_session();
+	return isset($session['INPUT']) ? $session['INPUT'] : '';
+    }
+
+    /**
+     * [GET] ユーザ入力データリセット
+     * 
+     * 現在あるユーザ入力データをリセットし、入力されていない状態にします
+     * 
+     * @return bool ユーザ入力データをリセットできていればture、それ以外はfalseを返します
+     */
+    protected function reset_input() {
+	$session = $this->get_session();
+	unset($session['INPUT']);
+	return $this->reset_session(session);
+    }
+
 }

@@ -73,8 +73,8 @@ class Former {
      * @return void サブタイトルがオブジェクト内のデータの1番後ろに追加されます。
      */
     function SubTitle($title, $caption, $icon, $badgetext = ''): void {
-	$b_text = ($badgetext) ? '<span class = "badge-dark badge-pill">' . $badgetext . '</span>' : '';
-	array_push($this->data, '<h3 class="sub-title"><i class="fas fa-' . $icon . ' fa-fw"></i>' . $title . ' ' . $b_text . '</h3><p class="sub-caption">' . $caption . '</p>');
+	$b_text = ($badgetext) ? '<span class = "badge-primary badge-pill">' . $badgetext . '</span>' : '';
+	array_push($this->data, '<h3 class="sub-title"><i class="fas fa-' . $icon . ' fa-fw"></i>' . $title . ' ' . $b_text . '<p class="sub-caption">' . $caption . '</p></h3>');
     }
 
     /**
@@ -141,10 +141,11 @@ class Former {
      * @return void 入力フォームがオブジェクト内のデータの1番後ろに追加されます。
      */
     function Input($id, $desc, $small_desc, $icon, $required = false, $value = ''): void {
-	$r_text = ($required) ? '必須' : '任意';
+	$this->FormStart($desc, $icon, $required);
 	$r_flag = ($required) ? 'required="required"' : '';
 	$v_text = ($value) ? 'value="' . $value . '"' : '';
-	array_push($this->data, '<div class="form-group-input pt-2"><label class="importantLabel col-md-3">【' . $r_text . '】</label><label class="formtext col-md-8">' . $desc . '<i class="fas fa-' . $icon . ' fa-2x ml-2"></i></label><input type="text" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Input Here" ' . $r_flag . ' id="' . $id . '" name="' . $id . '" ' . $v_text . '><small class="form-text text-body" id="' . $id . '">' . $small_desc . '</small></div>');
+	array_push($this->data, '<input type="text" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Input Here" ' . $r_flag . ' id="' . $id . '" name="' . $id . '" ' . $v_text . '><small class="form-text text-body" id="' . $id . '">' . $small_desc . '</small>');
+	$this->FormEnd();
     }
 
     /**
@@ -165,25 +166,40 @@ class Former {
      * @return void 入力フォームがオブジェクト内のデータの1番後ろに追加されます。
      */
     function InputNumber($id, $desc, $small_desc, $icon, $min, $max, $required = false, $value = ''): void {
-	$r_text = ($required) ? '必須' : '任意';
+	$this->FormStart($desc, $icon, $required);
 	$r_flag = ($required) ? 'required="required"' : '';
 	$v_text = ($value) ? 'value="' . $value . '"' : '';
-	array_push($this->data, '<div class="form-group-input pt-2"><label class="importantLabel col-md-3">【' . $r_text . '】</label><label class="formtext col-md-8">' . $desc . '<i class="fas fa-' . $icon . ' fa-2x ml-2"></i></label><input type="number" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Input Here" ' . $r_flag . ' id="' . $id . '" name="' . $id . '" ' . $v_text . ' min="' . $min . '" max="' . $max . '" ><small class="form-text text-body" id="' . $id . '">' . $small_desc . '</small></div>');
+	array_push($this->data, '<input type="number" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Input Here" ' . $r_flag . ' id="' . $id . '" name="' . $id . '" ' . $v_text . ' min="' . $min . '" max="' . $max . '" ><small class="form-text text-body" id="' . $id . '">' . $small_desc . '</small>');
+	$this->FormEnd();
     }
 
     /**
-     * [SET] フォームタイトル設置
+     * [SET] フォームフォーマット設定
      * 
-     * フォームタイトルのみが必要な場合は、ここで作成ができます。
+     * フォームタイトルのみを加えて、フォームフォーマットを作成します<br>
+     * この後に、フォーム内容を随時書き込みます<br>
+     * 終わるには FormEnd() が必要です
      * 
      * @param string $desc 項目名を指定します
      * @param string $icon アイコンを指定します
-     * @param boolean $required 【任意】必須入力かどうかを指定します（Default: true）
+     * @param bool $required 【任意】必須入力かどうかを指定します（Default: true）
      * @return void フォームタイトルがオブジェクト内のデータの1番後ろに追加されます。
      */
-    function FormTitle($desc, $icon, $required = true): void {
+    function FormStart($desc, $icon, $required = true): void {
 	$r_text = ($required) ? '必須' : '任意';
-	array_push($this->data, "<label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-2x ml-2\"></i></label>");
+	array_push($this->data, '<div class="form-group-input pt-2">');
+	array_push($this->data, "<label class=\"importantLabel col-md-3\">【" . $r_text . "】</label><label class=\"formtext col-md-8\">$desc<i class=\"fas fa-$icon fa-lx ml-2\"></i></label>");
+    }
+
+    /**
+     * [SET] フォームフォーマット終了
+     * 
+     * フォームフォーマット設定 FormStart() のエンドポイントです
+     * 
+     * @return void フォームフォーマットの終了タグを付けます
+     */
+    function FormEnd(): void {
+	array_push($this->data, "</div>");
     }
 
     /**
@@ -201,9 +217,11 @@ class Former {
      * @return void パスワードフォームがオブジェクト内のデータの1番後ろに追加されます。
      */
     function Password($id, $desc, $small_desc, $auto_focus = false, $value = ''): void {
+	$this->FormStart($desc, "key", true);
 	$c_text = ($auto_focus) ? 'autofocus' : '';
 	$v_text = ($value) ? 'value="' . $value . '"' : '';
-	array_push($this->data, '<div class="form-group-input pt-2"><label class="importantLabel col-md-3">【必須】</label><label class="formtext col-md-8">' . $desc . '<i class="fas fa-key fa-2x ml-2"></i></label><input type="password" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Input Here" ' . $v_text . ' required="required" id="' . $id . '" name="' . $id . '" ' . $c_text . '><span class="field-icon"><i toggle="#password-field" class="fas fa-fw fa-eye toggle-password fa-mod-eye"></i></span><small class="form-text text-body">' . $small_desc . '</small></div>');
+	array_push($this->data, '</label><input type="password" class="form-control bg-dark my-1 form-control-lg shadow-sm text-monospace" placeholder="Input Here" ' . $v_text . ' required="required" id="' . $id . '" name="' . $id . '" ' . $c_text . '><span class="field-icon"><i toggle="#password-field" class="fas fa-fw fa-eye toggle-password fa-mod-eye"></i></span><small class="form-text text-body">' . $small_desc . '</small>');
+	$this->FormEnd();
     }
 
     /**
@@ -556,7 +574,7 @@ class Former {
 	$color_text = '';
 	switch ($color_code) {
 	    case 0:
-		$color_text = 'vc-back';
+		$color_text = 'vc-back-caption';
 		break;
 	    case 1:
 		$color_code = 'bg-dark';
@@ -626,9 +644,8 @@ class Former {
      * ユーザIDの入力フォームとして、「in_at_ps」を提供します。<br>
      * また、ボタンにてキャンセルボタン「bt_at_bk」、送信ボタン「bt_at_sb」を提供します。
      * 
-     * @return string 作成されたデータをそのままページHTMLとして返します
      */
-    public function fm_at(): string {
+    public function fm_at() {
 	$userdata = session_get_userdata();
 	if (!$userdata) {
 	    $userdata['USERNAME'] = '[USER]';

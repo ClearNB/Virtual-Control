@@ -111,7 +111,15 @@ class Page extends Former {
     protected function setCorrect() {
 	$this->SubTitle('更新に成功しました！', 'ボタンを押して変更が反映したか確認しましょう！', 'check-square');
 	$this->Button('bt_cs_bk', '設定トップ画面に戻る', 'button', 'chevron-circle-left');
-	return $this->Export();
+    }
+    
+    /**
+     * [SET] 認証画面設定
+     * 
+     * 変更を加える前に必要な認証機能の画面を設定します
+     */
+    protected function setAuth() {
+	$this->fm_at();
     }
     
     /**
