@@ -46,23 +46,20 @@ details.sub[open] .details-content-sub {
     position: relative;
     display: block;
     padding: 0.5rem 2.3rem;
-    border-radius: 0.5rem 0 0.8rem 0;
     cursor: pointer;
     font-weight: bold;
-    background-color: #ff4500;
+    background-color: #222;
     transition: all 0.1s ease-in;
     -moz-transition: all 0.1s ease-in;
     -webkit-transition: all 0.1s ease-in;
     margin-bottom: 0.5rem;
-    border: 0.4rem solid #000;
-    border-right-width: 0.6rem;
 }
 
 .summary:hover {
-    background-color: #ff5a00;
+    background-color: #444;
 }
 
-.summary::-webkit-details-marker {
+.summary::marker {
     display: none;
 }
 
@@ -95,7 +92,8 @@ details.sub[open] .details-content-sub {
 }
 
 details.main[open] .summary {
-    background-color: #e13501;
+    background-color: #ff5a00;
+    box-shadow: 0 0.3rem 1rem #000;
 }
 
 details.main[open] .summary:after {
@@ -107,6 +105,7 @@ details.main[open] .summary:after {
 .details-content {
     border-left: 0.3rem dashed #000;
     padding-left: 0.5rem;
+    padding-top: 0.6rem;
 }
 
 /* Sub */
@@ -117,29 +116,28 @@ details.main[open] .summary:after {
     padding: 0.2rem 2.0rem;
     cursor: pointer;
     font-weight: bold;
-    background-color: #ff4500;
+    background-color: #222;
     transition: all 0.1s ease-in;
     -moz-transition: all 0.1s ease-in;
     -webkit-transition: all 0.1s ease-in;
     margin-bottom: 0.5rem;
     margin-right: 2.5em;
     margin-left: 0.5rem;
+    border-right: 0.2rem solid #000;
     overflow-wrap: break-word;
-    border: 0.3rem solid #000;
-    border-radius: 0.6rem 0 0.8rem 0;
 }
 
 .summary-sub:hover {
     background-color: #ff5a00;
 }
 
-.summary-sub::-webkit-details-marker {
+.summary-sub::marker {
     display: none;
 }
 
 .summary-sub:before, .summary-sub:after {
     content: "";
-    margin: auto 0 auto 10px;
+    margin: auto 0 auto 0.5rem;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -149,15 +147,14 @@ details.main[open] .summary:after {
 .summary-sub:before {
     width: 1.0rem;
     height: 1.0rem;
-    border-radius: 0.2rem;
     background-color: #000;
 }
 
 .summary-sub:after {
-    left: 0.3rem;
-    width: 0.3rem;
-    height: 0.3rem;
-    border: 0.3rem solid transparent;
+    left: 0.38rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border: 0.25rem solid transparent;
     border-left: 0.3rem solid #ff5a00;
     box-sizing: border-box;
     transition: all 0.1s ease-in;
@@ -166,13 +163,13 @@ details.main[open] .summary:after {
 }
 
 details.sub[open] .summary-sub {
-    background-color: #e13501;
-    margin-right: 4.5rem;
+    background-color: #ff5a00;
+    margin-right: 1.5rem;
 }
 
 details.sub[open] .summary-sub:after {
     transform: rotate(90deg);
-    left: 0.15rem;
+    left: 0.2rem;
     top: 0.38rem;
 }
 

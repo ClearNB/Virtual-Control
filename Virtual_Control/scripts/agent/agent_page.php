@@ -1,8 +1,8 @@
 <?php
 
-include __DIR__ . '/../general/former.php';
+include __DIR__ . '/../general/page.php';
 
-class AgentPage extends form_generator {
+class AgentPage extends Page {
 
     /**
      * [VAR] $rules
@@ -24,179 +24,164 @@ class AgentPage extends form_generator {
     /**
      * [SET] CONSTRUCTOR
      * 
-     * オブジェクトコンストラクタです<br>
-     * Formerのコンストラクタも含まれます
+     * オブジェクトコンストラクタです
      * 
-     * @param string $id ページのIDを指定します（Default: 'fm_pg'）
+     * @param int $code レスポンスコードを指定します
+     * @param string $data レスポンスデータを指定します
+     * @param string $id フォームIDを指定します（Default: 'fm_pg'）
      */
-    public function __construct($id = 'fm_pg') {
-	parent::__construct($id);
+    public function __construct($code, $data, $id = 'fm_pg') {
+	parent::__construct($code, $data, $id);
+    }
+    
+        /**
+     * [GET] AGENTページデータ取得
+     * 
+     * レスポンスコードより識別される情報でページの分岐を行います<br>
+     * 継承により分岐の拡張ができます
+     */
+    public function setPageFunc() {
+	switch ($this->response_code) {
+	    case 0: //SELECT
+		$this->setSelect();
+		break;
+	    case 1: //CREATE
+		$this->setCreate();
+		break;
+	    case 2: //EDIT SELECT
+		$this->setEditSelect();
+	    case 3: case 4: case 5: //EDIT
+		$this->setEdit();
+		break;
+	    case 6: //DELETE
+		$this->setDelete();
+		break;
+	    case 10: // SUCCESS
+		$this->setCorrect();
+		break;
+	    case 11: // FAIL (DATABASE)
+		$this->setFail();
+		break;
+	    case 12: case 14: // FAIL (ON PAGE)
+		$this->setResCodeToData();
+		break;
+	    case 13:
+		$this->setAuth();
+		break;
+	    case 15: //CONFIRM
+		$this->setConfirm();
+		break;
+	    case 999: //FAIL
+		$this->setFail();
+		break;
+	}
     }
 
     /**
-     * [GET] エージェント選択画面取得
+     * [SET] エージェント選択画面設定
      * 
-     * エージェントテーブルデータをもとに、アカウント選択画面を作成します
-     * 
-     * @param string $select AgentSelectで取得したエージェントラジオボタングループデータ
-     * @return string 引数をもとにページデータをHTMLの文字列で返します
+     * エージェントテーブルデータをもとに、アカウント選択画面を設定します
      */
-    public function getSelect($select): string {
-	$this->Button('bt_ag_bk', '設定一覧へ', 'button', 'list');
+    public function setSelect() {
+	$this->Button('bt_ag_bk', '設定一覧に戻る', 'button', 'list');
 	$this->SubTitle('エージェント作成・編集・削除', '作成は「作成」ボタンを、編集・削除はエージェント一覧表からエージェントをラジオボタンで選択してからボタンを押します。', 'user');
-	$this->Caption($select);
+	$this->Caption($this->response_data);
 	$this->Button('bt_ag_cr', '作成', 'button', 'plus-square');
 	$this->Button('bt_ag_ed', '編集', 'button', 'edit', true);
 	$this->Button('bt_ag_dl', '削除', 'button', 'trash-alt', true);
-	return $this->Export();
     }
 
     /**
-     * [GET] エージェント作成画面取得
+     * [SET] エージェント作成画面設定
      * 
-     * エージェント作成画面を作成します
-     * 
-     * @param string $mib_select MIBセレクタの文字列（HTML）を指定します
-     * @return string 引数をもとにページデータをHTMLの文字列で返します
+     * エージェント作成画面を設定します
      */
-    public function getCreate($mib_select) {
-	$mib = $this->getSub();
+    public function setCreate() {
 	$this->Button('bt_cr_bk', 'エージェント選択へ戻る', 'button', 'chevron-circle-left');
 	$this->SubTitle('エージェント作成', '以下の情報を入力してください', 'plus-circle', false, '1: 情報入力');
 	$this->Input('in_ag_hs', 'エージェントホストアドレス', self::$rules['AGENTHOST'], self::$icons['AGENTHOST'], true);
 	$this->Input('in_ag_cm', 'コミュニティ名', self::$rules['COMMUNITY'], self::$icons['COMMUNITY'], true);
-	$this->Caption($mib . $mib_select);
+	$this->setSub();
 	$this->WarnForm('fm_warn');
 	$this->Button('bt_cr_nx', '次へ', 'submit', 'sign-in-alt');
-	return $this->Export();
     }
 
     /**
-     * [GET] アカウント編集選択画面取得
+     * [SET] エージェント編集選択画面設定
      * 
-     * アカウントデータ（選択したデータ）をもとに、編集選択画面を取得します
-     * 
-     * @param array $agentdata エージェントデータ（AgentDataで取得したデータで、ユーザ情報を取得したもの）
-     * @return string 引数をもとにページデータをHTMLの文字列で返します
+     * エージェントデータ（選択したデータ）をもとに、編集選択画面を設定します
      */
-    public function getEditSelect($agentdata) {
+    public function setEditSelect() {
 	$this->Button('bt_ed_bk', 'エージェント選択画面に戻る', 'button', 'chevron-circle-left');
-	$this->SubTitle('【' . $agentdata['COMMUNITY'] . '】' . $agentdata['AGENTHOST'], '以下から変更したい項目を選択してください。', 'edit', false);
+	$this->SubTitle('【' . $this->response_data['COMMUNITY'] . '】' . $this->response_data['AGENTHOST'], '以下から変更したい項目を選択してください。', 'edit', false);
 	$this->Button('bt_ed_hs', 'エージェントホスト', 'button', self::$icons['AGENTHOST']);
 	$this->Button('bt_ed_cm', 'コミュニティ名', 'button', self::$icons['COMMUNITY']);
 	$this->Button('bt_ed_oi', 'MIBサブツリー選択', 'button', self::$icons['MIB']);
-	return $this->Export();
     }
 
     /**
-     * [GET] アカウント編集画面作成
+     * [SET] アカウント編集画面設定
      * 
-     * ファンクションIDおよびアカウントデータをもとに、編集画面を作成します
-     * 
-     * @param string $type ファンクションIDを指定します（4..USERID, 5..USERNAME, 6..PASSWORD）
-     * @param array $agent_data エージェントデータ（AgentDataで取得したデータで、ユーザ情報を取得したもの）
-     * @param string $mib_select MIBセレクタの文字列（HTML）を指定します
-     * @return string 引数をもとにページデータをHTMLの文字列で返します
+     * ファンクションIDおよびアカウントデータをもとに、編集画面を設定します
      */
-    public function getEdit($type, $agent_data, $mib_select = '') {
-	switch ($type) {
-	    case 14: //AGENTHOST
+    public function setEdit() {
+	switch ($this->response_code) {
+	    case 3: //AGENTHOST
 		$this->Button('bt_hs_bk', '編集選択画面に戻る', 'button', 'chevron-circle-left');
 		$this->SubTitle('エージェント編集（エージェントホスト）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
-		$this->addList('変更対象のエージェント: ' . $agent_data['AGENTHOST'] . ' (' . $agent_data['COMMUNITY'] . ')');
+		$this->addList('変更対象のエージェント: ' . $this->response_data['AGENTHOST'] . ' (' . $this->response_data['COMMUNITY'] . ')');
 		$this->closeList();
 		$this->Input('in_ag_hs', 'エージェントホスト', self::$rules['AGENTHOST'], 'user-check', true);
 		$this->WarnForm('fm_warn');
 		$this->Button('bt_id_nx', '次へ', 'submit', 'sign-in-alt');
 		break;
-	    case 15: //COMMUNITY
+	    case 4: //COMMUNITY
 		$this->Button('bt_cm_bk', '編集選択画面に戻る', 'button', 'chevron-circle-left');
 		$this->SubTitle('エージェント編集（コミュニティ名）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
-		$this->addList('変更対象のエージェント: ' . $agent_data['AGENTHOST'] . ' (' . $agent_data['COMMUNITY'] . ')');
+		$this->addList('変更対象のエージェント: ' . $this->response_data['AGENTHOST'] . ' (' . $this->response_data['COMMUNITY'] . ')');
 		$this->closeList();
 		$this->Input('in_ag_cm', 'コミュニティ名', self::$rules['COMMUNITY'], self::$icons['COMMUNITY'], true);
 		$this->WarnForm('fm_warn');
 		$this->Button('bt_nm_nx', '次へ', 'submit', 'sign-in-alt');
 		break;
-	    case 16: //OID
-		$mib = $this->getSub();
+	    case 5: //OID
 		$this->Button('bt_oi_bk', '編集選択画面に戻る', 'button', 'chevron-circle-left');
 		$this->SubTitle('エージェント編集（MIBサブツリー選択）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
-		$this->addList('変更対象のエージェント: ' . $agent_data['AGENTHOST'] . ' (' . $agent_data['COMMUNITY'] . ')');
+		$this->addList('変更対象のエージェント: ' . $this->response_data['AGENTHOST'] . ' (' . $this->response_data['COMMUNITY'] . ')');
 		$this->closeList();
-		$this->Caption($mib . $mib_select);
+		$this->Caption($this->response_data['MIBSELECT']);
 		$this->WarnForm('fm_warn');
 		$this->Button('bt_nm_nx', '次へ', 'submit', 'sign-in-alt');
 		break;
 	}
-	return $this->Export();
     }
 
     /**
-     * [GET] 削除画面取得
+     * [SET] 削除確認画面設定
      * 
-     * 削除を行う前に、情報を確認する画面を作成します
-     * 
-     * @param array $agentdata エージェントデータ（AgentDataで取得したデータで、ユーザ情報を取得したもの）
-     * @return string 引数をもとにページデータをHTMLの文字列で返します
+     * 削除を行う前に、情報を確認する画面を設定します
      */
-    public function getDelete($agentdata) {
+    public function setDelete() {
 	$this->Button('bt_dl_bk', 'エージェント選択画面に戻る', 'button', 'chevron-circle-left');
 	$this->SubTitle('エージェント削除', '以下のエージェントを削除します。', 'trash-alt');
 	$this->openList();
-	$this->addList('エージェントホスト: ' . $agentdata['AGENTHOST']);
-	$this->addList('コミュニティ名: ' . $agentdata['COMMUNITY']);
+	$this->addList('エージェントホスト: ' . $this->response_data['AGENTHOST']);
+	$this->addList('コミュニティ名: ' . $this->response_data['COMMUNITY']);
 	$this->closeList();
 	$this->Button('bt_dl_sb', '削除する', 'button', 'sign-in-alt');
-	return $this->Export();
-    }
-
-    /**
-     * [GET] 更新確認画面作成
-     * 
-     * 入力〜認証までの段階をクリアした場合、入力された情報をもう一度確認する画面を作成します
-     * 
-     * @param string $confirm_data AgentSetで認証まで確認されたデータを指定します
-     * @return string 引数をもとにページデータをHTMLの文字列で返します
-     */
-    public function getConfirm($confirm_data) {
-	$this->SubTitle('入力確認', '入力事項が正しければ「更新する」を押してください。<br>（※）「キャンセル」の場合、アカウント選択画面に遷移します。', 'user-check');
-	$this->Caption($confirm_data);
-	$this->Button('bt_cf_sb', '更新する', 'button', 'sign-in-alt');
-	$this->Button('bt_cf_bk', 'キャンセル', 'button', 'chevron-circle-left');
-	return $this->Export();
-    }
-
-    public function getFail($log = '〈形式ログはなし〉') {
-	$fm_fl = fm_fl('fm_fl', 'エラーが発生しました。', '以下をご確認ください。');
-	$fm_fl->openList();
-	$fm_fl->addList('データベースとの接続をご確認ください。');
-	$fm_fl->addList('要求しているデータと実際のデータを比べ、記述や内容が正しいかどうかをご確認ください。');
-	$fm_fl->addList('アカウント認証であるセッションが切れていると思われます。もう一度ログインし直してから再試行してください。');
-	$fm_fl->addList('【アクセスログ】<br>' . $log);
-	$fm_fl->closeList();
-	$fm_fl->Button('bt_fl_rt', 'ページを再読込する', 'button', 'sync-alt');
-	return $fm_fl->Export();
-    }
-
-    public function getCorrect() {
-	$this->SubTitle('更新に成功しました！', 'ボタンを押して変更が反映したか確認しましょう！', 'check-square');
-	$this->Button('bt_cs_bk', 'エージェント選択画面に戻る', 'button', 'chevron-circle-left');
-	return $this->Export();
     }
     
-    private function getSub() {
-	$this->FormTitle('MIBサブツリー選択', self::$icons['MIB']);
+    private function setSub() {
+	$this->FormStart('MIBサブツリー選択', self::$icons['MIB']);
 	$this->openList();
 	$this->addList('MIBサブツリーを、以下から1つ以上選択します。');
 	$this->addList('「全てを選択」にチェックがついていない状態で押すと、列挙されているすべてのサブツリーを選択できます。');
 	$this->addList('ついている状態で押すと、全て解除されます。');
 	$this->closeList();
-	$res = $this->Export(false);
-	$this->reset('fm_pg');
-	return $res;
+	$this->Caption($this->response_data);
+	$this->FormEnd();
     }
 }

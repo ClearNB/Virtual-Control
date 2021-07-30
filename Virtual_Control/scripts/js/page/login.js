@@ -4,7 +4,7 @@ function page_get(duration, fdata, iswait) {
     if (fdata === '') {
         fdata = [];
     }
-    fdata.push({'name': 'fun_id', 'value': getFunctionID()});
+    fdata.push({'name': 'f_id', 'value': get_funid()});
     if (iswait) {
         animation('data_output', duration, fm_ld);
     } else {
@@ -30,7 +30,7 @@ $(document).ready(function () {
 $(document).on('submit', '#fm_pg', function (event) {
     event.preventDefault();
     var fdata = $(this).serializeArray();
-    change_login_sub();
+    change_login_post();
     page_get(400, fdata, false);
 });
 

@@ -131,6 +131,15 @@ function delete($table, $while = '') {
     return $result;
 }
 
+/**
+ * [SQL] SELECT文を生成します
+ * 
+ * @param bool $one_column 1行分のデータとして切り捨てるかどうかを指定しmさう
+ * @param string $table テーブルを指定します（FROM … ）
+ * @param string $column データ項目を指定します（SELECT …）
+ * @param string $other SELECT文に付加するその他の条件を指定します
+ * @return array|bool 正しく取得できた場合は、配列化データ、それ以外はfalseを返します
+ */
 function select($one_column, $table, $column, $other = '') {
     $query = "SELECT $column FROM $table $other";
     $result = query($query);

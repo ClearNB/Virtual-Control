@@ -1,8 +1,7 @@
-<?php
+<?php //Virtual Control : ERROR (VC-12) by Project GSC
 include_once __DIR__ . '/scripts/general/loader.php';
-include_once __DIR__ . '/scripts/session/session_chk.php';
-include_once __DIR__ . '/scripts/general/sqldata.php';
 include_once __DIR__ . '/scripts/general/former.php';
+include_once __DIR__ . '/scripts/general/session.php';
 
 $loader = new loader();
 
@@ -21,39 +20,8 @@ $response_caption = [
 
 $response_code = http_response_code();
 
-$fm_pg = new form_generator('fm_pg');
+$fm_pg = new Former('fm_pg');
 $fm_pg->SubTitle($response_caption[$response_code][1], $response_caption[$response_code][2], 'times-circle');
 $fm_pg->Button('bt_pg_bk', 'ホームへ戻る', 'button', 'home');
-?>
 
-<html>
-    <head>
-	<?php echo $loader->loadHeader('Virtual Control', $response_caption[$response_code][0]) ?>
-	<?php echo form_generator::ExportClass() ?>
-    </head>
-
-    <body class="text-monospace">
-	<?php echo $loader->navigation($per) ?>
-
-	<?php echo $loader->load_Logo() ?>
-
-	<?php echo $loader->Title($response_caption[$response_code][0], 'exclamation-triangle') ?>
-
-        <div id="data_output"></div>
-
-	<?php echo $loader->footer() ?>
-
-	<?php echo $loader->footer_load() ?>
-
-        <script type="text/javascript">
-	    $(document).ready(function () {
-		animation('data_output', 0, fm_pg);
-	    });
-
-	    $(document).on('click', '#bt_pg_bk', function () {
-		animation_to_sites('data_output', 400, '/');
-	    });
-        </script>
-    </body>
-
-</html>
+echo $loader->getPage('Virtual Control', $response_caption[$response_code][0], 'exclamation-triangle', $per, 'error.js');
