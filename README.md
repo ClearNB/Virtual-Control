@@ -1,6 +1,6 @@
 ---
 ## A Controlling Networks Tool.
-# Virtual Control (v 0.6.0)
+# Virtual Control (v 0.7.1)
 ---
 
 ## 1. はじめに
