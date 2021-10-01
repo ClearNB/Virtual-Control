@@ -21,7 +21,7 @@ class AccountData {
     }
 
     public static function get_all_users() {
-	$q01 = select(false, 'VC_USERS', 'USERID, USERNAME, PERMISSION, LOGINSTATE, LOGINUPTIME');
+	$q01 = select(false, 'VC_USER', 'USERID, USERNAME, PERMISSION, LOGINSTATE, LOGINUPTIME');
 	if ($q01) {
 	    $result = [
 		"COLUMN" => [

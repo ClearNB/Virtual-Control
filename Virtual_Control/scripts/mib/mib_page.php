@@ -4,21 +4,6 @@ include_once __DIR__ . '/../general/page.php';
 
 class MIBPage extends Page {
 
-    private static $ruleData = [
-	'GROUP_OID' => '【判定条件】半角数字（0〜9）と記号（.）を用いて255文字まで, グループOIDは一意で、配下に依存していない必要があります<br>【例】1.3.6.1.2.1',
-	'GROUP_NAME' => '【判定条件】半角英数字・一部記号（a〜z, A〜Z, 0〜9, -, _）50文字まで',
-	'SUB_OID' => '【判定条件】半角数字（0〜9）のみで32ビット整数まで, グループOIDに続く一意の数字を指定する必要があります。<br>【例】1.3.6.1.2.1 + 1',
-	'SUB_NAME' => '【判定条件】半角英数字（a〜z, A〜Z, 0〜9）50文字まで, サブツリー名はANALYにて表示されます。',
-	'NODE_OID' => '【判定条件】半角数字のみ（符号なし）, グループOID + サブツリーOIDに続く1つの数字を指定する必要があります。<br>【例】1.3.6.1.2.1.1 + 1',
-	'NODE_SUB' => '【判定条件】OIDサブ情報, 半角数字（0〜9）と記号（.）を用いて11文字まで, ノードOID指定より交尾で追加可能な追加OID情報を指定します（先頭に . を付ける必要はありません）<br>【例】1.3.6.1.2.1.1 + 1 + 1',
-    ];
-    private static $iconData = [
-	'GROUP_OID' => 'id-badge',
-	'GROUP_NAME' => 'sliders-h',
-	'SUB_OID' => 'id-badge',
-	'SUB_NAME' => 'sliders-h'
-    ];
-
     /**
      * [SET] CONSTRUCTOR
      * 
@@ -56,21 +41,61 @@ class MIBPage extends Page {
 		break;     //AUTH
 	    case 6: $res_page = $this->getConfirm();
 		break;     //CONFIRM
-	    
-	    case 11: $res_page = $this->getMainPage();
+
+	    case 11: $res_page = $this->setMainPage();
 	}
 	return $res_page;
     }
-    
-    private function getMainPage() {
-	$this->Button('bt_ac_bk', '設定一覧に戻る', 'button', 'list');
-	$this->SubTitle('MIBメインターミナル', '各グループ・サブツリー・ノードは階層別に管理できます。<br>新しく作る場合は「グループ」は以下の「グループ作成」ボタン、「サブツリー」は各グループ内の「サブツリー作成」ボタン、「ノード」は各グループ・サブツリー内の「ノード作成」ボタンから作成してください。', 'object-group');
-	$this->FormStart('MIBグループルート', '');
-	$this->Button('グループ作成', '', 'button', '');
-	if(is_array($this->response_data)) {
-	    
-	}
+
+    /**
+     * [SET] メインページ作成
+     * 
+     * 登録されているMIBシリーズを閲覧できるページです
+     */
+    private function setMainPage() {
+	/**
+	 *  - {--} .. グループ選択リスト（ID : gp_sl_**, VALUE: gp）
+	 */
+	$this->Button('bt_mb_sl_bk', '設定一覧に戻る', 'button', 'chevron-circle-left');
+	$this->SubTitle('MIBポータル', 'MIBを作成するときはページ上部の「MIB作成」から行います<br>グループ関係は、グループ作成またはグループ編集、削除を行います');
+	$this->Button('bt_mb_sl_cr', 'MIB作成', 'button', 'plus-square');
+	$this->Horizonal();
+	$this->FormStart('グループ選択', 'users');
+	$this->setHTML($this->response_data);
+	$this->Button('bl_mb_gp_sl', 'グループ選択', 'button', 'vote-yea', true);
+	$this->Button('bl_mb_gp_cr', 'グループ作成', 'button', 'folder-plus');
 	$this->FormEnd();
+    }
+
+    private function setMIBGroupSelect() {
+	/**
+	 *  - [GROUPOID] .. (String)
+	 *  - [GROUPNAME] .. (String)
+	 *  - [MIBSELECT] .. (button ID : bt_gp_++)
+	 */
+	$this->Button('bt_mb_gp_bk', 'MIBポータルに戻る', 'button', 'chevron-circle-left');
+	$this->FormStart('グループ情報', 'folder');
+
+	$this->FormEnd();
+    }
+
+    private function setMIBCreatePage() {
+	$this->Button('bt_cr_bk', 'MIBポータルに戻る', 'button', 'chevron-circle-left');
+	$this->SubTitle('MIB作成', '必須事項を入力して、MIBを作成しましょう！', 'bars');
+	$this->Input('data_oid', 'データOID', '【条件】(数字).(数字).(数字) ... (-255文字)<br>（※）データとして参照できない分岐用OIDを指定しないでください', 'object-ungroup');
+	$this->FormStart('データタイプ選択', 'border-style');
+	$this->Caption('ANALYでSNMPWALKのために利用するMIBか、WARNでOIDを認識するために利用するMIBかを指定します。', false);
+	$this->Check(1, 'data_type_0', 'data_type', 0, '0: 通常データ（ANALY）', true, true);
+	$this->Check(1, 'data_type_1', 'data_type', 1, '1: トラップデータ（WARN）', true, true);
+	$this->FormEnd();
+    }
+
+    private function setMIBCreatePageNormal() {
+	
+    }
+
+    private function setMIBCreatePageTable() {
+	
     }
 
 }

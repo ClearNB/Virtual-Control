@@ -12,46 +12,58 @@
  * 
  * @return array ['CODE' => (0 or 1), 'DATA' => (データ), 'DEM' => (ズレ値)]
  */
-function getDataFromIndex($option, $data_array, $data_array_index) {
+function getDataFromIndex($replaced, $rptype, $data_array, $data_array_index) {
     $res = ['CODE' => 1, 'DATA' => '', 'DEM' => 0];
-    if ($option >= 51 && $option <= 59) {
-	$dem = intval($option) - 50;
-	if (isset($data_array[$data_array_index + $dem - 1])) {
-	    $res['CODE'] = 0;
-	    $res['DATA'] = implode(' ', array_slice($data_array, $data_array_index, $dem));
-	    $res['DEM'] = $dem;
-	} else {
-	    $res['DATA'] = '「インデックス位置: ' . ($data_array_index + 1) . 'から' . $dem . '文字分を取り出す」が適用できませんでした。';
-	}
-    } else if ($option == 10 || $option == 20 || $option == 24) {
-	if($option == 24) {
-	    $arr = getIP($data_array, $data_array_index, 4, ($option == 10));
-	} else {
-	    $arr = getIP($data_array, $data_array_index, 0, ($option == 10));
-	}
-	$res['DATA'] = $arr['DATA'];
-	if ($arr['CODE'] == 0) {
-	    $res['CODE'] = 0;
-	    $res['DEM'] = $arr['DEM'];
-	}
-    } else if ($option == 30) {
-	$dem = intval($data_array[$data_array_index - 1]);
-	if (isset($data_array[$data_array_index + $data_array[$data_array_index - 1]])) {
-	    $res['CODE'] = 0;
-	    $res['DEM'] = $dem;
-	    $res['DATA'] = implode(' ', array_slice($data_array, $data_array_index, $dem));
-	} else {
-	    $res['DATA'] = '「インデックス位置: ' . ($data_array_index + 1) . 'から' . $dem . '文字分取り出す」が適用できませんでした。';
-	}
-    } else if ($option == 40) {
-	$dem = 1;
-	if (isset($data_array[$data_array_index])) {
-	    $res['CODE'] = 0;
-	    $res['DEM'] = $dem;
-	    $res['DATA'] = getIPType($data_array[$data_array_index]);
-	} else {
-	    $res['DATA'] = '「インデックス位置: ' . ($data_array_index + 1) . 'から' . $dem . '文字分を取り出し、IPバージョンにコンバートする」が適用できませんでした。';
-	}
+    //var_dump($replaced . ' ' . $rptype . ' (' . implode('.', $data_array) . ') [' . $data_array_index . ']<br>');
+    switch ($rptype) {
+	case 2:
+	    $dem = intval($replaced);
+	    if (isset($data_array[$data_array_index + $dem - 1])) {
+		$res['CODE'] = 0;
+		$res['DATA'] = implode(' ', array_slice($data_array, $data_array_index, $dem));
+		$res['DEM'] = $dem;
+	    } else {
+		$res['DATA'] = '「インデックス位置: ' . ($data_array_index + 1) . 'から' . $dem . '文字分を取り出す」が適用できませんでした。';
+	    }
+	    break;
+	case 3:
+	    $dem = 1;
+	    if (isset($data_array[$data_array_index])) {
+		$res['CODE'] = 0;
+		$res['DEM'] = $dem;
+		$res['DATA'] = getIPType($data_array[$data_array_index]);
+	    } else {
+		$res['DATA'] = '「インデックス位置: ' . ($data_array_index + 1) . 'から' . $dem . '文字分を取り出し、IPバージョンにコンバートする」が適用できませんでした。';
+	    }
+	    break;
+	case 4:
+	case 5:
+	    $arr = getIP($data_array, $data_array_index, 0, ($rptype == 5));
+	    $res['DATA'] = $arr['DATA'];
+	    if ($arr['CODE'] == 0) {
+		$res['CODE'] = 0;
+		$res['DEM'] = $arr['DEM'];
+	    }
+	    break;
+	case 6:
+	    $dem = intval($data_array[$data_array_index]);
+	    if (isset($data_array[$data_array_index + $data_array[$data_array_index]])) {
+		$res['CODE'] = 0;
+		$res['DEM'] = $dem;
+		$res['DATA'] = implode(' ', array_slice($data_array, $data_array_index + 1, $dem));
+	    } else {
+		$res['DATA'] = '「インデックス位置: ' . ($data_array_index + 1) . 'から' . $dem . '文字分取り出す」が適用できませんでした。';
+	    }
+	case 7:
+	    $dem = 0;
+	    if (isset($data_array[$data_array_index + intval($replaced)])) {
+		$res['CODE'] = 0;
+		$res['DEM'] = $dem;
+		$res['DATA'] = implode(' ', array_slice($data_array, $data_array_index, intval($replaced)));
+	    } else {
+		$res['DATA'] = '「インデックス位置: ' . ($data_array_index + 1) . 'から' . intval($replaced) . '文字分取り出す」が適用できませんでした。';
+	    }
+	    break;
     }
     return $res;
 }
@@ -164,22 +176,16 @@ function getIPv6($data, $isport = false): string {
 		$start_first_zero = true;
 	    }
 	} else {
-	    if ($start_first_zero) {
-		$end_first_zero = true;
-	    }
+	    $end_first_zero = ($start_first_zero == true);
 	    array_push($res, dechex(intval($var)));
 	    $res_i += 1;
 	}
     }
 
-    $dataset = str_replace(':::', '::', implode(':', $res));
-    if (!$dataset || $dataset == ':') {
-	$dataset = '::';
-    }
+    $str = str_replace(':::', '::', implode(':', $res));
+    $dataset = (!$str || $str == ':') ? '::' : $str;
     if ($isport) {
-	$p_data = $data[sizeof($data) - 1];
-	return $dataset . '/' . $p_data;
-    } else {
-	return $dataset;
+	$dataset .= '/' . $data[sizeof($data) - 1];
     }
+    return $dataset;
 }

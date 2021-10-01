@@ -12,11 +12,11 @@ class AgentPage extends Page {
      * @var array $rules
      */
     private static $rules = [
-	'AGENTHOST' => '<strong>【条件】ドメイン名・IPv4アドレス・IPv6のいずれかを入力していること<br>（※）IPv6アドレスは「0省略」記述が可能です。</strong>',
+	'HOSTADDRESS' => '<strong>【条件】ドメイン名・IPv4アドレス・IPv6のいずれかを入力していること<br>（※）IPv6アドレスは「0省略」記述が可能です。</strong>',
 	'COMMUNITY' => '<strong>【条件】半角英数字（小文字・大文字）・記号（$ _ のみ）を用いて255文字まで',
     ];
     private static $icons = [
-	'AGENTHOST' => 'server',
+	'HOSTADDRESS' => 'server',
 	'COMMUNITY' => 'book',
 	'MIB' => 'object-group'
     ];
@@ -99,7 +99,7 @@ class AgentPage extends Page {
     public function setCreate() {
 	$this->Button('bt_cr_bk', 'エージェント選択へ戻る', 'button', 'chevron-circle-left');
 	$this->SubTitle('エージェント作成', '以下の情報を入力してください', 'plus-circle', false, '1: 情報入力');
-	$this->Input('in_ag_hs', 'エージェントホストアドレス', self::$rules['AGENTHOST'], self::$icons['AGENTHOST'], true);
+	$this->Input('in_ag_hs', 'エージェントホストアドレス', self::$rules['HOSTADDRESS'], self::$icons['HOSTADDRESS'], true);
 	$this->Input('in_ag_cm', 'コミュニティ名', self::$rules['COMMUNITY'], self::$icons['COMMUNITY'], true);
 	$this->setSub();
 	$this->WarnForm('fm_warn');
@@ -113,8 +113,8 @@ class AgentPage extends Page {
      */
     public function setEditSelect() {
 	$this->Button('bt_ed_bk', 'エージェント選択画面に戻る', 'button', 'chevron-circle-left');
-	$this->SubTitle('【' . $this->response_data['COMMUNITY'] . '】' . $this->response_data['AGENTHOST'], '以下から変更したい項目を選択してください。', 'edit', false);
-	$this->Button('bt_ed_hs', 'エージェントホスト', 'button', self::$icons['AGENTHOST']);
+	$this->SubTitle('【' . $this->response_data['COMMUNITY'] . '】' . $this->response_data['HOSTADDRESS'], '以下から変更したい項目を選択してください。', 'edit', false);
+	$this->Button('bt_ed_hs', 'エージェントホスト', 'button', self::$icons['HOSTADDRESS']);
 	$this->Button('bt_ed_cm', 'コミュニティ名', 'button', self::$icons['COMMUNITY']);
 	$this->Button('bt_ed_oi', 'MIBサブツリー選択', 'button', self::$icons['MIB']);
     }
@@ -126,13 +126,13 @@ class AgentPage extends Page {
      */
     public function setEdit() {
 	switch ($this->response_code) {
-	    case 3: //AGENTHOST
+	    case 3: //HOSTADDRESS
 		$this->Button('bt_hs_bk', '編集選択画面に戻る', 'button', 'chevron-circle-left');
 		$this->SubTitle('エージェント編集（エージェントホスト）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
-		$this->addList('変更対象のエージェント: ' . $this->response_data['AGENTHOST'] . ' (' . $this->response_data['COMMUNITY'] . ')');
+		$this->addList('変更対象のエージェント: ' . $this->response_data['HOSTADDRESS'] . ' (' . $this->response_data['COMMUNITY'] . ')');
 		$this->closeList();
-		$this->Input('in_ag_hs', 'エージェントホスト', self::$rules['AGENTHOST'], 'user-check', true);
+		$this->Input('in_ag_hs', 'エージェントホスト', self::$rules['HOSTADDRESS'], 'user-check', true);
 		$this->WarnForm('fm_warn');
 		$this->Button('bt_id_nx', '次へ', 'submit', 'sign-in-alt');
 		break;
@@ -140,7 +140,7 @@ class AgentPage extends Page {
 		$this->Button('bt_cm_bk', '編集選択画面に戻る', 'button', 'chevron-circle-left');
 		$this->SubTitle('エージェント編集（コミュニティ名）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
-		$this->addList('変更対象のエージェント: ' . $this->response_data['AGENTHOST'] . ' (' . $this->response_data['COMMUNITY'] . ')');
+		$this->addList('変更対象のエージェント: ' . $this->response_data['HOSTADDRESS'] . ' (' . $this->response_data['COMMUNITY'] . ')');
 		$this->closeList();
 		$this->Input('in_ag_cm', 'コミュニティ名', self::$rules['COMMUNITY'], self::$icons['COMMUNITY'], true);
 		$this->WarnForm('fm_warn');
@@ -150,7 +150,7 @@ class AgentPage extends Page {
 		$this->Button('bt_oi_bk', '編集選択画面に戻る', 'button', 'chevron-circle-left');
 		$this->SubTitle('エージェント編集（MIBサブツリー選択）', '以下の情報をもとに変更を行います。', 'edit');
 		$this->openList();
-		$this->addList('変更対象のエージェント: ' . $this->response_data['AGENTHOST'] . ' (' . $this->response_data['COMMUNITY'] . ')');
+		$this->addList('変更対象のエージェント: ' . $this->response_data['HOSTADDRESS'] . ' (' . $this->response_data['COMMUNITY'] . ')');
 		$this->closeList();
 		$this->Caption($this->response_data['MIBSELECT']);
 		$this->WarnForm('fm_warn');
@@ -168,7 +168,7 @@ class AgentPage extends Page {
 	$this->Button('bt_dl_bk', 'エージェント選択画面に戻る', 'button', 'chevron-circle-left');
 	$this->SubTitle('エージェント削除', '以下のエージェントを削除します。', 'trash-alt');
 	$this->openList();
-	$this->addList('エージェントホスト: ' . $this->response_data['AGENTHOST']);
+	$this->addList('エージェントホスト: ' . $this->response_data['HOSTADDRESS']);
 	$this->addList('コミュニティ名: ' . $this->response_data['COMMUNITY']);
 	$this->closeList();
 	$this->Button('bt_dl_sb', '削除する', 'button', 'sign-in-alt');

@@ -39,7 +39,7 @@ class loader {
 	}
 	$data .= '<div id="data_output"></div>';
 	$data .= $this->footer();
-	$data .= $this->footer_load($js_file);
+	$data .= $this->loadFooter($js_file);
 	$data .= '</body></html>';
 	echo $data;
     }
@@ -129,7 +129,7 @@ class loader {
      * @return string 引数に合ったHTMLを生成し、文字列として渡します
      */
     function loadHeader($site_title, $title): string {
-	$loader_css = ['font-awesome/css/all.min.css', 'font-awesome/css/brands.min.css', 'font-awesome/css/regular.min.css', 'font-awesome/css/solid.min.css', 'style.css', 'button.css', 'details.css', 'select.css', 'check.css', 'list.css', 'radio.css', 'background.css'];
+	$loader_css = ['font-awesome/css/all.min.css', 'font-awesome/css/brands.min.css', 'font-awesome/css/regular.min.css', 'font-awesome/css/solid.min.css', 'style.css', 'button.css', 'details.css', 'select.css', 'check.css', 'list.css', 'radio.css', 'background.css', 'popup.css'];
 
 	$loader_text = '';
 
@@ -208,7 +208,7 @@ class loader {
      * @param string $js_file jQueryコードで独自のイベントハンドラスクリプトがある場合は、そのファイル名を指定します（Default: ''）
      * @return string HTMLを生成し、文字列として渡します
      */
-    function footer_load($js_file = ''): string {
+    function loadFooter($js_file = ''): string {
 	$sources = ['source/jquery.min.js', 'source/bootstrap.min.js', 'ui/pass_modify.js', 'ui/animation.js', 'ui/select.js', 'ajax/ajax_dynamic.js'];
 	if ($js_file) {
 	    array_push($sources, 'page/' . $js_file);
@@ -305,5 +305,15 @@ class loader {
     function closeDetails(): string {
 	return '</div></details>';
     }
-
+    
+    /**
+     * [GET] 説明を加える
+     * テキストをホバーするとバルーンポップアップする要素を取り入れます
+     * 
+     * @param $text 説明するテキストを付加します
+     * @return string HTMLを生成し、文字列として取り入れます
+     */
+    function addExplan($text) {
+	return ' <a class="s">?<span class="s-balloon">' . $text . '</span></a>';
+    }
 }

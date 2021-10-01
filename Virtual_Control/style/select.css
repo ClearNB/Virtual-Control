@@ -1,140 +1,33 @@
-@font-face{font-family:"Font Awesome 5 Free Regular";font-style:normal;font-weight:400;font-display:block;src:url('../font-awesome/otfs/Font Awesome 5 Free-Regular-400.otf') format('opentype');}
-@font-face{font-family:"Font Awesome 5 Free Solid";font-style:normal;font-weight:900;font-display:block;src:url('../font-awesome/otfs/Font Awesome 5 Free-Solid-900.otf') format('opentype');}
+select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+select::-ms-expand {
+  display: none;
+}
 
-.sel {
-    font-size: 0.8rem;
-    display: inline-block;
-    margin: 2em 0;
-    width: 100%;
-    background-color: #000;
-    border-radius: 0.7em;
-    position: relative;
+select {
+    display: block;
     cursor: pointer;
-    transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -webkit-transition: all 0.5s ease;
+    background-color: #ff5a00;
+    padding: 0.75rem;
+    width: 80%;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.1rem 0 0.3rem rgba(0, 0, 0, 0.5);
+    margin: 0.5rem auto;
+    color: #fff;
+    font-size: 1.2rem;
+    appearance: none;
 }
 
-.sel::before {
+.sel-con::before {
+    border-top: 1.5rem solid white;
+    border-left: 0.85rem solid transparent;
+    border-right: 0.85rem solid transparent;
+    border-radius: 0.25rem;
+    content: "";
     position: absolute;
-    font-family: 'Font Awesome 5 Free Solid';
-    content: '\f078';
-    font-size: 2em;
-    color: #fff;
-    right: 20px;
-    top: calc(50% - 0.7em);
-}
-
-.sel.active::before {
-    transform: rotateX(-180deg);
-}
-
-.sel select {
-    display: none;
-}
-
-.sel__placeholder {
-    display: block;
-    font-size: 1.5em;
-    color: #fff;
-    padding: 0.2em 0.5em;
-    text-align: left;
-    pointer-events: none;
-    user-select: none;
-    visibility: visible;
-}
-
-.sel.active .sel__placeholder {
-    visibility: hidden;
-}
-
-.sel__placeholder::before {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 0.2em 0.5em;
-    content: attr(data-placeholder);
-    visibility: hidden;
-}
-
-.sel.active .sel__placeholder::before {
-    visibility: visible;
-}
-
-.sel__box {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: -4px;
-    display: none;
-    list-style-type: none;
-    text-align: left;
-    font-size: 0.6em;
-    background-color: #000;
-    width: calc(100% + 8px);
-    box-sizing: border-box;
-    margin-top: 3px;
-    box-shadow: black 0px 0px 4px;
-}
-
-.sel.active .sel__box {
-    display: block;
-    animation: fadeInUp 500ms;
-}
-
-.sel__box__options {
-    display: list-item;
-    font-size: 1.5em;
-    color: #fff;
-    padding: 0.5em 1em;
-    user-select: none;
-    border-bottom: 3px solid #ff5a00;
-}
-
-.sel__box__options::after {
-    font-family: 'Font Awesome 5 Free Solid';
-    content: '\f35b';
-    font-size: 1em;
-    color: #fff;
-    margin-left: 5px;
-    display: none;
-}
-
-.sel__box__options.selected::after {
-    display: inline;
-}
-
-.sel__box__options:hover {
-    background-color: #333;
-    color: #fff;
-}
-
-/* ----- Select Box Black Panther ----- */
-
-.sel--black-panther {
-    z-index: 9999;
-}
-
-/* ===== Keyframes ===== */
-@keyframes fadeInUp {
-    from {
-	opacity: 0;
-	transform: translate3d(0, 20px, 0);
-    }
-
-    to {
-	opacity: 1;
-	transform: none;
-    }
-}
-
-@keyframes fadeOut {
-    from {
-	opacity: 1;
-    }
-
-    to {
-	opacity: 0;
-    }
+    right: 32%;
+    bottom: -14.7%;
 }

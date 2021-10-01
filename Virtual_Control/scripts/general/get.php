@@ -10,6 +10,7 @@ include_once __DIR__ . '/session.php';
 class Get {
 
     protected $request_code;
+    protected $get_data;
     protected $session_id;
 
     /**
@@ -34,6 +35,20 @@ class Get {
      */
     public function run(): array {
 	return ['CODE' => 1, 'DATA' => '要求された行為は受け取れませんでした'];
+    }
+    
+    /**
+     * [SET] 取得データ設定
+     * 引数によって取得したデータを指定します
+     * 
+     * @param array $column 
+     * @param array $value
+     */
+    public function setGetData($column, $value) {
+	$this->get_data = [];
+	for($i = 0; $i < sizeof($column); $i++) {
+	    $this->get_data[$column[$i]] = $value[$i];
+	}
     }
 
     /**
@@ -66,8 +81,8 @@ class Get {
      * @param array|string|int $data セッションとして代入するデータを指定します
      * @return bool 追加に成功した場合はtrue、失敗した場合はfalseがを返します
      */
-    protected function set_session($data): bool {
-	return session_create($this->session_id, $data);
+    protected function set_session($data, $is_regenerated = true): bool {
+	return session_create($this->session_id, $data, $is_regenerated);
     }
 
     /**
@@ -177,7 +192,7 @@ class Get {
      * 
      * 現在あるユーザ入力データをリセットし、入力されていない状態にします
      * 
-     * @return bool ユーザ入力データをリセットできていればture、それ以外はfalseを返します
+     * @return bool ユーザ入力データをリセットできていればtrue、それ以外はfalseを返します
      */
     protected function reset_input() {
 	$session = $this->get_session();

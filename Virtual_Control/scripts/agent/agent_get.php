@@ -16,7 +16,7 @@ class AgentGet extends Get {
     private $community;
     private $mib;
     private $a_pass;
-    private $mib_sub;
+    private $mib_group;
 
     /**
      * [SET] CONSTRUCTOR
@@ -37,22 +37,16 @@ class AgentGet extends Get {
 	$this->a_pass = post_get_data('in_at_ps');
 	if ($select) { //SELECT
 	    $this->pre_agentid = ($this->pre_agentid) ? $this->pre_agentid : $select['AGENTID'];
-	    $this->agenthost = ($this->agenthost) ? $this->agenthost : $select['AGENTHOST'];
+	    $this->agenthost = ($this->agenthost) ? $this->agenthost : $select['HOSTADDRESS'];
 	    $this->community = ($this->community) ? $this->community : $select['COMMUNITY'];
 	    $this->mib = ($this->mib) ? $this->mib : $select['MIB'];
 	}
 	if ($input) { //INPUT
 	    $this->pre_agentid = $input['AGENTID'];
-	    $this->agenthost = $input['AGENTHOST'];
+	    $this->agenthost = $input['HOSTADDRESS'];
 	    $this->community = $input['COMMUNITY'];
 	    $this->mib = $input['MIB'];
 	}
-    }
-
-    private function getMIBData() {
-	$this->mib_subdata = session_get('vc_mib');
-	$mibdata = new MIBData();
-	return $mibdata->getMIB(0);
     }
 
     /**
@@ -82,12 +76,12 @@ class AgentGet extends Get {
 		case 82: //CREATE
 		    if ($this->sh_code == 1) {
 			$data = $this->get_session();
-			$res_data = $this->set_function(0, $data, ['F_ID' => $this->request_code, 'P_ID' => $this->pre_agentid, 'AGENTHOST' => $this->agenthost, 'COMMUNITY' => $this->community, 'MIB' => $this->mib, 'A_PASS' => $this->a_pass]);
+			$res_data = $this->set_function(0, $data, ['F_ID' => $this->request_code, 'P_ID' => $this->pre_agentid, 'HOSTADDRESS' => $this->agenthost, 'COMMUNITY' => $this->community, 'MIB' => $this->mib, 'A_PASS' => $this->a_pass]);
 			$res_data['DATA'] = isset($res_data['DATA']) ? $res_data['DATA'] : '';
 		    } else if ($this->sh_code == 0) {
-			$this->mib_sub = $this->getMIBData();
-			if ($this->mib_sub) {
-			    $select = new MIBSubSelect($this->mib_sub);
+			$this->mib_group = getMIBGroup();
+			if ($this->mib_group) {
+			    $select = new MIBSubSelect($this->mib_group);
 			    $res_data = ['CODE' => 1, 'DATA' => $select->getSubSelectClear()];
 			}
 		    }
@@ -132,12 +126,12 @@ class AgentGet extends Get {
 			$res_data = $this->set_function(1, $data);
 			$res_data['DATA'] = isset($res_data['DATA']) ? $res_data['DATA'] : '';
 		    } else if ($this->sh_code == 0) {
-			$this->mib_sub = $this->getMIBData();
-			if ($this->mib_sub) {
-			    $select = new MIBSubSelect($this->mib_sub);
+			$this->mib_group = getMIBGroup();
+			if ($this->mib_group) {
+			    $select = new MIBSubSelect($this->mib_group);
 			    $res_data = ['CODE' => $b_req_code, 'DATA' => $data['SELECT']];
 			    if ($this->request_code == 86) {
-				$res_data['DATA']['MIBSELECT'] = $select->getSubSelectOnAgent($data['SELECT']['SUBID']);
+				$res_data['DATA']['MIBSELECT'] = $select->getSubSelectOnAgent($data['SELECT']['GROUPID']);
 			    }
 			}
 		    }
@@ -162,7 +156,7 @@ class AgentGet extends Get {
     private function set_function($type, $data) {
 	//1: 配列データを登録する
 	if (!$this->get_input()) {
-	    $this->set_input(['FUN_ID' => $this->request_code, 'A_PASS' => $this->a_pass, 'AGENTHOST' => $this->agenthost, 'COMMUNITY' => $this->community, 'AGENTID' => $this->pre_agentid, 'MIB' => $this->mib]);
+	    $this->set_input(['FUN_ID' => $this->request_code, 'A_PASS' => $this->a_pass, 'HOSTADDRESS' => $this->agenthost, 'COMMUNITY' => $this->community, 'AGENTID' => $this->pre_agentid, 'MIB' => $this->mib]);
 	}
 	$res = ['CODE' => 999, 'DATA' => '要求されたデータは受け入れられませんでした。'];
 	if ($type == 0 || isset($data['SELECT'])) {

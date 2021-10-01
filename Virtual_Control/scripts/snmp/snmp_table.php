@@ -36,8 +36,10 @@ class SNMPTable extends Table {
     public function generateTable(): string {
 	$flag = true;
 	$sub_table_flag = false;
-	foreach ($this->table_data as $d) {
-	    $type = $d['TYPE'];
+
+	foreach ($this->table_data['MIB']['VALUE'] as $j => $d) {
+	    $i = intval($j);
+	    $type = $d['TABLETYPE'];
 	    switch ($type) {
 		case 0:
 		    if (!$flag) {
@@ -46,22 +48,24 @@ class SNMPTable extends Table {
 			$this->tableBack();
 			$this->result .= $this->start_table_without_title($this->table_id . '-' . $this->t_id);
 		    }
-		    $this->tableAdd($type, $d);
+		    $this->tableAdd($d, $i);
 		    break;
 		case 1:
 		case 2:
-		    if ($flag) {
-			$flag = false;
-			$this->tableOnClose();
-		    }
-		    if ($type == 1) {
-			if($sub_table_flag) {
-			    $this->tableBack();
+		    if (isset($this->table_data['VALUE'][$i])) {
+			if ($flag) {
+			    $flag = false;
+			    $this->tableOnClose();
 			}
-			$this->subTableOpen($d);
-			$sub_table_flag = true;
-		    } else {
-			$this->tableAdd($type, $d);
+			if ($type == 1) {
+			    if ($sub_table_flag) {
+				$this->tableBack();
+			    }
+			    $this->subTableOpen($i);
+			    $sub_table_flag = true;
+			} else {
+			    $this->tableAdd($d, $i);
+			}
 		    }
 		    break;
 	    }
@@ -75,7 +79,11 @@ class SNMPTable extends Table {
     }
 
     private function getColumn($d) {
-	return '<h5>' . $d['OID'] . '</h5><i class="' . $d['ICON'] . ' fa-fw"></i>' . $d['JAPTLANS'] . '<br><small>' . $d['DESCR'] . '</small>';
+	$res = '<h5>' . $d['DATAOID'] . '</h5><i class="' . $d['ICON'] . ' fa-fw"></i>' . $d['JPNAME'] . '<br><small>' . $d['ENNAME'] . '</small>';
+	if ($d['DESCR'] != '') {
+	    $res .= $this->addExplan($d['DESCR']);
+	}
+	return $res;
     }
 
     private function tableBack() {
@@ -93,31 +101,43 @@ class SNMPTable extends Table {
 	$this->result .= $this->table_close();
     }
 
-    private function subTableOpen($d) {
-	$index_size = sizeof($d['INDEX']);
-	$this->result .= $this->openDetails('【' . $d['OID'] . '】' . $d['DESCR'] . ' : ' . $d['JAPTLANS'] . '（' . $index_size . '）');
+    private function subTableOpen($i) {
+	$index = $this->table_data['VALUE'][$i];
+	$mib = $this->table_data['MIB']['VALUE'][$i];
+	unset($index[0]);
+	$index_size = sizeof($index);
+
+	$this->result .= $this->openDetails('【' . $mib['DATAOID'] . '】' . $mib['ENNAME'] . ' : ' . $mib['JPNAME'] . '（' . $index_size . '）');
 	$s_id = 1;
-	foreach ($d['INDEX'] as $e) {
+	foreach ($index as $e) {
 	    $sub_title = '【' . $e . '】';
 	    $this->stack[$s_id] = [];
-	    array_push($this->stack[$s_id], $this->openSubDetails($sub_title) . $this->start_table($this->table_id . '-' . $this->t_id, 'table', $d['JAPTLANS'] . '（' . $e . '）', 4));
+	    array_push($this->stack[$s_id], $this->openSubDetails($sub_title) . $this->start_table($this->table_id . '-' . $this->t_id, 'table', $mib['JPNAME'] . '（' . $e . '）', 4));
 	    $s_id += 1;
 	    $this->t_id += 1;
 	}
     }
 
-    private function tableAdd($t, $d) {
+    /**
+     * 
+     * @param type $d
+     * @param int $i MIBIDを指定します
+     */
+    private function tableAdd($d, $i) {
 	$s_id = 1;
-	foreach ($d['DATA'] as $e) {
-	    $de = $this->add_table_data($this->getColumn($d), $this->dataNumberFormat($e));
-	    if ($t == 2) {
+	$value = isset($this->table_data['VALUE'][$i]) ? $this->table_data['VALUE'][$i] : '(該当なし)';
+
+	if (is_array($value)) {
+	    foreach ($value as $e) {
+		$de = $this->add_table_data($this->getColumn($d), $this->dataNumberFormat($e));
 		if (isset($this->stack[$s_id])) {
 		    array_push($this->stack[$s_id], $de);
 		    $s_id += 1;
 		}
-	    } else {
-		$this->result .= $de;
 	    }
+	} else {
+	    $de = $this->add_table_data($this->getColumn($d), $this->dataNumberFormat($value));
+	    $this->result .= $de;
 	}
     }
 

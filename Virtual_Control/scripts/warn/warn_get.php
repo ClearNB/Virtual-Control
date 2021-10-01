@@ -33,7 +33,7 @@ class WarnGet extends Get {
 	    switch ($this->request_code) {
 		case 41: case 44:
 		    $this->initialize();
-		    $data = WarnData::getWarn();
+		    $data = getWarnData();
 		    $table = new WarnTable($data);
 		    $res_data = $table->getHTML();
 		    $res['CODE'] = 0;
