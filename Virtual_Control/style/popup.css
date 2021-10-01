@@ -1,0 +1,56 @@
+.s{
+    text-decoration: underline;
+    position: relative;
+    background-color: #ff5a00;
+    padding: 0.1rem 0.4rem;
+    border-radius: 1.5rem;
+}
+
+.s-balloon {
+    cursor: help;
+    position: absolute;
+    width: 15rem;
+    left: 2rem;
+    display: none;
+    opacity: 0;
+    padding: 1.5rem;
+    border: 0.15rem solid #ff5a00;
+    border-radius: 1rem;
+    color: #fff;
+    background-color: #333;
+    animation-duration: 0.3s;
+    animation-name: show-balloon;
+}
+
+.s:hover .s-balloon {
+    display: inline-block;
+    opacity: 1;
+    top: -1.5rem;
+}
+
+.s-balloon::before {
+    content: "";
+    position: absolute;
+    top: 1.7rem;
+    left: -0.02rem;
+    border: 0.5rem solid transparent;
+    border-right: 0.6rem solid #ff5a00;
+}
+
+@keyframes show-balloon {
+    0% {
+	display: none;
+	opacity: 0;
+	top: 0rem;
+    }
+    1% {
+	display: inline-block;
+	opacity: 0;
+	top: 0rem;
+    }
+    100% {
+	display: inline-block;
+	opacity: 1;
+	top: -1.5rem;
+    }
+}

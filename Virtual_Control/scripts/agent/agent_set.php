@@ -45,7 +45,8 @@ class AgentSet {
      * @param string $community コミュニティ
      * @param string $mibs 対象MIB
      */
-    public function __construct($functionid, $a_pass, $agenthost, $pre_agentid, $community, $mibs) {
+    public function __construct($functionid, $a_pass, $agenthost, $pre_agentid,
+	    $community, $mibs) {
 	$this->agenthost = $agenthost;
 	$this->pre_agentid = $pre_agentid;
 	$this->community = $community;
@@ -149,14 +150,14 @@ class AgentSet {
 		$flag = true;
 
 		//3: INSERT文の実行 (VC_AGENT)
-		$res = insert("VC_AGENT", ["AGENTHOST", "COMMUNITY"], [$this->agenthost, $this->community]);
-		$sel = select(true, "VC_AGENT", "AGENTID", "WHERE AGENTHOST = '$this->agenthost' AND COMMUNITY = '$this->community'");
+		$res = insert("VC_AGENT", ["HOSTADDRESS", "COMMUNITY"], [$this->agenthost, $this->community]);
+		$sel = select(true, "VC_AGENT", "AGENTID", "WHERE HOSTADDRESS = '$this->agenthost' AND COMMUNITY = '$this->community'");
 		if ($res && $sel) {
 		    //AgentIDの取得（発行時）
 		    $agentid = $sel['AGENTID'];
 		    //4: INSERT文の実行（VC_AGENT_MIB）
 		    foreach ($this->mibs as $m) {
-			$res3 = insert("VC_AGENT_MIB", ["AGENTID", "SID"], [$agentid, $m]);
+			$res3 = insert("VC_AGENT_MIB", ["AGENTID", "GROUPID"], [$agentid, $m]);
 			$flag &= $res3;
 			if (!$flag) {
 			    break;
@@ -165,7 +166,6 @@ class AgentSet {
 		} else {
 		    $flag = false;
 		}
-
 		$res_code = $flag ? 0 : 1;
 	    } else {
 		$res_code = 5;
@@ -259,7 +259,7 @@ class AgentSet {
 	$flag = true;
 	switch ($this->funid) {
 	    case 84:
-		$flag &= update("VC_AGENT", "AGENTHOST", $this->agenthost, "WHERE AGENTID = $this->pre_agentid");
+		$flag &= update("VC_AGENT", "HOSTADDRESS", $this->agenthost, "WHERE AGENTID = $this->pre_agentid");
 		break;
 	    case 85:
 		$flag &= update("VC_AGENT", "COMMUNITY", $this->community, "WHERE AGENTID = $this->pre_agentid");
@@ -267,14 +267,14 @@ class AgentSet {
 	    case 86:
 		$flag &= delete("VC_AGENT_MIB", "WHERE AGENTID = $this->pre_agentid");
 		foreach ($this->mibs as $m) {
-		    $flag &= insert("VC_AGENT_MIB", ["AGENTID", "SID"], [$this->pre_agentid, $m]);
+		    $flag &= insert("VC_AGENT_MIB", ["AGENTID", "GROUPID"], [$this->pre_agentid, $m]);
 		    if (!$flag) {
 			break;
 		    }
 		}
 		break;
 	}
-	$flag &= update("VC_AGENT", "AGENTUPTIME", date("Y-m-d H:i:s"), "WHERE AGENTID = $this->pre_agentid");
+	$flag &= update("VC_AGENT", "UPTIME", date("Y-m-d H:i:s"), 1, "WHERE AGENTID = $this->pre_agentid");
 	return $flag;
     }
 
@@ -322,9 +322,9 @@ class AgentSet {
 
     private function get_current_agent() {
 	$res = '';
-	$sql = select(true, 'VC_AGENT', 'AGENTID, AGENTHOST, COMMUNITY, AGENTUPTIME', 'WHERE AGENTID = ' . $this->pre_agentid);
+	$sql = select(true, 'VC_AGENT', 'AGENTID, HOSTADDRESS, COMMUNITY, UPTIME', 'WHERE AGENTID = ' . $this->pre_agentid);
 	if ($sql) {
-	    $res = '【' . $sql['COMMUNITY'] . '】' . $sql['AGENTHOST'];
+	    $res = '【' . $sql['COMMUNITY'] . '】' . $sql['HOSTADDRESS'];
 	}
 	return $res;
     }
@@ -332,14 +332,10 @@ class AgentSet {
     private function get_mib_text(): string {
 	$res = [''];
 
-	$mb = new MIBData();
-	$data = $mb->getMIB(0, 0, $this->mibs);
-	if ($data) {
-	    foreach ($data['SUB'] as $k => $g) {
-		array_push($res, '【' . $data['GROUP'][$k]['GROUP_OID'] . '】' . $data['GROUP'][$k]['GROUP_NAME']);
-		foreach ($this->mibs as $s) {
-			array_push($res, '├ (' . $g[$s]['SUB_OID'] . ') ' . $g[$s]['SUB_NAME']);
-		}
+	$mb = getMIBGroup($this->mibs);
+	if ($mb) {
+	    foreach ($mb as $g) {
+		array_push($res, '・(' . $g['GROUPOID'] . ') ' . $g['GROUPNAME']);
 	    }
 	} else {
 	    $res = '（取得不可）';
@@ -377,7 +373,7 @@ function check_host($host): string {
  * @return string|null 何らかのエラーがあれば、その原因のエラーを出し、何もなければnullを返します。
  */
 function check_duplicate($host, $com): string {
-    $result = select(true, "VC_AGENT", "COUNT(*) AS AGENTCOUNT", "WHERE AGENTHOST = '$host' AND COMMUNITY = '$com'");
+    $result = select(true, "VC_AGENT", "COUNT(*) AS AGENTCOUNT", "WHERE HOSTADDRESS = '$host' AND COMMUNITY = '$com'");
     if ($result['AGENTCOUNT'] == 1) {
 	return '<li>データが他の情報と重複しています。エージェントホストとコミュニティは他のと違う情報にしてください。</li>';
     } else {
@@ -406,7 +402,7 @@ function check_duplicate_onchange($type, $pre_agentid, $changes): string {
 	    $c = [$changes, ''];
 	    break;
 	case 1: $pare = 0;
-	    $query = [true, "VC_AGENT", "AGENTHOST", "WHERE AGENTID = $pre_agentid"];
+	    $query = [true, "VC_AGENT", "HOSTADDRESS", "WHERE AGENTID = $pre_agentid"];
 	    $c = ['', $changes];
 	    break;
     }
@@ -456,7 +452,7 @@ function check_mib($mib): string {
     }
     $flag = true;
     foreach ($mib as $m) {
-	$flag &= select(true, 'VC_MIB_SUB', 'SID', 'WHERE SID = ' . $m);
+	$flag &= select(true, 'VC_MIB_GROUP', 'GROUPID', 'WHERE GROUPID = ' . $m);
 	if (!$flag) {
 	    break;
 	}

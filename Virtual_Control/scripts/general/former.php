@@ -522,6 +522,22 @@ class Former {
     function closeDetails(): void {
 	array_push($this->data, '</div></details>');
     }
+    
+    function openSelect($name): void {
+	array_push($this->data, '<div class="sel-con"><select name="' . $name . '">');
+    }
+    
+    function addSelect($value, $name, $is_selected): void {
+	$s_text = '';
+	if($is_selected) {
+	    $s_text = 'selected';
+	}
+	array_push($this->data, '<option value="' . $value . '" ' . $s_text . '>' . $name . '</option>');
+    }
+    
+    function closeSelect(): void {
+	array_push($this->data, '</select></div>');
+    }
 
     /**
      * [GET] オブジェクトのJavaScriptへのエンコード
@@ -636,6 +652,7 @@ class Former {
 	$js .= '</script>';
 	return $js;
     }
+    
 
     /**
      * [FUNCTION] 認証画面作成

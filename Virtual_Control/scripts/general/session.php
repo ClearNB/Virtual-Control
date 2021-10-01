@@ -1,6 +1,6 @@
 <?php
 
-include_once __DIR__ . '/../general/sqldata.php';
+include_once __DIR__ . '/sqldata.php';
 
 /**
  * [FUNCTIONS] セッション系処理ファンクション群
@@ -102,7 +102,8 @@ function post_get_data($post_id, $filter = FILTER_SANITIZE_STRING) {
  * @param int $filter フィルタするメソッド定数を指定します（Default: FILTER_SANITIZE_STRING）
  * @return string データが取得できた場合はそのデータを、できなかった場合は$s_dataのデータを返します
  */
-function post_get_data_convert($post_id, $s_data, $filter = FILTER_SANITIZE_STRING) {
+function post_get_data_convert($post_id, $s_data,
+	$filter = FILTER_SANITIZE_STRING) {
     $data = filter_input(INPUT_POST, $post_id, $filter);
     return ($data) ? $data : $s_data;
 }
@@ -159,7 +160,7 @@ function session_action_guest(): void {
 	    break;
 	case 3:
 	    http_response_code(301);
-	    header('location: /init');	    
+	    header('location: /init');
 	    exit();
 	    break;
     }
@@ -173,7 +174,7 @@ function session_action_guest(): void {
  * ゲストとして利用できる場合: / へ
  */
 function session_action_init(): void {
-    switch(session_chk()) {
+    switch (session_chk()) {
 	case 0:
 	    http_response_code(301);
 	    header('location: /dash');
@@ -199,11 +200,11 @@ function session_chk(): int {
     $chk = 1;
     if (session_exists('vc_userid')) {
 	$userid = session_get_userid();
-	$res = select(true, "VC_USERS", "LOGINSTATE", "WHERE USERID = '$userid'");
+	$res = select(true, "VC_USER", "LOGINSTATE", "WHERE USERID = '$userid'");
 	$chk = ($res && $res['LOGINSTATE'] == 1) ? 0 : 2;
     }
-    if($chk == 2 || $chk == 1) {
-	$res = select(false, 'VC_USERS', 'USERID');
+    if ($chk == 2 || $chk == 1) {
+	$res = select(false, 'VC_USER', 'USERID');
 	$chk = ($res) ? $chk : 3;
     }
     ob_get_clean();
@@ -236,7 +237,7 @@ function session_auth(): bool {
 function session_auth_check($userid, $pass, $isauthid = false): int {
     $res = 0;
 
-    $q01 = select(true, "VC_USERS", "SALT", "WHERE USERID = '$userid'");
+    $q01 = select(true, "VC_USER", "SALT", "WHERE USERID = '$userid'");
     $salt = '';
     if (!$q01) {
 	$res = 1;
@@ -248,7 +249,7 @@ function session_auth_check($userid, $pass, $isauthid = false): int {
 	$res = 2;
     } else {
 	$hash = hash('sha256', $pass . $salt);
-	$result = select(true, "VC_USERS", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERID = '$userid'");
+	$result = select(true, "VC_USER", "(PASSWORDHASH = '$hash') AS PASSWORD_MATCHES", "WHERE USERID = '$userid'");
 	$password_matches = $result['PASSWORD_MATCHES'];
 	if ($password_matches) {
 	    if ($isauthid) {
@@ -273,7 +274,7 @@ function session_auth_check($userid, $pass, $isauthid = false): int {
 function session_get_userdata(): array {
     session_start_once();
     $userid = session_get_userid();
-    $sql = select(true, "VC_USERS", "USERID, USERNAME, PERMISSION, LOGINSTATE", "WHERE USERID = '$userid'");
+    $sql = select(true, "VC_USER", "USERID, USERNAME, PERMISSION, LOGINSTATE", "WHERE USERID = '$userid'");
     session_set_data($sql);
     return $sql;
 }
@@ -325,10 +326,12 @@ function session_set_data(&$sql): void {
  * @param string $value セッション値
  * @return bool セッション登録に成功した場合はtrue、そうでない場合はfalseを返します
  */
-function session_create($sessionid, $value): bool {
+function session_create($sessionid, $value, $is_regenerated = true): bool {
     session_start_once();
+    if ($is_regenerated) {
+	session_regenerate_id();
+    }
     $_SESSION[$sessionid] = $value;
-    session_regenerate_id();
     return (isset($_SESSION[$sessionid]));
 }
 

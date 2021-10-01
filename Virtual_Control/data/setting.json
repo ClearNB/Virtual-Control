@@ -1,8 +1,0 @@
-{
-    "host" : "localhost",
-    "port" : "3306",
-    "user" : "vchost",
-    "password" : "masterkey",
-    "database" : "vcdb",
-    "logdirectory" : "/var/log/snmptrap"
-}

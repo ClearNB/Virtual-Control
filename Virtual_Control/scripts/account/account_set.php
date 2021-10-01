@@ -80,8 +80,9 @@ class AccountSet {
 	    $set_fun = 999;
 	} else {
 	    $set_fun = $this->check_correct_functionid();
+	    var_dump($set_fun & ' = ' & $this->funid);
 	    if ($set_fun != $this->funid) {
-		$set_fun = 8;
+		$set_fun = 88;
 	    }
 	}
 	$this->funid = $set_fun;
@@ -92,15 +93,15 @@ class AccountSet {
 	$flag1 = $this->userid && $this->username && $this->pass && $this->r_pass;
 	$flag2 = isset($this->per);
 	if ($flag1 && $flag2) {
-	    $set_fun = 2;
+	    $set_fun = 82;
 	} else if ($this->pre_userid && $this->userid) {
-	    $set_fun = 4;
+	    $set_fun = 84;
 	} else if ($this->pre_userid && $this->username) {
-	    $set_fun = 5;
+	    $set_fun = 85;
 	} else if ($this->pre_userid && $this->pass && $this->r_pass) {
-	    $set_fun = 6;
+	    $set_fun = 86;
 	} else if ($this->pre_userid) {
-	    $set_fun = 7;
+	    $set_fun = 87;
 	}
 	return $set_fun;
     }
@@ -119,13 +120,13 @@ class AccountSet {
     public function run() {
 	$result_code = 0;
 	switch ($this->funid) {
-	    case 2: $result_code = $this->create();
+	    case 82: $result_code = $this->create();
 		break;
-	    case 4: case 5: case 6: $result_code = $this->edit();
+	    case 84: case 85: case 86: $result_code = $this->edit();
 		break;
-	    case 7: $result_code = $this->delete();
+	    case 87: $result_code = $this->delete();
 		break;
-	    case 8: $result_code = 2;
+	    case 88: $result_code = 2;
 		break;
 	    case 999: $result_code = $this->auth();
 		break;
@@ -178,16 +179,16 @@ class AccountSet {
 	$chk_text = '[DATA]</ul>';
 	$chk = '';
 	switch ($this->funid) {
-	    case 2: //作成（ユーザID・ユーザ名・パスワード・権限確認）
+	    case 82: //作成（ユーザID・ユーザ名・パスワード・権限確認）
 		$chk .= $this->check_userid() . $this->check_username() . $this->check_password() . $this->check_permission();
 		break;
-	    case 4: //編集1（ユーザID確認）
+	    case 84: //編集1（ユーザID確認）
 		$chk .= $this->check_userid();
 		break;
-	    case 5: //編集2（ユーザ名確認）
+	    case 85: //編集2（ユーザ名確認）
 		$chk .= $this->check_username();
 		break;
-	    case 6: //編集3（パスワード確認）
+	    case 86: //編集3（パスワード確認）
 		$chk .= $this->check_password();
 		break;
 	}
@@ -218,11 +219,11 @@ class AccountSet {
     private function editQuery() {
 	$res = [];
 	switch ($this->funid) {
-	    case 4: $res = ['VC_USERS', ['USERID'], [$this->userid]];
+	    case 84: $res = ['VC_USERS', ['USERID'], [$this->userid]];
 		break;
-	    case 5: $res = ['VC_USERS', ['USERNAME'], [$this->username]];
+	    case 85: $res = ['VC_USERS', ['USERNAME'], [$this->username]];
 		break;
-	    case 6:
+	    case 86:
 		$salt = random(20);
 		$pass_hash = hash('sha256', $this->pass . $salt);
 		$res = ['VC_USERS', ['PASSWORDHASH', 'SALT'], [$pass_hash, $salt]];
@@ -245,19 +246,19 @@ class AccountSet {
 	$column_list = ['<li>対象のユーザ: ' . $this->pre_userid . '</li>', '<li>新しいユーザID: [NEW_USERID]</li>', '<li>新しいユーザ名: [NEW_USERNAME]</li>', '<li>新しいパスワード: [表示できません]</li>', '<li>権限: [NEW_PERMISSION]</li>'];
 	$columns = [];
 	switch ($this->check_correct_functionid()) {
-	    case 2: $func = str_replace('[FUNCTION]', 'ユーザ作成', $func);
+	    case 82: $func = str_replace('[FUNCTION]', 'ユーザ作成', $func);
 		$columns = [1, 2, 3, 4];
 		break;
-	    case 4: $func = str_replace('[FUNCTION]', 'ユーザ編集（ユーザID）', $func);
+	    case 84: $func = str_replace('[FUNCTION]', 'ユーザ編集（ユーザID）', $func);
 		$columns = [0, 1];
 		break;
-	    case 5: $func = str_replace('[FUNCTION]', 'ユーザ編集（ユーザ名）', $func);
+	    case 85: $func = str_replace('[FUNCTION]', 'ユーザ編集（ユーザ名）', $func);
 		$columns = [0, 2];
 		break;
-	    case 6: $func = str_replace('[FUNCTION]', 'ユーザ編集（パスワード）', $func);
+	    case 86: $func = str_replace('[FUNCTION]', 'ユーザ編集（パスワード）', $func);
 		$columns = [0, 3];
 		break;
-	    case 7: $func = str_replace('[FUNCTION]', 'ユーザ削除', $func);
+	    case 87: $func = str_replace('[FUNCTION]', 'ユーザ削除', $func);
 		$columns = [0];
 		break;
 	}

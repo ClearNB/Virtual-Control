@@ -11,7 +11,7 @@ ul.black-view, ol.black-view, ul.orange-view, ol.orange-view {
 
 ul.black-view li, ol.black-view li {
     color: #fff;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.5rem;
     line-height: 1.5;
     padding: 0.3em;
     list-style-type: none !important;
@@ -28,7 +28,7 @@ ul.black-view li.all-view h5, ol.black-view li.all-view h5 {
 
 ul.black-view li.all-view, ol.black-view li.all-view {
     color: #fff;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.0rem;
     line-height: 1.5;
     padding: 0.5em;
     list-style-type: none !important;

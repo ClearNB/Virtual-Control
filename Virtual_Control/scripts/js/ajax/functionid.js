@@ -40,6 +40,18 @@ function change_analy_dl() {
     fid = 36;
 }
 
+function change_analy_past() {
+    fid = 37;
+}
+
+function change_analy_past_get() {
+    fid = 38;
+}
+
+function change_analy_past_s() {
+    fid = 39;
+}
+
 function change_warn() {
     fid = 41;
 }
@@ -81,7 +93,7 @@ function change_account_create() {
 }
 
 function change_account_edit_sel() {
-   fid = 73; 
+    fid = 73;
 }
 
 function change_account_edit_id() {
@@ -109,7 +121,7 @@ function change_agent_create() {
 }
 
 function change_agent_edit_sel() {
-   fid = 83;
+    fid = 83;
 }
 
 function change_agent_edit_hs() {
@@ -128,96 +140,44 @@ function change_agent_del() {
     fid = 87;
 }
 
-function change_mgp_sel() {
+function change_mib_group_select() {
     fid = 91;
 }
 
-function change_mgp_create() {
+function change_mib_add() {
     fid = 92;
 }
 
-function change_mgp_edit_sel() {
-   fid = 93; 
+function change_mib_page_add_normal() {
+    fid = 93;
 }
 
-function change_mgp_edit_id() {
+function change_mib_page_add_table() {
     fid = 94;
 }
 
-function change_mgp_edit_nm() {
+function change_mib_page_add_table_data() {
     fid = 95;
 }
 
-function change_mgp_del() {
+function change_mib_edit() {
     fid = 96;
 }
 
-function change_msb_sel() {
-    fid = 101;
+function change_mib_delete() {
+    fid = 97;
 }
 
-function change_msb_create() {
-    fid = 102;
+function change_mib_group_add() {
+    fid = 98;
 }
 
-function change_msb_edit_sel() {
-    fid = 103;
+function change_mib_group_edit() {
+    fid = 99;
 }
 
-function change_msb_edit_id() {
-    fid = 104;
-}
-
-function change_msb_edit_nm() {
-    fid = 105;
-}
-
-function change_msb_del() {
-    fid = 106;
-}
-
-function change_mnd_menu() {
-    fid = 111;
-}
-
-function change_mnd_add_sel() {
-    fid = 112;
-}
-
-function change_mnd_add_data() {
-    fid = 113;
-}
-
-function change_mnd_add_data_trap() {
-    fid = 114;
-}
-
-function change_mnd_add_table() {
-    fid = 115;
-}
-
-function change_mnd_add_table_trap() {
-    fid = 116;
-}
-
-function change_mnd_add_tdata() {
-    fid = 117;
-}
-
-function change_mnd_add_tdata_trap() {
-    fid = 118;
-}
-
-function change_mnd_edit() {
-    fid = 119;
-}
-
-function change_mnd_delete() {
-    fid = 120;
-}
-
-function change_mnd_update() {
-    fid = 121;
+function change_mib_group_delete() {
+    fid = 100;
 }
 
 function get_funid() {

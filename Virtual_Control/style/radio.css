@@ -21,13 +21,12 @@ input[type="radio"], input[type="checkbox"] {
     cursor: pointer;
     display: inline-block;
     position: relative;
-    padding: 0.3rem 2.0rem;
+    padding: 0.5rem 2.0rem;
     text-align: left;
     width: 100%;
     transition: all 0.5s;
     -moz-transition: all 0.5s;
     -webkit-transition: all 0.5s;
-    border-bottom: 0.3rem solid transparent;
 }
 
 .radio01::before {
@@ -38,10 +37,11 @@ input[type="radio"], input[type="checkbox"] {
     display: block;
     margin-top: -0.8em;
     position: absolute;
-    left: 0.1rem;
+    left: 0.5rem;
     top: 50%;
     height: 1.5em;
     width: 1.5em;
+    font-weight: bold;
 }
 
 input[type=radio]:hover + .radio01::before {
@@ -53,7 +53,7 @@ input[type=radio]:hover + .radio01::before {
     border-radius: 50%;
     content: '';
     display: block;
-    left: 0.48em;
+    left: 0.9rem;
     margin-top: -0.386em;
     opacity: 1;
     position: absolute;
@@ -71,7 +71,8 @@ input[type=radio]:checked + .radio01::before {
 }
 
 input[type=radio]:checked + .radio01 {
-    border-bottom: 0.3rem solid #000;
+    background-color: #ff5a00;
+    border-radius: 5rem;
 }
 
 input[type=radio]:focus + .radio01::before {
@@ -139,7 +140,7 @@ input[type=radio]:checked + .radio02::before {
 }
 
 input[type=radio]:focus + .radio02::before {
-    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0.5rem 0.5rem rgba(0, 0, 0, 0.4);
 }
 
 input[type=radio]:checked + .radio02::after {

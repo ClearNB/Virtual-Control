@@ -22,7 +22,7 @@ class AgentSelect extends loader {
 	    $res = '（選択できるエージェントはありません）';
 	}
 	foreach($value as $val) {
-	    $res .= $this->Radio('ag_rd_' . ($i + 1), 'sl_ag', $val['AGENTID'], '【' . $val['COMMUNITY'] . '】（最終更新日時: ' . $val['AGENTUPTIME'] . ') ' . $val['AGENTHOST'], false);
+	    $res .= $this->Radio('ag_rd_' . ($i + 1), 'sl_ag', $val['AGENTID'], '【' . $val['COMMUNITY'] . '】（最終更新日時: ' . $val['UPTIME'] . ') ' . $val['HOSTADDRESS'], false);
 	    $i += 1;
 	}
 	return $res;

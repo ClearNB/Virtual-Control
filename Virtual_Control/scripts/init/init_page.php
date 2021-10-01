@@ -35,8 +35,9 @@ class InitPage extends Page {
 	$this->SubTitle('データベース初期化', 'ここでは、データベースの初期化を行うことができます。以下の注意事項をよく読んで実行してください。', 'sync');
 	$this->openList();
 	$this->addList('これを行うことにより初期状態に戻され、テーブルの定義やテーブルの内容が全て初期状態に置き換えられます。');
-	$this->addList('/data/data_format.jsonというファイルがあることをご確認ください。');
+	$this->addList('/data/new_database.phpというファイルがあることをご確認ください。');
 	$this->addList('初期化を行う前に、データベースサーバとWebサーバが相互に接続できているか確認してください。');
+	$this->addList('初期化中は、結果が表示されるまでこのページから離れないでください。');
 	$this->closeList();
 	$this->Button('bt_pg_st', '初期化を開始', 'button', 'play');
 	$this->Button('bt_pg_bk', 'ホームに戻る', 'button', 'home');

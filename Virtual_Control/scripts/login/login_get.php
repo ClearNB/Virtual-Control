@@ -71,9 +71,17 @@ function getState($userid, $pass) {
     if ($code == 0) {
 	session_start_once();
 	session_create('vc_userid', $userid);
-	$r1 = update('VC_USERS', 'LOGINSTATE', 1, 'WHERE USERID = "' . $userid . '"');
-	$r2 = update('VC_USERS', 'LOGINUPTIME', date('Y-m-d H:i:s'), 'WHERE USERID = "' . $userid . '"');
+	$r1 = update('VC_USER', 'LOGINSTATE', 1, 'WHERE USERID = "' . $userid . '"');
+	$r2 = update('VC_USER', 'LOGINUPTIME', date('Y-m-d H:i:s'), 1, 'WHERE USERID = "' . $userid . '"');
 	$code = ($r1 && $r2) ? 3 : 1;
     }
     return $code;
+}
+
+/**
+ * 
+ * @param type $oid
+ */
+function MIBSearch($oid) {
+    $sel = select(true, 'MIBID', 'FROM VC_MIB', '');
 }

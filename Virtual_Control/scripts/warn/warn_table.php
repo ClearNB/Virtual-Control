@@ -11,7 +11,7 @@ include_once __DIR__ . '/../general/loader.php';
  */
 class WarnTable {
 
-    static $column = ['GROUP' => 'グループ情報', 'SYSTIME' => 'システム稼働時間', 'TIME' => '発生時刻', 'ADDRESS' => 'ホストアドレス', 'COMMUNITY' => 'コミュニティ', 'OID' => '対象OID', 'AGENT' => 'エージェント情報', 'ENTERPRISE' => '情報出力先OID', 'INTERFACE' => 'インタフェースID', 'SOURCE' => 'その他情報', 'MESSAGE' => 'メッセージ'];
+    static $column = ['AGENT' => 'エージェント情報', 'TRAP' => 'トラップ情報', 'SYSTEM' => 'システム情報', 'OTHER' => 'その他情報', 'SYSTIME' => 'システム稼働時間', 'TRAPTIME' => 'トラップ発生時刻'];
     private $data;
     private $u_data;
     private $s_data;
@@ -61,7 +61,7 @@ class WarnTable {
 	    $updated_data = $this->u_data[$g];
 	    $i = 1;
 	    foreach ($d as $v) {
-		$title = '【#' . $i . '】' . $v['MESSAGE'];
+		$title = '【#' . $i . '】' . $v['TRAP'];
 		$this->setSubDetails($title);
 		$this->setTable($v, $g . '-' . $i);
 		$this->closeDetails();
@@ -70,7 +70,7 @@ class WarnTable {
 	    $id = 'sub_i' . $g;
 	    $size = sizeof($d);
 	    $this->r_data['COUNT'] += $size;
-	    $this->r_data['LIST'] .= $this->loader->addListGroup($id, $g . ' - (' . $size . '件)', 'poll-h', '最新: ' . $updated_data, '詳しくはクリック！');
+	    $this->r_data['LIST'] .= $this->loader->addListGroup($id, $g . ' - (' . $size . '件)', 'poll-h', '【最新】' . $updated_data, '詳しくはクリック！');
 	    
 	    $this->r_data['SUB'][$id] = $this->getData($g, $size);
 	    $this->resetData();

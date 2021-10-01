@@ -55,15 +55,14 @@ class AccountGet extends Get {
 		case 75; //EDIT NAME
 		case 76: //EDIT PASS
 		case 77: //DELETE
-		    $type_code = ($this->request_code == 2) ? 0 : (($this->request_code == 7) ? 2 : 1);
+		    $type_code = ($this->request_code == 72) ? 0 : (($this->request_code == 77) ? 2 : 1);
 		    if ($this->data_type == 1) {
 			$s_data = $this->get_session();
 			$res_data = $this->set_function($type_code, $s_data, ['F_ID' => $this->request_code, 'P_ID' => $this->pre_userid, 'USERID' => $this->userid, 'USERNAME' => $this->username, 'A_PASS' => $this->a_pass, 'PASS' => $this->pass, 'R_PASS' => $this->r_pass, 'PERMISSION' => $this->permission]);
 			$response_data = ['CODE' => $res_data['CODE'], 'DATA' => isset($res_data['DATA']) ? $res_data['DATA'] : ''];
 		    } else if ($this->data_type == 0) {
 			$s_data = ($this->pre_userid) ? $this->set_selectdata($type_code, $this->pre_userid) : $this->get_session();
-			$response_data = ['CODE' => (isset($s_data['SELECT']) || $this->request_code == 72) ? $this->request_code % 10 : $response_data['CODE'],
-			    'DATA' => (isset($s_data['SELECT'])) ? $s_data['SELECT'] : (($this->request_code == 72) ? '' : $response_data['DATA'])];
+			$response_data = ['CODE' => (isset($s_data['SELECT']) || $this->request_code == 72) ? $this->request_code % 10 : $response_data['CODE'], 'DATA' => (isset($s_data['SELECT'])) ? $s_data['SELECT'] : (($this->request_code == 72) ? '' : $response_data['DATA'])];
 		    }
 		    break;
 		case 73: //EDIT-SELECT

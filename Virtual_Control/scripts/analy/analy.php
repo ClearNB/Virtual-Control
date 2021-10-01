@@ -22,5 +22,10 @@ $get = new AnalyGet($f_id);
 $response = $get->run();
 $page = new AnalyPage($response['CODE'], $response['DATA']);
 $res['PAGE'] = $page->getPage();
+$res['CODE'] = 0;
+
+if($response['CODE'] >= 10 && $response['CODE'] != 999) {
+    $res['CODE'] = 1;
+}
 
 echo json_encode($res);
